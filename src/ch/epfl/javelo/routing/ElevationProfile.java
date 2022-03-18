@@ -11,7 +11,7 @@ import java.util.function.DoubleUnaryOperator;
 
 public final class ElevationProfile {
 
-    private static final DoubleSummaryStatistics s = new DoubleSummaryStatistics();
+    private final DoubleSummaryStatistics s = new DoubleSummaryStatistics();
     private final double length;
     private final float[] samples;
 
