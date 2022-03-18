@@ -1,10 +1,12 @@
 package ch.epfl.javelo.routing;
 
+import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
+import java.util.function.DoubleUnaryOperator;
 
 
 public final class ElevationProfile {
@@ -56,12 +58,9 @@ public final class ElevationProfile {
     }
 
     public double elevationAt(double position) {
-        System.out.println(Arrays.toString(samples));
-        double distance = length / (samples.length - 1);
-        int index = (int) (position / distance);
-        System.out.println(length);
-        System.out.println(index);
-        return samples[Math2.clamp(0, index, samples.length - 1)];
+        if (length < position) return samples[samples.length-1];
+        if (position < 0) return samples[0];
+        return Functions.sampled(samples, length).applyAsDouble(position);
     }
 
 
