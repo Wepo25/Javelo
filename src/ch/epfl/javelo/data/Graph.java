@@ -6,14 +6,10 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
+import java.nio.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
@@ -32,54 +28,24 @@ public final class Graph {
     }
 
     public static Graph loadFrom(Path basePath) throws IOException {
-        Path nodesPath = basePath.resolve("nodes.bin");
-        Path sectorsPath = basePath.resolve("sectors.bin");
-        Path edgesPath = basePath.resolve("edges.bin");
-        Path profilePath = basePath.resolve("profile_ids.bin");
-        Path elevationsPath = basePath.resolve("elevations.bin");
-        Path attributesPath = basePath.resolve("attributes.bin");
-        IntBuffer nodes;
-        ByteBuffer sectors;
-        ByteBuffer edges;
-        IntBuffer profileIds;
-        ShortBuffer elevations;
-        LongBuffer attributes;
+        IntBuffer nodes = tryAndOpen(basePath.resolve("nodes.bin")).asIntBuffer();
+        ByteBuffer sectors = tryAndOpen(basePath.resolve("sectors.bin")).asReadOnlyBuffer();
+        ByteBuffer edges = tryAndOpen(basePath.resolve("edges.bin")).asReadOnlyBuffer();
+        IntBuffer profileIds = tryAndOpen(basePath.resolve("profile_ids.bin")).asIntBuffer();
+        ShortBuffer elevations = tryAndOpen(basePath.resolve("elevations.bin")).asShortBuffer();
+        LongBuffer attributes = tryAndOpen(basePath.resolve("attributes.bin")).asLongBuffer();
         List<AttributeSet> attributeSets = new ArrayList<>();
-        try (FileChannel channel = FileChannel.open(nodesPath)) {
-            nodes = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asIntBuffer();
-        }
-        try (FileChannel channel = FileChannel.open(sectorsPath)) {
-            sectors = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asReadOnlyBuffer();
-        }
-        try (FileChannel channel = FileChannel.open(edgesPath)) {
-            edges = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asReadOnlyBuffer();
-        }
-        try (FileChannel channel = FileChannel.open(profilePath)) {
-            profileIds = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asIntBuffer();
-        }
-        try (FileChannel channel = FileChannel.open(elevationsPath)) {
-            elevations = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asShortBuffer();
-        }
-        try (FileChannel channel = FileChannel.open(attributesPath)) {
-            attributes = channel
-                    .map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-                    .asLongBuffer();
-        }
         for (int i = 0; i < attributes.capacity(); i++) {
             attributeSets.add(new AttributeSet(attributes.get(i)));
         }
         return new Graph(new GraphNodes(nodes), new GraphSectors(sectors), new GraphEdges(edges, profileIds, elevations), attributeSets);
 
+    }
+
+    private static MappedByteBuffer tryAndOpen(Path path) throws IOException {
+        try(FileChannel channel = FileChannel.open(path)){
+            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        }
     }
 
     public int nodeCount() {
@@ -100,12 +66,13 @@ public final class Graph {
 
     public int nodeClosestTo(PointCh point, double searchDistance) {
         int closestNodeId = -1;
+        double NewSearchDistance = searchDistance*searchDistance;
         double distance = Math2.squaredNorm(SwissBounds.MAX_E - SwissBounds.MIN_E, SwissBounds.MAX_N - SwissBounds.MIN_N);
         List<GraphSectors.Sector> temp = sectors.sectorsInArea(point, searchDistance);
         for (GraphSectors.Sector sect : temp) {
             for (int i = sect.startNodeId(); i < sect.endNodeId(); ++i) {
                 double tempDistance = point.squaredDistanceTo(new PointCh(nodes.nodeE(i), nodes.nodeN(i)));
-                if ((tempDistance < distance)) {
+                if ((tempDistance < distance && tempDistance <= NewSearchDistance)) {
                     distance = tempDistance;
                     closestNodeId = i;
                 }

@@ -21,38 +21,7 @@ class GraphSectorsTest {
     //
 
     @Test
-    void sectorsInAreaTest() {
-
-        ByteBuffer buffer = ByteBuffer.allocate(6 * 16684);
-
-        for (int i = 0; i <= 16683; i += 1) {
-            buffer.putInt(i * 6, i);
-        }
-
-        for (int j = 0; j <= 16683; j += 1) {
-            buffer.putShort(j * 6 + 4, (short) 5);
-        }
-
-        GraphSectors graphSectors = new GraphSectors(buffer);
-
-        int expectedLength = 1;
-        int actualLength = graphSectors.sectorsInArea(new PointCh(2485000, 1075000), 0).size();
-        assertEquals(expectedLength, actualLength);
-
-        int expectedLength2 = 4;
-        int actualLength2 = graphSectors.sectorsInArea(new PointCh(2485000 + (SwissBounds.WIDTH / 128), 1075000 + (SwissBounds.HEIGHT / 128)), 0).size();
-        assertEquals(expectedLength2, actualLength2);
-
-        int expectedStartNode1 = 0;
-        int actualStartNode1 = graphSectors.sectorsInArea(new PointCh(2485000 + (SwissBounds.WIDTH / 128), 1075000 + (SwissBounds.HEIGHT / 128)), 0).get(0).startNodeId();
-        int expectedEndNode1 = 4;
-        int actualEndNode1 = graphSectors.sectorsInArea(new PointCh(2485000 + (SwissBounds.WIDTH / 128), 1075000 + (SwissBounds.HEIGHT / 128)), 0).get(0).endNodeId();
-        assertEquals(expectedStartNode1, actualStartNode1);
-        assertEquals(expectedEndNode1, actualEndNode1);
-
-    }
-    @Test
-    void sectorInAreaTest2() {
+    void sectorInAreaTest() {
         ByteBuffer buffer = ByteBuffer.allocate(6 * 16684);
 
         for (int i = 0; i <= 16683; i += 1) {

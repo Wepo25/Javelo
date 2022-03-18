@@ -81,7 +81,7 @@ public class GraphTest {
         assertEquals(nodeId1, graph.nodeClosestTo(node1, 100));
         assertEquals(nodeId2, graph.nodeClosestTo(node2, 100));
         assertEquals(nodeId3, graph.nodeClosestTo(node3, 100));
-        assertEquals(nodeId1, graph.nodeClosestTo(pointNearNode1, 20));
+        assertEquals(nodeId1, graph.nodeClosestTo(pointNearNode1, 21));
         assertEquals(-1, graph.nodeClosestTo(pointNearNode1, 19));
     }
 
