@@ -106,9 +106,5 @@ public final class Graph {
             return Functions.constant(Double.NaN);
         } else
             return Functions.sampled(edges.profileSamples(edgeId), this.edges.length(edgeId));
-
-
     }
-
 }
-

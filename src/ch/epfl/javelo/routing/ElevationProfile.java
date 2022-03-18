@@ -3,6 +3,7 @@ package ch.epfl.javelo.routing;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
+import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 
 
@@ -55,8 +56,11 @@ public final class ElevationProfile {
     }
 
     public double elevationAt(double position) {
+        System.out.println(Arrays.toString(samples));
         double distance = length / (samples.length - 1);
         int index = (int) (position / distance);
+        System.out.println(length);
+        System.out.println(index);
         return samples[Math2.clamp(0, index, samples.length - 1)];
     }
 
