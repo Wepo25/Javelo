@@ -18,8 +18,7 @@ public final class ElevationProfile {
     public ElevationProfile(double length, float[] elevationSamples) {
         Preconditions.checkArgument(length > 0 && elevationSamples.length >= 2);
         this.length = length;
-        samples = new float[(1 + (int) Math.ceil(length / 2))];
-        System.arraycopy(elevationSamples, 0, samples, 0, 1 + (int) Math.ceil(length / 2));
+        this.samples = elevationSamples;
         for (float sample : samples) {
             s.accept(sample);
         }
@@ -38,23 +37,23 @@ public final class ElevationProfile {
     }
 
     public double totalAscent() {
-        double ascent = 0;
-        for (int i = 1; i < samples.length; i++) {
-            if (samples[i - 1] < samples[i]) {
-                ascent += Math.abs(samples[i] - samples[i - 1]);
+        double ascent= 0;
+        for (int i = 0; i < samples.length-1; i++) {
+            if (samples[i+1]- samples[i] > 0) {
+                ascent += samples[i+1]- samples[i];
             }
         }
-        return ascent;
+        return Math.abs(ascent);
     }
 
     public double totalDescent() {
         double descent = 0;
-        for (int i = 1; i < samples.length; i++) {
-            if (samples[i - 1] > samples[i]) {
-                descent += Math.abs(samples[i] - samples[i - 1]);
+        for (int i = 0; i < samples.length-1; i++) {
+            if (samples[i+1]- samples[i] <0) {
+                descent += samples[i+1]- samples[i];
             }
         }
-        return descent;
+        return Math.abs(descent);
     }
 
     public double elevationAt(double position) {

@@ -66,14 +66,13 @@ public final class Graph {
 
     public int nodeClosestTo(PointCh point, double searchDistance) {
         int closestNodeId = -1;
-        double NewSearchDistance = searchDistance*searchDistance;
-        double distance = Math2.squaredNorm(SwissBounds.MAX_E - SwissBounds.MIN_E, SwissBounds.MAX_N - SwissBounds.MIN_N);
+        double NewSearchDistance = searchDistance*searchDistance ;
         List<GraphSectors.Sector> temp = sectors.sectorsInArea(point, searchDistance);
         for (GraphSectors.Sector sect : temp) {
             for (int i = sect.startNodeId(); i < sect.endNodeId(); ++i) {
-                double tempDistance = point.squaredDistanceTo(new PointCh(nodes.nodeE(i), nodes.nodeN(i)));
-                if ((tempDistance < distance && tempDistance <= NewSearchDistance)) {
-                    distance = tempDistance;
+                double tempDistance = point.squaredDistanceTo(nodePoint(i));
+                if ((tempDistance <= NewSearchDistance)) {
+                    NewSearchDistance = tempDistance;
                     closestNodeId = i;
                 }
             }
@@ -90,7 +89,7 @@ public final class Graph {
     }
 
     public AttributeSet edgeAttributes(int edgeId) {
-        return new AttributeSet(attributeSets.get(edges.attributesIndex(edgeId)).bits());
+        return attributeSets.get(edges.attributesIndex(edgeId));
     }
 
     public double edgeLength(int edgeId) {
