@@ -10,7 +10,8 @@ public record PointWebMercator(double x, double y) {
      *
      * @param x - double : X coordinate of a point.
      * @param y - double : Y coordinate of a point.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if the given coordinates are smaller than 0 or greater than 1.
+     * @throw IllegalArgumentException (checkArgument) : Throws an exception if the
+     * given coordinates are smaller than 0 or greater than 1.
      */
     public PointWebMercator {
         checkArgument(x >= 0 && x <= 1 && y >= 0 && y <= 1);
