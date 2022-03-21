@@ -1,27 +1,33 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Preconditions;
+import ch.epfl.javelo.Math2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
 
-public final class  ElevationProfileComputer {
+public class test {
 
-    private ElevationProfileComputer(){}
+    public static void main(String[] args) {
+        List<Integer> indexes = new ArrayList<Integer>();
+        float[] samples = new float[12];
+        samples[0] = (float) (2.0 % 0);
+        samples[1] = 3.0f;
+        samples[2] = (float) (2.0 % 0);
+        samples[3] = 4.0f;
+        samples[4] = (float) (2.0 % 0);
+        samples[5] = (float) (2.0 % 0);
+        samples[6] = (float) (2.0 % 0);
+        samples[7] = (float) (2.0 % 0);
+        samples[8] = 5.0f;
+        samples[9] = 6.0f;
+        samples[10] = (float) (2.0 % 0);
+        samples[11] = (float) (2.0 % 0);
 
-    public static ElevationProfile elevationProfile(Route route,double maxStepLength){
-        Preconditions.checkArgument(maxStepLength > 0);
-        int nbSamples = (int) Math.ceil(route.length()/maxStepLength) +1;
-        double length = route.length();
-        double spaceBetween = length/nbSamples;
-        float[] samples = new float[nbSamples];
-        List<Integer> indexes = new ArrayList<>();
-        for (int i = 0; i < nbSamples; i++) {
-            samples[i] = ((float) route.elevationAt(i*spaceBetween));
-        }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
         for (int i = 1; i < samples.length - 1; i++) {
@@ -34,14 +40,13 @@ public final class  ElevationProfileComputer {
         }
 
         for (int i = 0; i <= (indexes.size()/2)-1; i++) {
-            int quantity = indexes.get(2*i+1)-indexes.get(2*i);
-            DoubleUnaryOperator func = Functions.sampled(new float[] {samples[indexes.get(2*i)],samples[indexes.get(2*i+1)]},quantity);
-            for (int j = 1; j < quantity; j++) {
+            int length = indexes.get(2*i+1)-indexes.get(2*i);
+            DoubleUnaryOperator func = Functions.sampled(new float[] {samples[indexes.get(2*i)],samples[indexes.get(2*i+1)]},length);
+            for (int j = 1; j < length; j++) {
                 samples[indexes.get(2*i)+j] = (float) func.applyAsDouble(j);
             }
 
         }
-        return new ElevationProfile(length, samples);
     }
 
     private static int firstValid(float[] s){
@@ -55,5 +60,4 @@ public final class  ElevationProfileComputer {
         while(Float.isNaN(s[index])){index--;}
         return index;
     }
-
 }

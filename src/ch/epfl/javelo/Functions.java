@@ -33,5 +33,6 @@ public class Functions {
             int borneInf = (int) (x / ecart);
             return Math2.interpolate(samples[borneInf], samples[borneInf + 1], ((x - borneInf * ecart) / ecart));
         };
+
     }
 }
