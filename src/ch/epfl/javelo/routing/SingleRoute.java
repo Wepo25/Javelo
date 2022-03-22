@@ -51,47 +51,38 @@ public final class SingleRoute {
     }
 
     public PointCh pointAt(double position) {
-        position = Math2.clamp(0,position,length());
-        int resultSearch = Arrays.binarySearch(tab, position);
-        int edgeIndex;
-        if (resultSearch >= 0) {
-            edgeIndex = resultSearch;
-        } else {
-            edgeIndex = -resultSearch -2;
-        }
+        int edgeIndex = edgeIndex(position);
         double newPos = position - tab[edgeIndex] ;
             return edges.get(edgeIndex).pointAt(newPos);
     }
 
 
     public double elevationAt(double position) {
-        position = Math2.clamp(0,position,length());
-        int resultSearch = Arrays.binarySearch(tab, position);
-        int edgeIndex;
-        if (resultSearch >= 0) {
-            edgeIndex = resultSearch;
-        } else {
-            edgeIndex = -resultSearch -2;
-        }
+        int edgeIndex = edgeIndex(position);
         double newPos = position - tab[edgeIndex] ;
         return edges.get(edgeIndex).elevationAt(newPos);
     }
     public int nodeClosestTo(double position){
-        position = Math2.clamp(0,position,length());
-        int resultSearch = Arrays.binarySearch(tab, position);
-        int edgeIndex;
-        if (resultSearch >= 0) {
-            edgeIndex = resultSearch;
-        } else {
-            edgeIndex = -resultSearch -2;
-        }
+        int edgeIndex = edgeIndex(position);
         double diff1 = position - tab[edgeIndex];
         double diff2 = tab[edgeIndex+1] - position;
         if (diff1 < diff2){
             return edges.get(edgeIndex).fromNodeId();
         }else return edges.get(edgeIndex).toNodeId();
-
+// pas sur a voir si il y a un espacement regulier de nodeId entre from et to.
     }
+
+    private int edgeIndex(double position) {
+        position = Math2.clamp(0, position,length());
+        int resultSearch = Arrays.binarySearch(tab, position);
+        int edgeIndex;
+        if (resultSearch >= 0) {
+            return edgeIndex = resultSearch;
+        } else {
+            return edgeIndex = -resultSearch -2;
+        }
+    }
+
     public RoutePoint pointClosestTo(PointCh point){
         for (Edge edge: edges) {
             double position = position = Math2.clamp(0,position,length());
