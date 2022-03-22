@@ -1,6 +1,7 @@
 package ch.epfl.javelo.routing;
 
 
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
@@ -50,24 +51,52 @@ public final class SingleRoute {
     }
 
     public PointCh pointAt(double position) {
+        position = Math2.clamp(0,position,length());
         int resultSearch = Arrays.binarySearch(tab, position);
+        int edgeIndex;
         if (resultSearch >= 0) {
-            return edges.get(resultSearch).pointAt(position);
-        } else
-            return edges.get(resultSearch + 2).pointAt(position);
+            edgeIndex = resultSearch;
+        } else {
+            edgeIndex = -resultSearch -2;
+        }
+        double newPos = position - tab[edgeIndex] ;
+            return edges.get(edgeIndex).pointAt(newPos);
     }
 
 
     public double elevationAt(double position) {
+        position = Math2.clamp(0,position,length());
         int resultSearch = Arrays.binarySearch(tab, position);
+        int edgeIndex;
         if (resultSearch >= 0) {
-            return edges.get(resultSearch).elevationAt(position);
-        } else
-            return edges.get(resultSearch +2).elevationAt(position);
-
+            edgeIndex = resultSearch;
+        } else {
+            edgeIndex = -resultSearch -2;
+        }
+        double newPos = position - tab[edgeIndex] ;
+        return edges.get(edgeIndex).elevationAt(newPos);
     }
     public int nodeClosestTo(double position){
+        position = Math2.clamp(0,position,length());
+        int resultSearch = Arrays.binarySearch(tab, position);
+        int edgeIndex;
+        if (resultSearch >= 0) {
+            edgeIndex = resultSearch;
+        } else {
+            edgeIndex = -resultSearch -2;
+        }
+        double diff1 = position - tab[edgeIndex];
+        double diff2 = tab[edgeIndex+1] - position;
+        if (diff1 < diff2){
+            return edges.get(edgeIndex).fromNodeId();
+        }else return edges.get(edgeIndex).toNodeId();
 
+    }
+    public RoutePoint pointClosestTo(PointCh point){
+        for (Edge edge: edges) {
+            double position = position = Math2.clamp(0,position,length());
+        }
+        // 1. distance des extremité avec le point, 2.le point initial serat
     }
 
 }
