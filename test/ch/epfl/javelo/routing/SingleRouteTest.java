@@ -61,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
             double[] data = new double[] {0, 1000, 3000, 5000, 6000};
 
             for (int i = 0; i < data.length; i++) {
-                //assertEquals(data[i], test.summedUpTable()[i]);
+               // assertEquals(data[i], test.summedUpTable()[i]);
             }
 
             assertEquals(6000, test.length());

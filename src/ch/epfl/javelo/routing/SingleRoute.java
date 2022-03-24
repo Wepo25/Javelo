@@ -44,8 +44,8 @@ public final class SingleRoute {
 
     public List<PointCh> points() {
         List<PointCh> list = new ArrayList<>();
+        list.add(edges.get(0).fromPoint());
         for (Edge edge : edges) {
-            list.add(edge.fromPoint());
             list.add((edge.toPoint()));
         }
         return list;
@@ -89,17 +89,14 @@ public final class SingleRoute {
     }
 
     public RoutePoint pointClosestTo(PointCh point){
-        double position = Double.MAX_VALUE;
         RoutePoint closest = RoutePoint.NONE;
+        double position;
         double actualPosition;
         for (Edge edge: edges) {
-             actualPosition= Math2.clamp(0,edge.positionClosestTo(point),length());
-            if ( actualPosition < position){
-                position = actualPosition;
-            }
-        }return closest.min(point, position, point.distanceTo(pointAt(position)));
-        // on position closest to pour chaque edges oublie pas de clamp
-        // 1. distance des extremité avec le point, 2.le point initial serat
+             actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
+             position = actualPosition- positions[edges.indexOf(edge)];
+            closest = closest.min(edge.pointAt(actualPosition), actualPosition, point.distanceTo(edge.pointAt(position)));
+        }return closest ;
     }
 
 }
