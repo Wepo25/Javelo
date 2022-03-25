@@ -20,7 +20,7 @@ public final class SingleRoute implements Route {
         positions = new double[edges.size() +1];
         positions[0] = 0;
         for (int i = 0; i < edges().size(); i++) {
-            length += edges.get(i).length();
+            length += this.edges.get(i).length();
             positions[i+1] = length;
         }
 
@@ -70,7 +70,7 @@ public final class SingleRoute implements Route {
         int edgeIndex = edgeIndex(position);
         double diff1 = position - positions[edgeIndex];
         double diff2 = positions[edgeIndex+1] - position;
-        return (diff1 < diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
+        return (diff1 <= diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
     private int edgeIndex(double position) {
@@ -83,14 +83,12 @@ public final class SingleRoute implements Route {
 
     public RoutePoint pointClosestTo(PointCh point){
         RoutePoint closest = RoutePoint.NONE;
-        double position;
-        double actualPosition;
+
         for (Edge edge: edges) {
-             actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
-             position = actualPosition- positions[edges.indexOf(edge)];
-            System.out.println(position);
-            System.out.println(actualPosition);
-            closest = closest.min(edge.pointAt(actualPosition), actualPosition, point.distanceTo(edge.pointAt(position)));
+            double actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
+             double position = actualPosition+ positions[edges.indexOf(edge)];
+            closest = closest.min(edge.pointAt(actualPosition), position,
+                    point.distanceTo(edge.pointAt(actualPosition)));
         }return closest ;
     }
 
