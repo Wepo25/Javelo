@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class SingleRoute {
-    private List<Edge> edges;
-    private double[] positions;
+public final class SingleRoute implements Route{
+    private final List<Edge> edges;
+    private final double[] positions;
 
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());

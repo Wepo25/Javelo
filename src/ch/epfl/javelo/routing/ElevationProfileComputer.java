@@ -19,6 +19,9 @@ public final class  ElevationProfileComputer {
         double spaceBetween = length/(nbSamples-1);
         float[] samples = new float[nbSamples];
         List<Integer> indexes = new ArrayList<>();
+
+
+
         for (int i = 0; i < nbSamples; i++) {
             samples[i] = ((float) route.elevationAt(i*spaceBetween));
         }
@@ -27,6 +30,9 @@ public final class  ElevationProfileComputer {
         }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
+        if(!Float.isNaN(samples[0]) && Float.isNaN(samples[1])){
+            indexes.add(0);
+        }
         for (int i = 1; i < samples.length - 1; i++) {
             if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                 indexes.add(i);
@@ -34,6 +40,9 @@ public final class  ElevationProfileComputer {
             } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
                 indexes.add(i);
             }
+        }
+        if(!Float.isNaN(samples[samples.length-1]) && Float.isNaN(samples[samples.length-2])){
+            indexes.add(samples.length - 1);
         }
 
         for (int i = 0; i <= (indexes.size()/2)-1; i++) {

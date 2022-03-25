@@ -12,12 +12,14 @@ public class test {
 
     public static void main(String[] args) {
         List<Integer> indexes = new ArrayList<Integer>();
-        float[] samples = {Float.NaN, 3.0f, Float.NaN, 4.0f, Float.NaN,Float.NaN,Float.NaN,Float.NaN, 5.0f, 6.0f, Float.NaN,Float.NaN};
+        //float[] samples = {Float.NaN, 3.0f, Float.NaN, 4.0f, Float.NaN,Float.NaN,Float.NaN,Float.NaN, 5.0f, 6.0f, Float.NaN,Float.NaN};
         //float[] samples = {Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
         //float[] samples = {Float.NaN, 18.75f, Float.NaN, 43, Float.NaN, 13, 14, Float.NaN};
         //float[] samples = {Float.NaN, Float.NaN, Float.NaN,4.0f,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
         //float[] samples = {4.0f,Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
         //float[] samples = {Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN,4.0f};
+        float[] samples = { 200, 200, Float.NaN, 200, 200, Float.NaN, 200, 200, Float.NaN, 200, 200};
+
         System.out.println(Arrays.toString(samples));
         System.out.println(firstValid(samples));
         if(firstValid(samples) == -1 || lastValid(samples) == -1){
@@ -26,12 +28,16 @@ public class test {
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
         for (int i = 1; i < samples.length - 1; i++) {
+            System.out.println(i);
             if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                 indexes.add(i);
                 indexes.add(i);
             } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
                 indexes.add(i);
             }
+        }
+        if(!Float.isNaN(samples[samples.length-1]) && Float.isNaN(samples[samples.length-2])){
+            indexes.add(samples.length - 1);
         }
         System.out.println(Arrays.toString(samples));
         System.out.println(indexes.size());
