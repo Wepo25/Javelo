@@ -16,7 +16,7 @@ public final class  ElevationProfileComputer {
         Preconditions.checkArgument(maxStepLength > 0);
         int nbSamples = (int) Math.ceil(route.length()/maxStepLength) +1;
         double length = route.length();
-        double spaceBetween = length/nbSamples;
+        double spaceBetween = length/(nbSamples-1);
         float[] samples = new float[nbSamples];
         List<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < nbSamples; i++) {
@@ -48,23 +48,21 @@ public final class  ElevationProfileComputer {
     }
 
     private static int firstValid(float[] s){
-        int index = 0;
-        boolean exist = Float.isNaN(s[index]);
-        while(Float.isNaN(s[index])){
-            index++;
-            exist = true;
+        for(int i = 0; i < s.length ; i++){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
         }
-        return (exist)? index : -1;
+        return -1;
     }
 
     private static int lastValid(float[] s){
-        int index = s.length-1;
-        boolean exist = Float.isNaN(s[index]);
-        while(Float.isNaN(s[index])){
-            index--;
-            exist = true;
+        for(int i = s.length-1; i >= 0 ; i--){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
         }
-        return (exist)? index : -1;
+        return -1;
     }
 
 }

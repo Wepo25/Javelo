@@ -12,20 +12,17 @@ public class test {
 
     public static void main(String[] args) {
         List<Integer> indexes = new ArrayList<Integer>();
-        float[] samples = new float[12];
-        samples[0] = (float) (2.0 % 0);
-        samples[1] = 3.0f;
-        samples[2] = (float) (2.0 % 0);
-        samples[3] = 4.0f;
-        samples[4] = (float) (2.0 % 0);
-        samples[5] = (float) (2.0 % 0);
-        samples[6] = (float) (2.0 % 0);
-        samples[7] = (float) (2.0 % 0);
-        samples[8] = 5.0f;
-        samples[9] = 6.0f;
-        samples[10] = (float) (2.0 % 0);
-        samples[11] = (float) (2.0 % 0);
+        float[] samples = {Float.NaN, 3.0f, Float.NaN, 4.0f, Float.NaN,Float.NaN,Float.NaN,Float.NaN, 5.0f, 6.0f, Float.NaN,Float.NaN};
+        //float[] samples = {Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
+        //float[] samples = {Float.NaN, 18.75f, Float.NaN, 43, Float.NaN, 13, 14, Float.NaN};
+        //float[] samples = {Float.NaN, Float.NaN, Float.NaN,4.0f,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
+        //float[] samples = {4.0f,Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN};
+        //float[] samples = {Float.NaN, Float.NaN, Float.NaN,Float.NaN,Float.NaN, Float.NaN,Float.NaN,4.0f};
         System.out.println(Arrays.toString(samples));
+        System.out.println(firstValid(samples));
+        if(firstValid(samples) == -1 || lastValid(samples) == -1){
+            System.out.println(Arrays.toString(new float[samples.length]));
+        }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
         for (int i = 1; i < samples.length - 1; i++) {
@@ -53,14 +50,20 @@ public class test {
     }
 
     private static int firstValid(float[] s){
-        int index = 0;
-        while(Float.isNaN(s[index])){index++;}
-        return index;
+        for(int i = 0; i < s.length ; i++){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static int lastValid(float[] s){
-        int index = s.length-1;
-        while(Float.isNaN(s[index])){index--;}
-        return index;
+        for(int i = s.length-1; i >= 0 ; i--){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
+        }
+        return -1;
     }
 }
