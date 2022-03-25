@@ -99,5 +99,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
             assertEquals(edge3.elevationAt(1000), test.elevationAt(6000));
             assertEquals(edge3.elevationAt(1000), test.elevationAt(6999));
         }
+        @Test
+        public void nodeClosestToTest(){
+            assertEquals(0, test.nodeClosestTo(499));
+            assertEquals(0, test.nodeClosestTo(0));
+            assertEquals(2, test.nodeClosestTo(3400));
+            assertEquals(2, test.nodeClosestTo(3000));
+            assertEquals(4, test.nodeClosestTo(7000));
+            assertEquals(1,test.nodeClosestTo(900));
+        }
+        @Test
+        public void pointClosestToTest(){
+            assertEquals(point0, test.pointClosestTo(point0));
+
+        }
     }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class SingleRoute {
+public final class SingleRoute implements Route {
     private List<Edge> edges;
     private double[] positions;
 
@@ -70,21 +70,14 @@ public final class SingleRoute {
         int edgeIndex = edgeIndex(position);
         double diff1 = position - positions[edgeIndex];
         double diff2 = positions[edgeIndex+1] - position;
-        if (diff1 < diff2){
-            return edges.get(edgeIndex).fromNodeId();
-        }else return edges.get(edgeIndex).toNodeId();
-// pas sur a voir si il y a un espacement regulier de nodeId entre from et to.
+        return (diff1 < diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
     private int edgeIndex(double position) {
         position = Math2.clamp(0, position,length());
         int resultSearch = Arrays.binarySearch(positions, position);
         int edgeIndex;
-        if (resultSearch >= 0) {
-             edgeIndex = resultSearch;
-        } else {
-            edgeIndex = -resultSearch -2;
-        }
+        edgeIndex = (resultSearch >=0) ? resultSearch : -resultSearch-2 ;
         return Math2.clamp(0,edgeIndex, edges.size()-1);
     }
 
@@ -95,6 +88,8 @@ public final class SingleRoute {
         for (Edge edge: edges) {
              actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
              position = actualPosition- positions[edges.indexOf(edge)];
+            System.out.println(position);
+            System.out.println(actualPosition);
             closest = closest.min(edge.pointAt(actualPosition), actualPosition, point.distanceTo(edge.pointAt(position)));
         }return closest ;
     }
