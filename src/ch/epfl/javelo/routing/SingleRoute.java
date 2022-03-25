@@ -86,7 +86,7 @@ public final class SingleRoute implements Route {
 
         for (Edge edge: edges) {
             double actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
-            double position = actualPosition+ positions[edges.indexOf(edge)];
+            double position = actualPosition + positions[edges.indexOf(edge)];
             closest = closest.min(edge.pointAt(actualPosition), position,
                     point.distanceTo(edge.pointAt(actualPosition)));
         }return closest ;

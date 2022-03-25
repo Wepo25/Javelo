@@ -7,21 +7,17 @@ import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 import org.junit.jupiter.api.Test;
-import ch.epfl.javelo.routing.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
-import static ch.epfl.javelo.Functions.sampled;
 import static ch.epfl.javelo.TestRandomizer.RANDOM_ITERATIONS;
 import static ch.epfl.javelo.TestRandomizer.newRandom;
-import static ch.epfl.javelo.routing.ElevationProfileComputerTest.TestManager.DOUBLE_DELTA;
+import static ch.epfl.javelo.routing.SingleRouteTest.TestManager.DOUBLE_DELTA;
 import static org.junit.jupiter.api.Assertions.*;
-import ch.epfl.javelo.routing.ElevationProfileComputer;
 
 public class ElevationProfileComputerTest {
 
