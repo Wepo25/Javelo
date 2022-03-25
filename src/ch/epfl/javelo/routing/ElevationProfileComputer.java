@@ -16,14 +16,23 @@ public final class  ElevationProfileComputer {
         Preconditions.checkArgument(maxStepLength > 0);
         int nbSamples = (int) Math.ceil(route.length()/maxStepLength) +1;
         double length = route.length();
-        double spaceBetween = length/nbSamples;
+        double spaceBetween = length/(nbSamples-1);
         float[] samples = new float[nbSamples];
         List<Integer> indexes = new ArrayList<>();
+
+
+
         for (int i = 0; i < nbSamples; i++) {
             samples[i] = ((float) route.elevationAt(i*spaceBetween));
         }
+        if(firstValid(samples) == -1 || lastValid(samples) == -1){
+            return new ElevationProfile(length, new float[nbSamples]);
+        }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
+        if(!Float.isNaN(samples[0]) && Float.isNaN(samples[1])){
+            indexes.add(0);
+        }
         for (int i = 1; i < samples.length - 1; i++) {
             if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                 indexes.add(i);
@@ -31,6 +40,9 @@ public final class  ElevationProfileComputer {
             } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
                 indexes.add(i);
             }
+        }
+        if(!Float.isNaN(samples[samples.length-1]) && Float.isNaN(samples[samples.length-2])){
+            indexes.add(samples.length - 1);
         }
 
         for (int i = 0; i <= (indexes.size()/2)-1; i++) {
@@ -45,15 +57,21 @@ public final class  ElevationProfileComputer {
     }
 
     private static int firstValid(float[] s){
-        int index = 0;
-        while(Float.isNaN(s[index])){index++;}
-        return index;
+        for(int i = 0; i < s.length ; i++){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static int lastValid(float[] s){
-        int index = s.length-1;
-        while(Float.isNaN(s[index])){index--;}
-        return index;
+        for(int i = s.length-1; i >= 0 ; i--){
+            if(!Float.isNaN(s[i])){
+                return i;
+            }
+        }
+        return -1;
     }
 
 }

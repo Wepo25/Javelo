@@ -1,4 +1,4 @@
-package ch.epfl.test;
+package ch.epfl.javelo;
 
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;

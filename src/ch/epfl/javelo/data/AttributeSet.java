@@ -61,11 +61,11 @@ public record AttributeSet(long bits) {
     @Override
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
-        BitSet bs = BitSet.valueOf(new long[]{this.bits()});
-        int index = 0;
-        for (int i = 0; i < bs.cardinality(); ++i) {
-            index = (bs.cardinality() != 1) ? bs.nextSetBit(index + 1) : bs.nextSetBit(index);
-            j.add(Attribute.ALL.get(index).keyValue());
+        String bitsToString = Long.toBinaryString(bits);
+        for (int i = 0; i < bitsToString.length(); i++) {
+            if(bitsToString.charAt(bitsToString.length() - 1 - i) == '1'){
+                j.add((Attribute.ALL.get(i)).keyValue());
+            }
         }
         return j.toString();
     }
