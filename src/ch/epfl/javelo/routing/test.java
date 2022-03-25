@@ -1,11 +1,9 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Math2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
@@ -27,7 +25,7 @@ public class test {
         samples[9] = 6.0f;
         samples[10] = (float) (2.0 % 0);
         samples[11] = (float) (2.0 % 0);
-
+        System.out.println(Arrays.toString(samples));
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
         for (int i = 1; i < samples.length - 1; i++) {
@@ -38,6 +36,9 @@ public class test {
                 indexes.add(i);
             }
         }
+        System.out.println(Arrays.toString(samples));
+        System.out.println(indexes.size());
+        System.out.println(indexes);
 
         for (int i = 0; i <= (indexes.size()/2)-1; i++) {
             int length = indexes.get(2*i+1)-indexes.get(2*i);
@@ -47,6 +48,8 @@ public class test {
             }
 
         }
+        System.out.println(Arrays.toString(samples));
+
     }
 
     private static int firstValid(float[] s){

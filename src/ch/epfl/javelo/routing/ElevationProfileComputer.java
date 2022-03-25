@@ -22,6 +22,9 @@ public final class  ElevationProfileComputer {
         for (int i = 0; i < nbSamples; i++) {
             samples[i] = ((float) route.elevationAt(i*spaceBetween));
         }
+        if(firstValid(samples) == -1 || lastValid(samples) == -1){
+            return new ElevationProfile(length, new float[nbSamples]);
+        }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
         for (int i = 1; i < samples.length - 1; i++) {
@@ -46,14 +49,22 @@ public final class  ElevationProfileComputer {
 
     private static int firstValid(float[] s){
         int index = 0;
-        while(Float.isNaN(s[index])){index++;}
-        return index;
+        boolean exist = Float.isNaN(s[index]);
+        while(Float.isNaN(s[index])){
+            index++;
+            exist = true;
+        }
+        return (exist)? index : -1;
     }
 
     private static int lastValid(float[] s){
         int index = s.length-1;
-        while(Float.isNaN(s[index])){index--;}
-        return index;
+        boolean exist = Float.isNaN(s[index]);
+        while(Float.isNaN(s[index])){
+            index--;
+            exist = true;
+        }
+        return (exist)? index : -1;
     }
 
 }
