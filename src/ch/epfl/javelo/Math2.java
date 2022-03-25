@@ -124,10 +124,12 @@ public class Math2 {
      * @return - double : The length of the projection of AP vector on the AB vector.
      */
     public static double projectionLength(double aX, double aY, double bX, double bY, double pX, double pY) {
-        double l = dotProduct(pX - aX, pY - aY, bX - aX, bY - aY);
-        double k = squaredNorm(bX - aX, bY - aY);
-        double factor = l / k;
-        return norm(factor * (bX - aX), factor * (bY - aY));
+        double vX = pX-aX;
+        double vY = pY-aY;
+        double wX = bX-aX;
+        double wY = bY-aY;
+
+        return dotProduct(vX, vY, wX, wY) / norm(wX, wY);
     }
 }
 
