@@ -7,24 +7,19 @@ import ch.epfl.javelo.projection.Ch1903;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 import org.junit.jupiter.api.Test;
-import ch.epfl.javelo.routing.*;
-import ch.epfl.javelo.projection.PointCh;
-import ch.epfl.javelo.projection.SwissBounds;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 import static ch.epfl.javelo.routing.SingleRouteTest.TestManager.DOUBLE_DELTA;
 import static org.junit.jupiter.api.Assertions.*;
-import ch.epfl.javelo.routing.SingleRoute;
 
 
 public class SingleRouteTest {
@@ -1875,6 +1870,98 @@ public class SingleRouteTest {
             double disToRef = A[i].distanceTo(pt)  ;
             assertEquals( new RoutePoint( pt , pro + L  , disToRef ) , route.pointClosestTo(A[i]) );
             L += lengths.get(i);
+        }
+    }private final float DELTA2 = 1e-5f;
+
+    @Test
+    void elevationProfileOnSimpleProfileTest(){
+        PointCh from1 = new PointCh(2520000, 1145000);
+        PointCh to1 = new PointCh(2520000, 1145050);
+        double length1 = 50.;
+        DoubleUnaryOperator profile1 = Functions.sampled(new float[]{10f, 5f, 15f}, length1);
+        Edge edge1 = new Edge(0,1,from1, to1, length1, profile1);
+        SingleRoute route1 = new SingleRoute(Collections.singletonList(edge1));
+        ElevationProfile elevationProfile1 = ElevationProfileComputer.elevationProfile(route1, 1.);
+
+        testElevationProfileWithSample(profile1, elevationProfile1, 0.1);
+        assertEquals(length1, elevationProfile1.length(), DELTA2);
+        assertEquals(10., elevationProfile1.totalAscent(), DELTA2);
+        assertEquals(5., elevationProfile1.minElevation(), DELTA2);
+        assertEquals(15., elevationProfile1.maxElevation(), DELTA2);
+
+        assertThrows(IllegalArgumentException.class, ()->{ElevationProfileComputer.elevationProfile(route1, 0.);});
+        assertThrows(IllegalArgumentException.class, ()->{ElevationProfileComputer.elevationProfile(route1, -10.);});
+
+        PointCh from2 = new PointCh(2520000, 1145000);
+        PointCh to2 = new PointCh(2520100, 1145000);
+        double length2 = 4.;
+        DoubleUnaryOperator profile2_1 = Functions.sampled(new float[]{1f, 2f, 3f}, length2 / 2.);
+        DoubleUnaryOperator profile2_2 = Functions.sampled(new float[]{3f, 4f}, length2 / 2.);
+        DoubleUnaryOperator controlProfile2 = Functions.sampled(new float[]{1f, 2f, 3f, 3.5f, 4f}, length2); //extrapolation
+        Edge edge2_1 = new Edge(0,1,from2, to2, length2 / 2., profile2_1);
+        Edge edge2_2 = new Edge(0,1,from2, to2, length2 / 2., profile2_2);
+        SingleRoute route2 = new SingleRoute(Arrays.asList(edge2_1, edge2_2));
+        ElevationProfile elevationProfile2 = ElevationProfileComputer.elevationProfile(route2, 1.);
+
+        testElevationProfileWithSample(controlProfile2, elevationProfile2, 0.1);
+        assertEquals(length2, elevationProfile2.length(), DELTA2);
+        assertEquals(3., elevationProfile2.totalAscent(), DELTA2);
+        assertEquals(1., elevationProfile2.minElevation(), DELTA2);
+        assertEquals(4., elevationProfile2.maxElevation(), DELTA2);
+    }
+
+    @Test
+    void elevationProfileWithNaNTest(){
+        PointCh point1 = new PointCh(2520000, 1145000);
+        PointCh point2 = new PointCh(2520000, 1145020);
+        PointCh point3 = new PointCh(2520020, 1145020);
+        PointCh point4 = new PointCh(2520040, 1145020);
+        double length = 60.;
+
+        DoubleUnaryOperator profile1_1 = Functions.sampled(new float[]{1f, 2f, 4f}, length / 3.);
+        DoubleUnaryOperator profile1_2 = Functions.constant(Double.NaN);
+        DoubleUnaryOperator profile1_3 = Functions.sampled(new float[]{6f, 7f, 9f}, length / 3.);
+        DoubleUnaryOperator controlProfile1 = Functions.sampled(new float[]{1f, 2f, 4f, 5f, 6f, 7f, 9f}, length);
+        Edge edge1_1 = new Edge(0,1,point1, point2, length / 3., profile1_1);
+        Edge edge1_2 = new Edge(0,1,point2, point3, length / 3., profile1_2);
+        Edge edge1_3 = new Edge(0,1,point3, point4, length / 3., profile1_3);
+        SingleRoute route1 = new SingleRoute(Arrays.asList(edge1_1, edge1_2, edge1_3));
+        ElevationProfile elevationProfile1 = ElevationProfileComputer.elevationProfile(route1, 1.);
+
+       // testElevationProfileWithSample(controlProfile1, elevationProfile1, 0.1);
+        assertEquals(length, elevationProfile1.length(), DELTA2);
+        assertEquals(8., elevationProfile1.totalAscent(), DELTA2);
+        assertEquals(1., elevationProfile1.minElevation(), DELTA2);
+        assertEquals(9., elevationProfile1.maxElevation(), DELTA2);
+
+        DoubleUnaryOperator profile2_1 = Functions.constant(Double.NaN);
+        DoubleUnaryOperator profile2_2 = Functions.sampled(new float[]{10_000f, 0f, 5_000f}, length / 3.);
+        DoubleUnaryOperator profile2_3 = Functions.constant(Double.NaN);
+        DoubleUnaryOperator controlProfile2 = Functions.sampled(new float[]{10_000f, 10_000f, 10_000f, 0f, 5_000f, 5_000f, 5_000f}, length);
+        Edge edge2_1 = new Edge(0,1,point1, point2, length / 3., profile2_1);
+        Edge edge2_2 = new Edge(0,1,point2, point3, length / 3., profile2_2);
+        Edge edge2_3 = new Edge(0,1,point3, point4, length / 3., profile2_3);
+        SingleRoute route2 = new SingleRoute(Arrays.asList(edge2_1, edge2_2, edge2_3));
+        ElevationProfile elevationProfile2 = ElevationProfileComputer.elevationProfile(route2, 1.);
+
+        printElevationsDifferences(controlProfile2, route2, elevationProfile2, 0.1);
+
+        testElevationProfileWithSample(controlProfile2, elevationProfile2, 0.1);
+        assertEquals(length, elevationProfile2.length(), DELTA2);
+        assertEquals(15_000., elevationProfile2.totalAscent(), DELTA2);
+        assertEquals(0., elevationProfile2.minElevation(), DELTA2);
+        assertEquals(10_000., elevationProfile2.maxElevation(), DELTA2);
+    }
+
+    private void testElevationProfileWithSample(DoubleUnaryOperator sample, ElevationProfile elevationProfile, double step){
+        for(double i = 0; i < elevationProfile.length(); i += step){
+            assertEquals(sample.applyAsDouble(i), elevationProfile.elevationAt(i), DELTA2);
+        }
+    }
+
+    private void printElevationsDifferences(DoubleUnaryOperator profile, Route route, ElevationProfile elevationProfile, double step){
+        for(double i = 0; i <= elevationProfile.length(); i += step){
+            System.out.println(profile.applyAsDouble(i) + " , " +  route.elevationAt(i) + " , " + elevationProfile.elevationAt(i));
         }
     }
 
