@@ -26,10 +26,12 @@ public final class SingleRoute implements Route {
 
     }
 
+    @Override
     public int indexOfSegmentAt(double position) {
         return 0;
     }
 
+    @Override
     public double length() {
         double length = 0;
         for (Edge edge : edges) {
@@ -38,10 +40,12 @@ public final class SingleRoute implements Route {
         return length;
     }
 
+    @Override
     public List<Edge> edges() {
         return List.copyOf(edges);
     }
 
+    @Override
     public List<PointCh> points() {
         List<PointCh> list = new ArrayList<>();
         list.add(edges.get(0).fromPoint());
@@ -51,6 +55,7 @@ public final class SingleRoute implements Route {
         return list;
     }
 
+    @Override
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
@@ -59,12 +64,15 @@ public final class SingleRoute implements Route {
     }
 
 
+    @Override
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
         double newPos = position - positions[edgeIndex] ;
         return edges.get(edgeIndex).elevationAt(newPos);
     }
+
+    @Override
     public int nodeClosestTo(double position){
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
@@ -81,6 +89,7 @@ public final class SingleRoute implements Route {
         return Math2.clamp(0,edgeIndex, edges.size()-1);
     }
 
+    @Override
     public RoutePoint pointClosestTo(PointCh point){
         RoutePoint closest = RoutePoint.NONE;
 

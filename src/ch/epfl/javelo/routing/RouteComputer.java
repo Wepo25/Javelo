@@ -61,7 +61,9 @@ public final class RouteComputer {
             int h = 0;
             while(!found){
                 if(graph.edgeTargetNodeId(graph.nodeOutEdgeId(nodePath.get(j),h)) == nodePath.get(j+1)){
-                  edges.add(new Edge(nodePath.get(j), nodePath.get(j+1), graph.nodePoint(nodePath.get(j)), graph.nodePoint(nodePath.get(j+1)), graph.edgeLength(graph.nodeOutEdgeId(nodePath.get(j),h)), graph.edgeProfile(graph.nodeOutEdgeId(nodePath.get(j),h))));
+                  edges.add(new Edge(nodePath.get(j), nodePath.get(j+1), graph.nodePoint(nodePath.get(j)),
+                          graph.nodePoint(nodePath.get(j+1)), graph.edgeLength(graph.nodeOutEdgeId(nodePath.get(j),h)),
+                          graph.edgeProfile(graph.nodeOutEdgeId(nodePath.get(j),h))));
                   found = true;
                 }
                 h++;

@@ -4,35 +4,40 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MultiRoute implements Route{
     private final List<Route> segments;
+    private double[] positions;
 
 
     public MultiRoute(List<Route> segments){
         Preconditions.checkArgument(!segments.isEmpty());
         this.segments = List.copyOf(segments);
+        double length =0;
+        positions = new double[segments.size() +1];
+        positions[0] = 0;
+        for (int i = 0; i < edges().size(); i++) {
+            length += this.segments.get(i).length();
+            positions[i+1] = length;
+        }
     }
 
-    @Override
+    @Override // utiliser indexSegmentAt dedans si mulitroute imbirqué
     public int indexOfSegmentAt(double position) {
         position = Math2.clamp(0, position, length());
         double distance = 0;
         for(Route route : segments){
             if(distance+route.length()>=position){
-                return segments.indexOf(route);
+                return route.indexOfSegmentAt(position); // a verif;
             }
             else{
                 distance+= route.length();
             }
         }
-        return 0;
+        return segments.indexOf(segments.get(segments.size()-1));// a verif si on peut eviter de mettre un ligne jamais atteinte
     }
-
+// opti possible si on créer 1 tableau avec les longueur et que l'on prend le dernier index
     @Override
     public double length() {
         double distance = 0;
@@ -48,10 +53,10 @@ public class MultiRoute implements Route{
         for(Route route : segments){
             edges.addAll(route.edges());
         }
-        return edges;
+        return List.copyOf(edges);
     }
 
-    @Override
+    @Override // bon ordre ? avec HashSet
     public List<PointCh> points() {
         List<PointCh> points = new ArrayList<>();
         Set<PointCh> set = new HashSet<PointCh>();
@@ -62,54 +67,26 @@ public class MultiRoute implements Route{
         return List.copyOf(set);
     }
 
-    @Override
+    @Override // potentielle problème position fait size +1; normalement ok
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
         int index = indexOfSegmentAt(position);
-        double distance = 0;
-        for (int i = 0; i <= index; i++) {
-            distance += segments.get(i).length();
-        }
-        Route route = segments.get(index);
-        return route.pointAt(position-distance);
+        return segments.get(index).pointAt(position- positions[index]);
     }
 
     @Override
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
-        List<Edge> edges = edges();
-        Edge edgeAtPos = edges.get(0);
-        PointCh pointAtPos = pointAt(position);
-        double distance = edgeAtPos.positionClosestTo(pointAtPos);
-        for (Edge edge : edges) {
-            if(edge.positionClosestTo(pointAtPos)<distance){
-                distance = edge.positionClosestTo(pointAtPos);
-                edgeAtPos = edge;
-            }
+        int index = indexOfSegmentAt(position);
+        return segments.get(index).elevationAt(position- positions[index]);
+
         }
-        return edgeAtPos.elevationAt((edgeAtPos.length()*position)/length());
-    }
 
     @Override
     public int nodeClosestTo(double position) {
         position = Math2.clamp(0, position, length());
-        List<Edge> edges = edges();
-        Edge edgeAtPos = edges.get(0);
-        PointCh pointAtPos = pointAt(position);
-        double totalDistance = 0;
-        double distance = edgeAtPos.positionClosestTo(pointAtPos);
-        for (Edge edge : edges) {
-            if(edge.positionClosestTo(pointAtPos)<distance){
-                distance = edge.positionClosestTo(pointAtPos);
-                edgeAtPos = edge;
-            }
-        }
-        for (int i = 0; i < edges.indexOf(edgeAtPos); i++) {
-            totalDistance += edges.get(i).length();
-        }
-        double d1 = position - totalDistance;
-        double d2 = totalDistance+ edgeAtPos.length() - position;
-        return (d1 <= d2) ? edgeAtPos.fromNodeId() : edgeAtPos.toNodeId();
+        int index = indexOfSegmentAt(position);
+        return segments.get(index).nodeClosestTo(position- positions[index]);
     }
 
 
