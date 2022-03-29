@@ -18,7 +18,7 @@ public class MultiRoute implements Route{
         positions = new double[segments.size() +1];
         positions[0] = 0;
         for (int i = 0; i < edges().size(); i++) {
-            length += this.segments.get(i).length();
+            length += segments.get(i).length();
             positions[i+1] = length;
         }
     }
@@ -93,7 +93,15 @@ public class MultiRoute implements Route{
 
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
-        return null;
+       List<RoutePoint> closestPoints = new ArrayList<RoutePoint>();
+        for( Route segment: segments){
+            closestPoints.add(segment.pointClosestTo(point));
+        }
+        RoutePoint closest = RoutePoint.NONE;
+        for( RoutePoint closestPoint : closestPoints){
+            closest = closestPoint.min(closest);
+        }
+        return closest;
     }
 
 }

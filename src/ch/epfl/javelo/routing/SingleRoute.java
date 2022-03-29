@@ -20,7 +20,7 @@ public final class SingleRoute implements Route {
         positions = new double[edges.size() +1];
         positions[0] = 0;
         for (int i = 0; i < edges().size(); i++) {
-            length += this.edges.get(i).length();
+            length += edges.get(i).length();
             positions[i+1] = length;
         }
 
