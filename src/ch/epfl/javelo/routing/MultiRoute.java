@@ -29,13 +29,24 @@ public class MultiRoute implements Route{
         double distance = 0;
         for(Route route : segments){
             if(distance+route.length()>=position){
-                return route.indexOfSegmentAt(position); // a verif;
+                return route.indexOfSegmentAt(position-positions[segments.indexOf(route)]); // a verif;
             }
             else{
                 distance+= route.length();
             }
         }
         return segments.indexOf(segments.get(segments.size()-1));// a verif si on peut eviter de mettre un ligne jamais atteinte
+    }
+    private int indexOfSegmentOnRoute(double position){
+        position = Math2.clamp(0, position, length());
+        double distance = 0;
+        for(Route route : segments){
+            if (distance+route.length() >= position){
+                return segments.indexOf(route);
+            }else{
+                distance += route.length();
+            }
+        }return -1;
     }
 // opti possible si on créer 1 tableau avec les longueur et que l'on prend le dernier index
     @Override
@@ -56,28 +67,27 @@ public class MultiRoute implements Route{
         return List.copyOf(edges);
     }
 
-    @Override // bon ordre ? avec HashSet
+    @Override // bon ordre ? avec HashSet mais treeSet ne marche pas non plus car PointCh non comprable;
     public List<PointCh> points() {
         List<PointCh> points = new ArrayList<>();
-        Set<PointCh> set = new HashSet<PointCh>();
         for(Route route : segments){
             points.addAll(route.points());
+            points.remove(points.size()-1); // enlève le dernier de chaque car il est rajouté a chaque fois
         }
-        set.addAll(points);
-        return List.copyOf(set);
+        return List.copyOf(points);
     }
 
-    @Override // potentielle problème position fait size +1; normalement ok
+    @Override // index donne au total et pas couche( ex 7 au lieu de 2);
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentAt(position);
+        int index = indexOfSegmentOnRoute(position);
         return segments.get(index).pointAt(position- positions[index]);
     }
 
     @Override
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentAt(position);
+        int index = indexOfSegmentOnRoute(position);
         return segments.get(index).elevationAt(position- positions[index]);
 
         }
@@ -85,7 +95,7 @@ public class MultiRoute implements Route{
     @Override
     public int nodeClosestTo(double position) {
         position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentAt(position);
+        int index = indexOfSegmentOnRoute(position);
         return segments.get(index).nodeClosestTo(position- positions[index]);
     }
 
@@ -93,15 +103,12 @@ public class MultiRoute implements Route{
 
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
-       List<RoutePoint> closestPoints = new ArrayList<RoutePoint>();
+       RoutePoint points = RoutePoint.NONE;
         for( Route segment: segments){
-            closestPoints.add(segment.pointClosestTo(point));
+           points = points.min(segment.pointClosestTo(point)
+                   .withPositionShiftedBy(positions[segments.indexOf(segment)]));
         }
-        RoutePoint closest = RoutePoint.NONE;
-        for( RoutePoint closestPoint : closestPoints){
-            closest = closestPoint.min(closest);
-        }
-        return closest;
+        return points;
     }
 
 }
