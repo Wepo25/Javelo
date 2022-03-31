@@ -4,7 +4,9 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class MultiRoute implements Route{
     private final List<Route> segments;
@@ -17,7 +19,7 @@ public class MultiRoute implements Route{
         double length =0;
         positions = new double[segments.size() +1];
         positions[0] = 0;
-        for (int i = 0; i < edges().size(); i++) {
+        for (int i = 0; i < segments.size(); i++) {
             length += segments.get(i).length();
             positions[i+1] = length;
         }
@@ -26,16 +28,20 @@ public class MultiRoute implements Route{
     @Override // utiliser indexSegmentAt dedans si mulitroute imbirqué
     public int indexOfSegmentAt(double position) {
         position = Math2.clamp(0, position, length());
-        double distance = 0;
+        int index = 0;
+        double length = 0;
+
         for(Route route : segments){
-            if(distance+route.length()>=position){
-                return route.indexOfSegmentAt(position-positions[segments.indexOf(route)]); // a verif;
+           length = route.length();
+            if(length < position ){
+                index += route.indexOfSegmentAt(route.length())+1;
+                position -= length;
             }
             else{
-                distance+= route.length();
+                index += route.indexOfSegmentAt(position);
+               break;
             }
-        }
-        return segments.indexOf(segments.get(segments.size()-1));// a verif si on peut eviter de mettre un ligne jamais atteinte
+        }return index;
     }
     private int indexOfSegmentOnRoute(double position){
         position = Math2.clamp(0, position, length());
@@ -70,10 +76,14 @@ public class MultiRoute implements Route{
     @Override // bon ordre ? avec HashSet mais treeSet ne marche pas non plus car PointCh non comprable;
     public List<PointCh> points() {
         List<PointCh> points = new ArrayList<>();
+
         for(Route route : segments){
             points.addAll(route.points());
-            points.remove(points.size()-1); // enlève le dernier de chaque car il est rajouté a chaque fois
+            points.remove(points.size()-1);
+
         }
+        List<PointCh> list = segments.get(segments.size()-1).points();
+        points.add(list.get(list.size()-1));
         return List.copyOf(points);
     }
 
