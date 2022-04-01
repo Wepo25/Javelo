@@ -24,18 +24,18 @@ public final class RouteComputerNON_OPTI {
         int[] predecessor = new int[numberNodes];
 
         List<Integer> nodePath = new ArrayList<>();
-        Set<Integer> set = new HashSet<>();
+        Set<Integer> exploringNodes = new HashSet<>();
         List<Edge> edges = new ArrayList<>();
 
 
         Arrays.fill(distance, Double.POSITIVE_INFINITY);
         distance[startNodeId] = 0;
-        set.add(startNodeId);
+        exploringNodes.add(startNodeId);
         nodePath.add(endNodeId);
 
         do {
-            final int N = smallestDistance(set, distance);
-            set.removeIf(x -> (x == N));
+            final int N = smallestDistance(exploringNodes, distance);
+            exploringNodes.removeIf(x -> (x == N));
             if (N == endNodeId) {
                 break;
             }
@@ -46,10 +46,10 @@ public final class RouteComputerNON_OPTI {
                 if (d < distance[NP]) {
                     distance[NP] = d;
                     predecessor[NP] = N;
-                    set.add(NP);
+                    exploringNodes.add(NP);
                 }
             }
-        } while (!set.isEmpty());
+        } while (!exploringNodes.isEmpty());
         int i = endNodeId;
         while (i != 0) {
             i = predecessor[i];
