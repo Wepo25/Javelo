@@ -2,7 +2,6 @@ package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
-import ch.epfl.javelo.projection.Ch1903;
 
 import java.util.*;
 
@@ -49,8 +48,8 @@ public final class RouteComputerOpti {
             int quantity = graph.nodeOutDegree(id);
             for (int i = 0; i < quantity; i++) {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
-                if(Float.compare(Float.NEGATIVE_INFINITY, distance[NP])!=0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id])!=0) {
-                    visitedNode+=1;
+                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
+                    visitedNode += 1;
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
                     if (d < distance[NP]) {
                         distance[NP] = d;
@@ -77,7 +76,7 @@ public final class RouteComputerOpti {
                     edges.add(new Edge(nodePath.get(j), nodePath.get(j + 1), graph.nodePoint(nodePath.get(j)), graph.nodePoint(nodePath.get(j + 1)), graph.edgeLength(graph.nodeOutEdgeId(nodePath.get(j), h)), graph.edgeProfile(graph.nodeOutEdgeId(nodePath.get(j), h))));
                     found = true;
                 }
-                h ++;
+                h++;
             }
 
         }

@@ -5,6 +5,7 @@ import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.projection.PointCh;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.plaf.multi.MultiInternalFrameUI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
             points.add(point6);
 
             List<Route> segments = new ArrayList<>();
-            segments.add(new SingleRoute(edge1));
-            segments.add(new SingleRoute(edge2));
+            segments.add(new MultiRoute(List.of(new SingleRoute(edge1))));
+            segments.add(new MultiRoute(List.of(new SingleRoute(edge2))));
 
             m1 = new MultiRoute(segments);
         }
@@ -66,7 +67,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         private static final double TOOTH_ELEVATION_GAIN = 100d;
         private static final double TOOTH_SLOPE = TOOTH_ELEVATION_GAIN / TOOTH_LENGTH;
 
+        @Test
+        void indexOfSegmentAtCorrect() {
+            initialize();
 
+            assertEquals(0, m1.indexOfSegmentAt(-5));
+            //assertEquals(2, m1.indexOfSegmentAt(5000));
+            //assertEquals(2, m1.indexOfSegmentAt(5499));
+            assertEquals(2, m1.indexOfSegmentAt(5500));
+            assertEquals(4, m1.indexOfSegmentAt(9500));
+            assertEquals(4, m1.indexOfSegmentAt(11000));
+        }
         @Test
         void constructorThrowsOnEmptyList(){
             assertThrows(IllegalArgumentException.class, ()-> new MultiRoute(List.of()));
@@ -153,17 +164,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
                     ORIGIN_N + ((i & 1) == 0 ? 0 : TOOTH_NS));
         }
 
-        @Test
-        void indexOfSegmentAtCorrect() {
-            initialize();
 
-            //assertEquals(0, m1.indexOfSegmentAt(-5));
-            //assertEquals(2, m1.indexOfSegmentAt(5000));
-            //assertEquals(2, m1.indexOfSegmentAt(5499));
-            assertEquals(2, m1.indexOfSegmentAt(5500));
-            assertEquals(4, m1.indexOfSegmentAt(9500));
-            assertEquals(4, m1.indexOfSegmentAt(11000));
-        }
 
         @Test
         void lengthCorrect() {

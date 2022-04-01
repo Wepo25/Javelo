@@ -2,7 +2,6 @@ package ch.epfl.javelo.data;
 
 import ch.epfl.javelo.Preconditions;
 
-import java.util.BitSet;
 import java.util.StringJoiner;
 
 public record AttributeSet(long bits) {
@@ -63,7 +62,7 @@ public record AttributeSet(long bits) {
         StringJoiner j = new StringJoiner(",", "{", "}");
         String bitsToString = Long.toBinaryString(bits);
         for (int i = 0; i < bitsToString.length(); i++) {
-            if(bitsToString.charAt(bitsToString.length() - 1 - i) == '1'){
+            if (bitsToString.charAt(bitsToString.length() - 1 - i) == '1') {
                 j.add((Attribute.ALL.get(i)).keyValue());
             }
         }

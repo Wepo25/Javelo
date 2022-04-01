@@ -23,6 +23,7 @@ public interface Route {
 
     /**
      * This method allows us to get every edges of the itinerary.
+     *
      * @return - List<Edges> : containing all the edges.
      */
     List<Edge> edges();

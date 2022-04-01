@@ -1,16 +1,13 @@
 package ch.epfl.javelo.data;
 
 import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointCh;
-import ch.epfl.javelo.projection.SwissBounds;
 
 import java.io.IOException;
 import java.nio.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
@@ -44,7 +41,7 @@ public final class Graph {
     }
 
     private static MappedByteBuffer tryAndOpen(Path path) throws IOException {
-        try(FileChannel channel = FileChannel.open(path)){
+        try (FileChannel channel = FileChannel.open(path)) {
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         }
     }
@@ -67,7 +64,7 @@ public final class Graph {
 
     public int nodeClosestTo(PointCh point, double searchDistance) {
         int closestNodeId = -1;
-        double NewSearchDistance = searchDistance*searchDistance ;
+        double NewSearchDistance = searchDistance * searchDistance;
         List<GraphSectors.Sector> temp = sectors.sectorsInArea(point, searchDistance);
         for (GraphSectors.Sector sect : temp) {
             for (int i = sect.startNodeId(); i < sect.endNodeId(); ++i) {
