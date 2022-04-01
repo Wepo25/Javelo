@@ -19,7 +19,6 @@ public final class RouteComputer {
 
         Preconditions.checkArgument(startNodeId!=endNodeId);
 
-        int visitedNode = 0;
         int numberNodes = graph.nodeCount();
         double[] distance = new double[numberNodes];
         int[] predecessor = new int[numberNodes];
@@ -40,7 +39,6 @@ public final class RouteComputer {
             if(N == endNodeId){break;}
             int quantity = graph.nodeOutDegree(N);
             for (int i = 0; i < quantity; i++) {
-                visitedNode += 1;
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(N,i));
                 double d = distance[N] + costFunction.costFactor(N,graph.nodeOutEdgeId(N,i))*graph.edgeLength(graph.nodeOutEdgeId(N,i));
                 if(d<distance[NP]){
@@ -70,7 +68,6 @@ public final class RouteComputer {
             }
 
         }
-        System.out.println(visitedNode);
         return new SingleRoute(edges);
     }
 

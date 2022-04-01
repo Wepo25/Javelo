@@ -17,11 +17,8 @@ public final class Stage6Test {
         Random rand = new Random();
         Graph g = Graph.loadFrom(Path.of("ch_west"));
         CostFunction cf = new CityBikeCF(g);
-        RouteComputer rc = new RouteComputer(g, cf);
+        RouteComputerOpti rc = new RouteComputerOpti(g, cf);
         Route r = rc.bestRouteBetween(2046055, 2694240);
         KmlPrinter.write("test/ch/epfl/javelo/routing/RouteComputerTests/javeloCH_WEST.kml", r);
-
-
-
     }
 }

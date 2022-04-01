@@ -31,7 +31,6 @@ public final class RouteComputerOpti {
 
         }
 
-        int visitedNode = 0;
         float[] distance = new float[graph.nodeCount()];
         int[] predecessor = new int[graph.nodeCount()];
         Arrays.fill(distance, Float.POSITIVE_INFINITY);
@@ -51,7 +50,6 @@ public final class RouteComputerOpti {
             for (int i = 0; i < quantity; i++) {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if(Float.compare(Float.NEGATIVE_INFINITY, distance[NP])!=0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id])!=0) {
-                    visitedNode+=1;
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
                     if (d < distance[NP]) {
                         distance[NP] = d;
@@ -82,7 +80,6 @@ public final class RouteComputerOpti {
             }
 
         }
-        System.out.println(visitedNode);
         return new SingleRoute(edges);
     }
 }
