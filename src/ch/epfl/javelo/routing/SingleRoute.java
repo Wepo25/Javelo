@@ -10,18 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class SingleRoute implements Route {
-    private List<Edge> edges;
-    private double[] positions;
+    private final List<Edge> edges;
+    private final double[] positions;
 
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
         double length = 0;
-        positions = new double[edges.size() +1];
+        positions = new double[edges.size() + 1];
         positions[0] = 0;
         for (int i = 0; i < edges().size(); i++) {
             length += edges.get(i).length();
-            positions[i+1] = length;
+            positions[i + 1] = length;
         }
 
     }
@@ -59,8 +59,8 @@ public final class SingleRoute implements Route {
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
-        double newPos = position - positions[edgeIndex] ;
-            return edges.get(edgeIndex).pointAt(newPos);
+        double newPos = position - positions[edgeIndex];
+        return edges.get(edgeIndex).pointAt(newPos);
     }
 
 
@@ -68,37 +68,38 @@ public final class SingleRoute implements Route {
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
-        double newPos = position - positions[edgeIndex] ;
+        double newPos = position - positions[edgeIndex];
         return edges.get(edgeIndex).elevationAt(newPos);
     }
 
     @Override
-    public int nodeClosestTo(double position){
+    public int nodeClosestTo(double position) {
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
         double diff1 = position - positions[edgeIndex];
-        double diff2 = positions[edgeIndex+1] - position;
+        double diff2 = positions[edgeIndex + 1] - position;
         return (diff1 <= diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
     private int edgeIndex(double position) {
-        position = Math2.clamp(0, position,length());
+        position = Math2.clamp(0, position, length());
         int resultSearch = Arrays.binarySearch(positions, position);
         int edgeIndex;
-        edgeIndex = (resultSearch >=0) ? resultSearch : -resultSearch-2 ;
-        return Math2.clamp(0,edgeIndex, edges.size()-1);
+        edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
+        return Math2.clamp(0, edgeIndex, edges.size() - 1);
     }
 
     @Override
-    public RoutePoint pointClosestTo(PointCh point){
+    public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
 
-        for (Edge edge: edges) {
-            double actualPosition= Math2.clamp(0,edge.positionClosestTo(point),edge.length());
+        for (Edge edge : edges) {
+            double actualPosition = Math2.clamp(0, edge.positionClosestTo(point), edge.length());
             double position = actualPosition + positions[edges.indexOf(edge)];
             closest = closest.min(edge.pointAt(actualPosition), position,
                     point.distanceTo(edge.pointAt(actualPosition)));
-        }return closest ;
+        }
+        return closest;
     }
 
 }

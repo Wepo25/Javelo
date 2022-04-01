@@ -1,12 +1,9 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
-import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
-import java.util.function.DoubleUnaryOperator;
 
 
 public final class ElevationProfile {
@@ -37,10 +34,10 @@ public final class ElevationProfile {
     }
 
     public double totalAscent() {
-        double ascent= 0;
-        for (int i = 0; i < samples.length-1; i++) {
-            if (samples[i+1]- samples[i] > 0) {
-                ascent += samples[i+1]- samples[i];
+        double ascent = 0;
+        for (int i = 0; i < samples.length - 1; i++) {
+            if (samples[i + 1] - samples[i] > 0) {
+                ascent += samples[i + 1] - samples[i];
             }
         }
         return Math.abs(ascent);
@@ -48,16 +45,16 @@ public final class ElevationProfile {
 
     public double totalDescent() {
         double descent = 0;
-        for (int i = 0; i < samples.length-1; i++) {
-            if (samples[i+1]- samples[i] <0) {
-                descent += samples[i+1]- samples[i];
+        for (int i = 0; i < samples.length - 1; i++) {
+            if (samples[i + 1] - samples[i] < 0) {
+                descent += samples[i + 1] - samples[i];
             }
         }
         return Math.abs(descent);
     }
 
     public double elevationAt(double position) {
-        if (length < position) return samples[samples.length-1];
+        if (length < position) return samples[samples.length - 1];
         if (position < 0) return samples[0];
         return Functions.sampled(samples, length).applyAsDouble(position);
     }
