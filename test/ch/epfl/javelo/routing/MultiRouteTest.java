@@ -67,17 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         private static final double TOOTH_ELEVATION_GAIN = 100d;
         private static final double TOOTH_SLOPE = TOOTH_ELEVATION_GAIN / TOOTH_LENGTH;
 
-        @Test
-        void indexOfSegmentAtCorrect() {
-            initialize();
 
-            assertEquals(0, m1.indexOfSegmentAt(-5));
-            //assertEquals(2, m1.indexOfSegmentAt(5000));
-            //assertEquals(2, m1.indexOfSegmentAt(5499));
-            assertEquals(2, m1.indexOfSegmentAt(5500));
-            assertEquals(4, m1.indexOfSegmentAt(9500));
-            assertEquals(4, m1.indexOfSegmentAt(11000));
-        }
         @Test
         void constructorThrowsOnEmptyList(){
             assertThrows(IllegalArgumentException.class, ()-> new MultiRoute(List.of()));

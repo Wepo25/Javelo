@@ -2,6 +2,12 @@ package ch.epfl.javelo;
 
 import static ch.epfl.javelo.Preconditions.checkArgument;
 
+/**
+ * This final not instantiable allows us to do calculation with statics methods.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public class Math2 {
 
     /**

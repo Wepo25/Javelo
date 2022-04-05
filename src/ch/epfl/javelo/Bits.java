@@ -2,6 +2,12 @@ package ch.epfl.javelo;
 
 import static ch.epfl.javelo.Preconditions.checkArgument;
 
+/**
+ * This final not instantiable class allows us to extract bit sequence.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class Bits {
 
     /**

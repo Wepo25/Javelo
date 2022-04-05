@@ -1,8 +1,13 @@
 package ch.epfl.javelo.projection;
 
-
 import static ch.epfl.javelo.Preconditions.checkArgument;
 
+/**
+ * This class is used to represent a point in the Web Mercator system.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record PointWebMercator(double x, double y) {
 
     /**

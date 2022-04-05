@@ -1,12 +1,41 @@
 package ch.epfl.javelo.projection;
 
+/**
+ * This class contains values and function to describe the geographic limit of the Swiss.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class SwissBounds {
 
+    /**
+     * Minimum east coordinate.
+     */
     public static final double MIN_E = 2485000;
+
+    /**
+     * Maximum east coordinate.
+     */
     public static final double MAX_E = 2834000;
+
+    /**
+     * Minimum north coordinate.
+     */
     public static final double MIN_N = 1075000;
+
+    /**
+     * Maximum north coordinate.
+     */
     public static final double MAX_N = 1296000;
+
+    /**
+     * Width of the Swiss.
+     */
     public static final double WIDTH = MAX_E - MIN_E;
+
+    /**
+     * Height of the Swiss.
+     */
     public static final double HEIGHT = MAX_N - MIN_N;
 
     /**

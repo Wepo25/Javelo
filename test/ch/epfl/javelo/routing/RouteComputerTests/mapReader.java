@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class mapReader {
     public static void main(String[] args) {
         String javelo1 = analyseFile("test/ch/epfl/javelo/routing/RouteComputerTests/javelo.kml");
-        String javeloPerfect = analyseFile("test/ch/epfl/javelo/routing/RouteComputerTests/route_159049-117669 (1).kml");
-        assertEquals(javelo1, javeloPerfect);
+        String javelo2 = analyseFile("test/ch/epfl/javelo/routing/RouteComputerTests/javeloCH_WEST.kml");
+        assertEquals(javelo1, javelo2);
 
     }
 

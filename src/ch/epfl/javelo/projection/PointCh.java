@@ -4,6 +4,12 @@ import static ch.epfl.javelo.Preconditions.checkArgument;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
+/**
+ * This class is used to create a point represented in swiss coordinate system.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record PointCh(double e, double n) {
 
     /**
