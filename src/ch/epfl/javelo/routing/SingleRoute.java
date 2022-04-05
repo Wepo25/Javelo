@@ -9,13 +9,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A SingleRoute implementing Route.
+ * Represent a simple itinerary.
+ *
+ * @author Alexandre Mourot (346365)
+ */
+
 public final class SingleRoute implements Route {
     private final List<Edge> edges;
     private final double[] positions;
 
+    /**
+     * This method construct a SingleRoute with the list of edges given and a table
+     * containing the length at each edges positions.
+     *
+     */
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
+        positions = createPositions(edges);
+    }
+
+    private double[] createPositions(List<Edge> edges) {
+        final double[] positions;
         double length = 0;
         positions = new double[edges.size() + 1];
         positions[0] = 0;
@@ -23,7 +40,7 @@ public final class SingleRoute implements Route {
             length += edges.get(i).length();
             positions[i + 1] = length;
         }
-
+        return positions;
     }
 
     @Override

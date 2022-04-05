@@ -24,6 +24,9 @@ public final class MultiRoute implements Route {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int indexOfSegmentAt(double position) {
         position = Math2.clamp(0, position, length());
