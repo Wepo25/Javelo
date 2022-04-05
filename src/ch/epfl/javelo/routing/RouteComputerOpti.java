@@ -21,6 +21,12 @@ public final class RouteComputerOpti {
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
         Preconditions.checkArgument(startNodeId != endNodeId);
+        if(graph.nodeCount()<endNodeId || startNodeId < 0){
+            return null;
+        }
+        System.out.println(graph.nodeOutDegree(149195));
+        System.out.println(graph.nodeOutDegree(153181));
+
 
         record WeightedNode(int nodeId, float distance)
                 implements Comparable<WeightedNode> {
@@ -47,6 +53,9 @@ public final class RouteComputerOpti {
                 break;
             }
             int quantity = graph.nodeOutDegree(id);
+            if(quantity == 0) {
+                return null;
+            }
             for (int i = 0; i < quantity; i++) {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if(Float.compare(Float.NEGATIVE_INFINITY, distance[NP])!=0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id])!=0) {
@@ -72,13 +81,18 @@ public final class RouteComputerOpti {
             boolean found = false;
             int h = 0;
             while (!found) {
-                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(nodePath.get(j), h)) == nodePath.get(j + 1)) {
-                    edges.add(new Edge(nodePath.get(j), nodePath.get(j + 1), graph.nodePoint(nodePath.get(j)), graph.nodePoint(nodePath.get(j + 1)), graph.edgeLength(graph.nodeOutEdgeId(nodePath.get(j), h)), graph.edgeProfile(graph.nodeOutEdgeId(nodePath.get(j), h))));
+                int index = graph.nodeOutEdgeId(nodePath.get(j), h);
+                if (graph.edgeTargetNodeId(index) == nodePath.get(j + 1)) {
+                    edges.add(Edge.of(graph, index,nodePath.get(j),  nodePath.get(j + 1)));
+
                     found = true;
                 }
                 h ++;
             }
 
+        }
+        if(edges.isEmpty()){
+            return null;
         }
         return new SingleRoute(edges);
     }

@@ -14,6 +14,8 @@ public final record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointC
                 graph.nodePoint(toNodeId), graph.edgeLength(edgeId), graph.edgeProfile(edgeId));
     }
 
+
+
     public double positionClosestTo(PointCh point) {
         return Math2.projectionLength(fromPoint.e(), fromPoint.n(), toPoint.e(), toPoint.n(), point.e(), point.n());
     }
