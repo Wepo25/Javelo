@@ -15,13 +15,12 @@ import java.util.List;
  *
  * @author Alexandre Mourot (346365)
  */
-
 public final class SingleRoute implements Route {
     private final List<Edge> edges;
     private final double[] positions;
 
     /**
-     * This method construct a SingleRoute with the list of edges given and a table
+     * This method constructs a SingleRoute with the list of edges given and a table
      * containing the length at each edges positions.
      *
      */

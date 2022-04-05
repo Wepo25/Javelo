@@ -45,7 +45,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
     }
 
     /**
-     This method is useful to save memory when comparing two RoutePoint. It returns this if the distance
+     * This method is useful to save memory when comparing two RoutePoint. It returns this if the distance
      * to the reference is less than the other's RoutePoint distance.
      *
      * @param thatPoint - PointCh : point on the route.

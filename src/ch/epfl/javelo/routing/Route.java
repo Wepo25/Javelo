@@ -4,13 +4,18 @@ import ch.epfl.javelo.projection.PointCh;
 
 import java.util.List;
 
+/**
+ * Interface Route which describe the behaviour of route.
+ *
+ * @author Alexande Mourot (346365)
+ */
 public interface Route {
 
     /**
      * This method allows us to get the segment's index to a given position on the route.
      *
      * @param position - double : position given in meter.
-     * @return - int : the index link to the position
+     * @return - int : the index link to the position.
      */
     int indexOfSegmentAt(double position);
 
@@ -52,7 +57,7 @@ public interface Route {
     double elevationAt(double position);
 
     /**
-     * This method allows us to get the NodeId belonging to the route and being closest to a given position.
+     * This method allows us to get the NodeId belonging to the route and closest to a given position.
      *
      * @param position - double : position along the route.
      * @return - int : the identity of the closest node to the position.
