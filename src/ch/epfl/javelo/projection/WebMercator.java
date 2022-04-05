@@ -2,7 +2,14 @@ package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Math2;
 
+/**
+ * This class allows us to switch between WGS 84 and Web Mercator coordinates.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public class WebMercator {
+
 
     private final static double pi = Math.PI;
 

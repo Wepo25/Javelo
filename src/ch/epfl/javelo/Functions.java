@@ -2,6 +2,12 @@ package ch.epfl.javelo;
 
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * This final not instantiable class allows us to get create mathematical function.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public class Functions {
 
     /**

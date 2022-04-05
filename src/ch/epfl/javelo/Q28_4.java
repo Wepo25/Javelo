@@ -3,7 +3,7 @@ package ch.epfl.javelo;
 
 
 /**
- * This class allows us to represent the Q_28 representation and to switch between it and classic representations.
+ * This final not instantiable allows us to represent the Q_28 representation and to switch between it and classic representations.
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)

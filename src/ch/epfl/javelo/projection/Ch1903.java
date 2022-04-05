@@ -1,5 +1,12 @@
 package ch.epfl.javelo.projection;
 
+
+/**
+ * This final not instantiable class is used to convert swiss coordinate into WGS 84 and inversely.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class Ch1903 {
 
     /**
