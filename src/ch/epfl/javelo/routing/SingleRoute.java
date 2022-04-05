@@ -13,6 +13,7 @@ import java.util.List;
  * A SingleRoute implementing Route.
  * Represent a simple itinerary named route among this project.
  *
+ * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
 public final class SingleRoute implements Route {

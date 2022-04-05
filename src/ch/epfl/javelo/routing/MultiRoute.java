@@ -14,6 +14,7 @@ import java.util.List;
  * however at the "end" of the chain there is always SingleRoutes.
  * Several methods used recursive call to reach these last SingleRoutes.
  *
+ * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
 public final class MultiRoute implements Route {
@@ -49,7 +50,7 @@ public final class MultiRoute implements Route {
      * @param position - double : position given in meter.
      * @return - int : the index link to the position.
      */
-    private int indexOfSegmentOnRoute(double position) {
+    private int indexOfSegmentOnRoute(double position) { // refaire + comme SingleRoute binary
         position = Math2.clamp(0, position, length());
         double distance = 0;
         for (Route route : segments) {
@@ -95,11 +96,7 @@ public final class MultiRoute implements Route {
      */
     @Override
     public double length() {
-        double distance = 0;
-        for (Route route : segments) {
-            distance += route.length();
-        }
-        return distance;
+        return positions[positions.length - 1];
     }
 
     /**
