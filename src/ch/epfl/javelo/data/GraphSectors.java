@@ -10,7 +10,8 @@ import java.util.List;
 import static ch.epfl.javelo.Math2.clamp;
 
 /**
- * Record GraphSector which represents all the sectors contained in the Switzerland cartographie.
+ * Record GraphSector which represents all the sectors contained in the Switzerland cartography.
+ *
  */
 public record GraphSectors(ByteBuffer buffer) {
 
