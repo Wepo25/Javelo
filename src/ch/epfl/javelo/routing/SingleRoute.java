@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * A SingleRoute implementing Route.
- * Represent a simple itinerary.
+ * Represent a simple itinerary named route among this project.
  *
  * @author Alexandre Mourot (346365)
  */
@@ -43,11 +43,29 @@ public final class SingleRoute implements Route {
         return positions;
     }
 
+    private int edgeIndex(double position) {
+        position = Math2.clamp(0, position, length());
+        int resultSearch = Arrays.binarySearch(positions, position);
+        int edgeIndex;
+        edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
+        return Math2.clamp(0, edgeIndex, edges.size() - 1);
+    }
+
+    /**
+     * This method is not usefull for this type of route which contain only one segment.
+     * @param position - double : position given in meter.
+     * @return -int : 0.
+     */
     @Override
     public int indexOfSegmentAt(double position) {
         return 0;
     }
 
+    /**
+     * This method gives us the route's length.
+     *
+     * @return - double : the length.
+     */
     @Override
     public double length() {
         double length = 0;
@@ -57,11 +75,21 @@ public final class SingleRoute implements Route {
         return length;
     }
 
+    /**
+     * This method allows us to get every edges of the route.
+     *
+     * @return - List<Edges> : immutable and containing all the edges.
+     */
     @Override
     public List<Edge> edges() {
         return List.copyOf(edges);
     }
 
+    /**
+     * This method allows us to get every point located at the edges extremity of the route.
+     *
+     * @return - List<PointCh> : containing every pointCh located to edges extremity.
+     */
     @Override
     public List<PointCh> points() {
         List<PointCh> list = new ArrayList<>();
@@ -72,6 +100,12 @@ public final class SingleRoute implements Route {
         return list;
     }
 
+    /**
+     * This method allows us to find a point located to a given distance on the route.
+     *
+     * @param position - double : position along the route.
+     * @return - PointCh : the point corresponding to the position on the route.
+     */
     @Override
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
@@ -81,6 +115,12 @@ public final class SingleRoute implements Route {
     }
 
 
+    /**
+     * This method allows us to get the height for a given position along the route.
+     *
+     * @param position - double : position along the route.
+     * @return - double : the height corresponding to the position.
+     */
     @Override
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
@@ -89,6 +129,12 @@ public final class SingleRoute implements Route {
         return edges.get(edgeIndex).elevationAt(newPos);
     }
 
+    /**
+     * This method allows us to get the NodeId belonging to the route and being the closest to a given position.
+     *
+     * @param position - double : position along the route.
+     * @return - int : the identity of the closest node to the position.
+     */
     @Override
     public int nodeClosestTo(double position) {
         position = Math2.clamp(0, position, length());
@@ -98,14 +144,14 @@ public final class SingleRoute implements Route {
         return (diff1 <= diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
-    private int edgeIndex(double position) {
-        position = Math2.clamp(0, position, length());
-        int resultSearch = Arrays.binarySearch(positions, position);
-        int edgeIndex;
-        edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
-        return Math2.clamp(0, edgeIndex, edges.size() - 1);
-    }
 
+
+    /**
+     * This method allows us to get the point closest to an other given point.
+     *
+     * @param point - PointCh : reference point to find the closest around it.
+     * @return - RoutePoint : closest point from the point passed in parameter.
+     */
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
