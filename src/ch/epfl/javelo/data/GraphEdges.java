@@ -11,7 +11,14 @@ import static ch.epfl.javelo.Bits.extractSigned;
 import static ch.epfl.javelo.Bits.extractUnsigned;
 import static java.lang.Short.toUnsignedInt;
 
+/**
+ * Record GraphNodes which represents all the nodes contained in the graph representing the Switzerland cartography.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
+
     private static final int EDGES_INTS = 10;
 
     /**
@@ -31,7 +38,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - int : The ID of the destination node of the given edge.
      */
     public int targetNodeId(int edgeId) {
-        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) : edgesBuffer.getInt((edgeId * 10));
+        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) : edgesBuffer.getInt((edgeId * EDGES_INTS));
     }
 
     /**

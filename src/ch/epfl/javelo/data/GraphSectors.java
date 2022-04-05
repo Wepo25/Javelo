@@ -12,21 +12,47 @@ import static ch.epfl.javelo.Math2.clamp;
 /**
  * Record GraphSector which represents all the sectors contained in the Switzerland cartography.
  *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ * @param buffer - ByteBuffer : buffer containing the graph's information.
  */
 public record GraphSectors(ByteBuffer buffer) {
 
+    /**
+     * Numbers of sector by side of the Swiss.
+     */
     private static final int SECTOR_BY_SIDE = 128;
+
+    /**
+     * Offset to find the first node of a sector.
+     */
     private static final int OFFSET_NODE1 = 0;
+
+    /**
+     * Offset to find the length of a sector
+     */
     private static final int OFFSET_LENGTH = OFFSET_NODE1 + Integer.BYTES;
+
+    /**
+     * The number of elements in the buffer used to represent a sector.
+     */
     private static final int SECTOR_INTS = OFFSET_LENGTH + Short.BYTES;
+
+    /**
+     * Width of a sector.
+     */
     private static final double SectorsLength = SwissBounds.WIDTH / SECTOR_BY_SIDE;
+
+    /**
+     * Height of a sector.
+     */
     private static final double SectorsHeight = SwissBounds.HEIGHT / SECTOR_BY_SIDE;
 
     /**
      * Find all Sectors contained in a squared Area.
      *
-     * @param center   the center of the square.
-     * @param distance the distance from the center to the side of a square.
+     * @param center - PointCh :  the center of the square.
+     * @param distance - double : the distance from the center to the side of a square.
      * @return a list containing all sectors includes into the square ( dimensions distance*2 and centered on center).
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
@@ -60,6 +86,8 @@ public record GraphSectors(ByteBuffer buffer) {
 
     /**
      * Record of a sector with the first node and the one after the last node in attributes.
+     * @param startNodeId - int : Identity of the first node.
+     * @param endNodeId - int : Identity of the node after the last of the sector.
      */
     public record Sector(int startNodeId, int endNodeId) {
     }

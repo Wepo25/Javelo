@@ -5,11 +5,31 @@ import ch.epfl.javelo.Q28_4;
 
 import java.nio.IntBuffer;
 
+/**
+ * Record GraphNodes which represents all the nodes contained in the graph representing the Switzerland cartography.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ *
+ * @param buffer - IntBuffer : buffer containing all informations about nodes in the graph.
+ */
 public record GraphNodes(IntBuffer buffer) {
 
+    /**
+     * Offset to find the east coordinate.
+     */
     private static final int OFFSET_E = 0;
+    /**
+     * Offset to find the north coordinate.
+     */
     private static final int OFFSET_N = OFFSET_E + 1;
+    /**
+     * Offset to find the numbers of sorting edges from a node.
+     */
     private static final int OFFSET_OUT_EDGES = OFFSET_N + 1;
+    /**
+     * The number of elements in the buffer used to represent a node.
+     */
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
 
     /**

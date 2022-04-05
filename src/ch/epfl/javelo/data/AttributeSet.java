@@ -3,7 +3,12 @@ package ch.epfl.javelo.data;
 import ch.epfl.javelo.Preconditions;
 import java.util.StringJoiner;
 
-
+/**
+ * This record represent some OpenStreetMap's attributes.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record AttributeSet(long bits) {
 
     /**
