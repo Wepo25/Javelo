@@ -32,11 +32,11 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
     }
 
     /**
-     * This method is usefull to save memory when comparing two RoutePoint. It return this if the distance
-     * to the reference is less than the other's point one.
+     * This method is useful to save memory when comparing two RoutePoint. It returns this if the distance
+     * to the reference is less than the other's RoutePoint distance.
      *
      * @param that - RoutePoint : the RoutePoint to compare.
-     * @return - RoutePoint : the closest to reference.
+     * @return - RoutePoint : the closest to reference between this and that RoutePoint.
      */
     public RoutePoint min(RoutePoint that) {
         if (this.distanceToReference <= that.distanceToReference) {
@@ -44,6 +44,15 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
         } else return that;
     }
 
+    /**
+     This method is useful to save memory when comparing two RoutePoint. It returns this if the distance
+     * to the reference is less than the other's RoutePoint distance.
+     *
+     * @param thatPoint - PointCh : point on the route.
+     * @param thatPosition - double : position along the route in meters.
+     * @param thatDistanceToReference - double : distance (in meters) between the point and the reference.
+     * @return - RoutePoint : the closest to reference between this and the RoutePoint corresponding to the arguments.
+     */
     public RoutePoint min(PointCh thatPoint, double thatPosition, double thatDistanceToReference) {
         if (distanceToReference <= thatDistanceToReference) {
             return this;
