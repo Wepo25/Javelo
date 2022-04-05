@@ -16,6 +16,11 @@ import static java.lang.Short.toUnsignedInt;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param edgesBuffer - ByteBuffer : buffer containing the orientation,
+ *                   the Id of the destination's node, the length, the height and the Id of the attribute OSM of the edge
+ * @param elevations - IntBuffer : buffer containing the type of the profil and the Id of the first sample of the edge.
+ * @param profileIds - ShortBuffer : buffer containing the profil.
  */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
 
