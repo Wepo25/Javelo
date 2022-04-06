@@ -11,6 +11,12 @@ import static ch.epfl.javelo.Bits.extractSigned;
 import static ch.epfl.javelo.Bits.extractUnsigned;
 import static java.lang.Short.toUnsignedInt;
 
+/**
+ * A Buffer containing specific data of a Graph. Here edges.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
     private static final int EDGES_INTS = 10;
 

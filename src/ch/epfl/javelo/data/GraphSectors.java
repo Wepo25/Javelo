@@ -10,7 +10,10 @@ import java.util.List;
 import static ch.epfl.javelo.Math2.clamp;
 
 /**
- * Record GraphSector which represents all the sectors contained in the Switzerland cartographie.
+ * A Buffer containing specific data of a Graph. Here sectors.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
  */
 public record GraphSectors(ByteBuffer buffer) {
 
@@ -22,11 +25,11 @@ public record GraphSectors(ByteBuffer buffer) {
     private static final double SectorsHeight = SwissBounds.HEIGHT / SECTOR_BY_SIDE;
 
     /**
-     * Find all Sectors contained in a squared Area.
+     * This method allows us to find all Sectors contained in a squared Area.
      *
-     * @param center   the center of the square.
-     * @param distance the distance from the center to the side of a square.
-     * @return a list containing all sectors includes into the square ( dimensions distance*2 and centered on center).
+     * @param center - PointCh : The center of the square.
+     * @param distance - double : The distance from the center to the side of a square.
+     * @return - List<Sector> : A list containing all sectors includes into the square ( dimensions distance*2 and centered on center).
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
         if (distance == 0) {

@@ -4,6 +4,12 @@ import ch.epfl.javelo.Preconditions;
 import java.util.StringJoiner;
 
 
+/**
+ * A record representating a set of attributes.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public record AttributeSet(long bits) {
 
     /**

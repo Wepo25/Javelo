@@ -17,12 +17,13 @@ import java.util.List;
  * @author Alexandre Mourot (346365)
  */
 public final class SingleRoute implements Route {
+
     private final List<Edge> edges;
     private final double[] positions;
 
     /**
      * This method constructs a SingleRoute with the list of edges given and a table
-     * containing the length at each edges positions.
+     * containing the length at each edge position.
      *
      */
     public SingleRoute(List<Edge> edges) {
@@ -97,6 +98,7 @@ public final class SingleRoute implements Route {
         for (Edge edge : edges) {
             list.add((edge.toPoint()));
         }
+
         return list;
     }
 

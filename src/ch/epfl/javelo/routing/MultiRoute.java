@@ -114,9 +114,9 @@ public final class MultiRoute implements Route {
     }
 
     /**
-     * This method allows us to get every point located at the edges extremity of the route.
+     * This method allows us to get every point located at the edge's extremity of the route.
      *
-     * @return - List<PointCh> : containing every pointCh located to edges extremity.
+     * @return - List<PointCh> : containing every pointCh located to edge's extremity.
      */
     @Override
     public List<PointCh> points() {
@@ -135,8 +135,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to find a point located to a given distance on the MultiRoute.
      *
-     * @param position - double : position along the route.
-     * @return - PointCh : the point corresponding to the position on the MultiRoute.
+     * @param position - double : Position along the route.
+     * @return - PointCh : The point corresponding to the position on the MultiRoute.
      */
     @Override
     public PointCh pointAt(double position) {

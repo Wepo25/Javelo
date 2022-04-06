@@ -35,9 +35,9 @@ public class Functions {
         return (x) -> {
             if (x < 0) return samples[0];
             if (x >= xMax) return samples[samples.length - 1];
-            double ecart = xMax / (samples.length - 1);
-            int borneInf = (int) (x / ecart);
-            return Math2.interpolate(samples[borneInf], samples[borneInf + 1], ((x - borneInf * ecart) / ecart));
+            double gap = xMax / (samples.length - 1);
+            int borneInf = (int) (x / gap);
+            return Math2.interpolate(samples[borneInf], samples[borneInf + 1], ((x - borneInf * gap) / gap));
         };
 
     }

@@ -8,11 +8,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * A class intended to build an ElevationProfile
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class ElevationProfileComputer {
 
+    /**
+     * A private constructor.
+     */
     private ElevationProfileComputer() {
     }
 
+    /**
+     * This method allows us to build an ElevationProfile while interpolating the missing data.
+     *
+     * @param route - Route : The route of which we compute the ElevationProfile.
+     * @param maxStepLength - double : The gap between edges.
+     * @return - ElevationProfile : The ElevationProfile associated to the given route.
+     */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
@@ -30,9 +46,11 @@ public final class ElevationProfileComputer {
         }
         Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
         Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
+
         if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) {
             indexes.add(0);
         }
+
         for (int i = 1; i < samples.length - 1; i++) {
             if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                 indexes.add(i);
@@ -56,18 +74,30 @@ public final class ElevationProfileComputer {
         return new ElevationProfile(length, samples);
     }
 
-    private static int firstValid(float[] s) {
-        for (int i = 0; i < s.length; i++) {
-            if (!Float.isNaN(s[i])) {
+    /**
+     * This method allows us to compute the first non-NaN value of an array of float.
+     *
+     * @param floatArray - float[] : The array we are looking through.
+     * @return - int : The first valid index or -1 if it does not exist.
+     */
+    private static int firstValid(float[] floatArray) {
+        for (int i = 0; i < floatArray.length; i++) {
+            if (!Float.isNaN(floatArray[i])) {
                 return i;
             }
         }
         return -1;
     }
 
-    private static int lastValid(float[] s) {
-        for (int i = s.length - 1; i >= 0; i--) {
-            if (!Float.isNaN(s[i])) {
+    /**
+     * This method allows us to compute the last non-NaN value of an array of float.
+     *
+     * @param floatArray - float[] : The array we are looking through.
+     * @return - int : The last valid index or -1 if it does not exist.
+     */
+    private static int lastValid(float[] floatArray) {
+        for (int i = floatArray.length - 1; i >= 0; i--) {
+            if (!Float.isNaN(floatArray[i])) {
                 return i;
             }
         }

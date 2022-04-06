@@ -52,9 +52,7 @@ public class Math2 {
      */
     public static int clamp(int min, int v, int max) {
         checkArgument(!(min > max));
-        if (v < min) {
-            return min;
-        } else return Math.min(v, max);
+        return (v < min)? min : Math.min(v, max);
     }
 
     /**
@@ -68,9 +66,8 @@ public class Math2 {
      */
     public static double clamp(double min, double v, double max) {
         checkArgument(!(min > max));
-        if (v < min) {
-            return min;
-        } else return Math.min(v, max);
+        return (v < min)? min : Math.min(v, max);
+
     }
 
     /**
