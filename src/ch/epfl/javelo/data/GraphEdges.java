@@ -16,6 +16,8 @@ import static java.lang.Short.toUnsignedInt;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param profileIds - IntBuffer : Buffer containing the
  */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
 

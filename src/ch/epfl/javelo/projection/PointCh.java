@@ -9,6 +9,9 @@ import static java.lang.Math.pow;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param e - double : East coordinate of the pointCh.
+ * @param n - double : North coordinate of the pointCh.
  */
 public record PointCh(double e, double n) {
 

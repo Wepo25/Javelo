@@ -15,7 +15,7 @@ public record PointWebMercator(double x, double y) {
      *
      * @param x - double : X coordinate of a point.
      * @param y - double : Y coordinate of a point.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if the
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if the
      * given coordinates are smaller than 0 or greater than 1.
      */
     public PointWebMercator {
@@ -85,7 +85,8 @@ public record PointWebMercator(double x, double y) {
     /**
      * This method allows us to turn a point expressed with the Mercator system into the Swiss one.
      *
-     * @return - PointCh : This point expressed in the Swiss coordinates system.
+     * @return - PointCh : This point expressed in the Swiss coordinates system,
+     * or null if the point is not in the Swiss.
      */
     public PointCh toPointCh() {
         double e = Ch1903.e(lon(), lat());
