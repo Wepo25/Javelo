@@ -64,18 +64,7 @@ public final class Graph {
                 attributeSets);
     }
 
-    /**
-     * This private method allows us to open a given file while checking if it can access it.
-     *
-     * @param path - Path : The file's path.
-     * @return - MappedByteBuffer : A mapped ByteBuffer containing the file's data.
-     * @throws IOException . Throws an exception if it was unable to open the given file.
-     */
-    private static MappedByteBuffer tryAndOpen(Path path) throws IOException {
-        try (FileChannel channel = FileChannel.open(path)) {
-            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-        }
-    }
+
 
     /**
      * This method allows us to know the number of nodes in this graph.
@@ -200,5 +189,18 @@ public final class Graph {
         return (!edges.hasProfile(edgeId))?
                 Functions.constant(Double.NaN) :
                 Functions.sampled(edges.profileSamples(edgeId), this.edges.length(edgeId));
+    }
+
+    /**
+     * This private method allows us to open a given file while checking if it can access it.
+     *
+     * @param path - Path : The file's path.
+     * @return - MappedByteBuffer : A mapped ByteBuffer containing the file's data.
+     * @throws IOException . Throws an exception if it was unable to open the given file.
+     */
+    private static ByteBuffer tryAndOpen(Path path) throws IOException {
+        try (FileChannel channel = FileChannel.open(path)) {
+            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        }
     }
 }

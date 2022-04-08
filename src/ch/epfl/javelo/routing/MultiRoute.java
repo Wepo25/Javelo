@@ -35,32 +35,6 @@ public final class MultiRoute implements Route {
         positions = createPositions(segments);
     }
 
-    private double[] createPositions(List<Route> segments) {
-        final double[] positions;
-        double length = 0;
-        positions = new double[segments.size() + 1];
-        positions[0] = 0;
-        for (int i = 0; i < segments.size(); i++) {
-            length += segments.get(i).length();
-            positions[i + 1] = length;
-        }
-        return positions;
-    }
-
-    /**
-     * Private method to find the right index of segment at the scale of this MultiRoute.
-     *
-     * @param position - double : position given in meter.
-     * @return - int : the index link to the position.
-     */
-    private int indexOfSegmentOnRoute(double position) {
-        position = Math2.clamp(0, position, length());
-        int resultSearch = Arrays.binarySearch(positions, position);
-        int segmentIndex;
-        segmentIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
-        return Math2.clamp(0, segmentIndex, segments.size() - 1);
-    }
-
     /**
      * This method allows us to get the index in terms of SingleRoute to a given position on the route.
      *
@@ -85,7 +59,6 @@ public final class MultiRoute implements Route {
         }
         return index;
     }
-
 
     /**
      * This method gives us the MultiRoute's length.
@@ -184,6 +157,32 @@ public final class MultiRoute implements Route {
                     .withPositionShiftedBy(positions[segments.indexOf(segment)]));
         }
         return points;
+    }
+
+    private double[] createPositions(List<Route> segments) {
+        final double[] positions;
+        double length = 0;
+        positions = new double[segments.size() + 1];
+        positions[0] = 0;
+        for (int i = 0; i < segments.size(); i++) {
+            length += segments.get(i).length();
+            positions[i + 1] = length;
+        }
+        return positions;
+    }
+
+    /**
+     * Private method to find the right index of segment at the scale of this MultiRoute.
+     *
+     * @param position - double : position given in meter.
+     * @return - int : the index link to the position.
+     */
+    private int indexOfSegmentOnRoute(double position) {
+        position = Math2.clamp(0, position, length());
+        int resultSearch = Arrays.binarySearch(positions, position);
+        int segmentIndex;
+        segmentIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
+        return Math2.clamp(0, segmentIndex, segments.size() - 1);
     }
 
 }

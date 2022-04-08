@@ -86,7 +86,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
 
     public int targetNodeId(int edgeId) {
-        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) : edgesBuffer.getInt((edgeId * EDGES_INTS));
+        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) :
+                edgesBuffer.getInt((edgeId * EDGES_INTS));
     }
 
     /**
@@ -143,7 +144,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             int profile_length = (pf == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
             for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
                 for (int j = 0; j < profile_size; j++) {
-                    samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i), profile_length * (profile_size-j-1), profile_length), -4);
+                    samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i),
+                            profile_length * (profile_size-j-1), profile_length), -4);
                     if (index == samples.length-1) {
                         break;
                     }
@@ -154,32 +156,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         }
         return (isInverted(edgeId)) ? reverse(samples) : samples;
     }
-    /*public float[] profileSamples(int edgeId) {
-        int pf = extractUnsigned(profileIds.get(edgeId), 30, 2);
-        int sampleId = extractUnsigned(profileIds.get(edgeId), 0, 29);
-        int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
-        float[] samples = new float[quantity];
-        if (pf == 0) {
-            return new float[0];
-        } else if (pf == 1) {
-            for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
-                samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -4);
-            }
-        } else {
-            samples[0] = Math.scalb(toUnsignedInt(elevations.get(sampleId)), -4);
-            for (int i = sampleId + 1, j = 0, index = 1; i <= (sampleId + Math2.ceilDiv(quantity - 1, ((pf == 2) ? 2 : 4)));
-                 i = ((((pf == 2) ? 1 : 3) - j % ((pf == 2) ? 2 : 4)) == 0) ? i + 1 : i, j++, index++) {
-                samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i),
-                        ((pf == 2) ? 8 : 4) * (((pf == 2) ? 1 : 3) - j % ((pf == 2) ? 2 : 4)), (pf == 2) ? 8 : 4), -4);
-                if (index == samples.length - 1) {
-                    break;
-                }
-            }
-        }
-        return (isInverted(edgeId)) ? reverse(samples) : samples;
-    }
-
-     */
 
     /**
      * This method allows us to find the ID of a set of attribute given an edge.

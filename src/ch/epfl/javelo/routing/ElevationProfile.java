@@ -99,15 +99,7 @@ public final class ElevationProfile {
      * @return - double : The elevation at the given position.
      */
     public double elevationAt(double position) {
-        if(length < position){
-            return samples[samples.length - 1];
-        }
-        else if(position < 0){
-            return samples[0];
-        }
-        else{
             return Functions.sampled(samples, length).applyAsDouble(position);
-        }
     }
 
 
