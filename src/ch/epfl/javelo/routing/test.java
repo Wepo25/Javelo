@@ -1,7 +1,6 @@
 package ch.epfl.javelo.routing;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -13,7 +12,7 @@ public class test {
         test2 h = new test2(3);
         non.add(t);
         non.add(h);
-        oui.addAll(non, );
+        //oui.addAll(non, );
 
 
     }
