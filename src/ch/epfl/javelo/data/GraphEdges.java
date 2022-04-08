@@ -18,7 +18,27 @@ import static java.lang.Short.toUnsignedInt;
  * @author Alexandre Mourot (346365)
  */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
+
+    /**
+     * The capacity taken to represent an edge inside the buffer.
+     */
     private static final int EDGES_INTS = 10;
+
+    /**
+     * The OFFSET needed to reach the length of an edge.
+     */
+    private static final int OFFSET_LENGTH = 4;
+
+    /**
+     * The OFFSET needed to reach the elevation of an edge.
+     */
+    private static final int OFFSET_ELEVATION = 6;
+
+    /**
+     * The OFFSET needed to reach the AttributeSet of an edge.
+     */
+    private static final int OFFSET_ATTRIBUTE = 8;
+
 
     /**
      * This method allows us to know if an edge goes in the same direction as the OMS path it comes from.
@@ -36,8 +56,9 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
      * @return - int : The ID of the destination node of the given edge.
      */
+
     public int targetNodeId(int edgeId) {
-        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) : edgesBuffer.getInt((edgeId * 10));
+        return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) : edgesBuffer.getInt((edgeId * EDGES_INTS));
     }
 
     /**
@@ -47,7 +68,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - double : The length in meter of the given edge.
      */
     public double length(int edgeId) {
-        return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort(EDGES_INTS * edgeId + 4)));
+        return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort(EDGES_INTS * edgeId + OFFSET_LENGTH)));
     }
 
     /**
@@ -57,7 +78,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - double : The positive difference in altitude of the given edge.
      */
     public double elevationGain(int edgeId) {
-        return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + 6))));
+        return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + OFFSET_ELEVATION))));
     }
 
     /**
@@ -96,7 +117,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                 if (index == samples.length - 1) {
                     break;
                 }
-
             }
         }
         return (isInverted(edgeId)) ? reverse(samples) : samples;
@@ -109,7 +129,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - int : The ID of the set of attributes of the given edge.
      */
     public int attributesIndex(int edgeId) {
-        return toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + 8)));
+        return toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + OFFSET_ATTRIBUTE)));
     }
 
     /**
