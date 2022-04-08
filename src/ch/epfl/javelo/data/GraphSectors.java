@@ -17,11 +17,34 @@ import static ch.epfl.javelo.Math2.clamp;
  */
 public record GraphSectors(ByteBuffer buffer) {
 
+    /**
+     * The number of sector by side of the Swiss cartography.
+     */
     private static final int SECTOR_BY_SIDE = 128;
+
+    /**
+     * The Offset to reach the starting node of a sector.
+     */
     private static final int OFFSET_NODE1 = 0;
+
+    /**
+     * The Offset to reach the number of node in the sector.
+     */
     private static final int OFFSET_LENGTH = OFFSET_NODE1 + Integer.BYTES;
+
+    /**
+     * The capacity taken by a sector inside the buffer.
+     */
     private static final int SECTOR_INTS = OFFSET_LENGTH + Short.BYTES;
+
+    /**
+     * The sector's length.
+     */
     private static final double SectorsLength = SwissBounds.WIDTH / SECTOR_BY_SIDE;
+
+    /**
+     * The sector's height.
+     */
     private static final double SectorsHeight = SwissBounds.HEIGHT / SECTOR_BY_SIDE;
 
     /**

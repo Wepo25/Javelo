@@ -13,9 +13,24 @@ import java.nio.IntBuffer;
  */
 public record GraphNodes(IntBuffer buffer) {
 
+    /**
+     * The Offset to access the East coordinate.
+     */
     private static final int OFFSET_E = 0;
+
+    /**
+     * The Offset to access the North coordinate.
+     */
     private static final int OFFSET_N = OFFSET_E + 1;
+
+    /**
+     * The Offset to access the number of leaving edges from a node.
+     */
     private static final int OFFSET_OUT_EDGES = OFFSET_N + 1;
+
+    /**
+     * The capacity taken to represent a node inside the buffer.
+     */
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
 
     /**
