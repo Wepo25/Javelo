@@ -19,7 +19,7 @@ public final class Stage6Test {
         CostFunction cf = new CityBikeCF(g);
         RouteComputer rc = new RouteComputer(g, cf);
         long t0 = System.nanoTime();
-        Route r = rc.bestRouteBetween(149195, 153181);
+        Route r = rc.bestRouteBetween(2046055, 2694240);
         System.out.printf("Itinéraire calculé en %d ms\n",
                 (System.nanoTime() - t0) / 1_000_000);
         KmlPrinter.write("test/ch/epfl/javelo/routing/RouteComputerTests/javeloCH_WEST.kml", r);

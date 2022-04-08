@@ -72,8 +72,8 @@ public final class RouteComputer {
                 if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
                     float dd = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
-                    if (dd < distance[NP]) {
-                        distance[NP] = dd;
+                    if (d < distance[NP]) {
+                        distance[NP] = d;
                         predecessor[NP] = id;
                         p.add(new WeightedNode(NP, dd));
                     }
