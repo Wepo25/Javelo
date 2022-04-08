@@ -154,32 +154,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         }
         return (isInverted(edgeId)) ? reverse(samples) : samples;
     }
-    /*public float[] profileSamples(int edgeId) {
-        int pf = extractUnsigned(profileIds.get(edgeId), 30, 2);
-        int sampleId = extractUnsigned(profileIds.get(edgeId), 0, 29);
-        int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
-        float[] samples = new float[quantity];
-        if (pf == 0) {
-            return new float[0];
-        } else if (pf == 1) {
-            for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
-                samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -4);
-            }
-        } else {
-            samples[0] = Math.scalb(toUnsignedInt(elevations.get(sampleId)), -4);
-            for (int i = sampleId + 1, j = 0, index = 1; i <= (sampleId + Math2.ceilDiv(quantity - 1, ((pf == 2) ? 2 : 4)));
-                 i = ((((pf == 2) ? 1 : 3) - j % ((pf == 2) ? 2 : 4)) == 0) ? i + 1 : i, j++, index++) {
-                samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i),
-                        ((pf == 2) ? 8 : 4) * (((pf == 2) ? 1 : 3) - j % ((pf == 2) ? 2 : 4)), (pf == 2) ? 8 : 4), -4);
-                if (index == samples.length - 1) {
-                    break;
-                }
-            }
-        }
-        return (isInverted(edgeId)) ? reverse(samples) : samples;
-    }
-
-     */
 
     /**
      * This method allows us to find the ID of a set of attribute given an edge.

@@ -53,6 +53,7 @@ public final class ElevationProfileComputer {
             indexes.add(0);
         }
 
+        //Taking the indexes of values surrounding NaNs to facilitate interpolation.
         for (int i = 1; i < samples.length - 1; i++) {
             if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                 indexes.add(i);
@@ -65,6 +66,7 @@ public final class ElevationProfileComputer {
             indexes.add(samples.length - 1);
         }
 
+        //Interpolating
         for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
             int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
             DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)], samples[indexes.get(2 * i + 1)]}, quantity);

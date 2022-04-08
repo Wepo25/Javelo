@@ -54,36 +54,40 @@ public final class RouteComputer {
         Arrays.fill(distance, Float.POSITIVE_INFINITY);
         distance[startNodeId] = 0;
 
-        PriorityQueue<WeightedNode> p = new PriorityQueue<>();
+        PriorityQueue<WeightedNode> exploringNodes = new PriorityQueue<WeightedNode>();
         List<Integer> nodePath = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
 
-        p.add(new WeightedNode(startNodeId, distance[startNodeId]));
+        exploringNodes.add(new WeightedNode(startNodeId, distance[startNodeId]));
 
         do {
-            int id = p.remove().nodeId;
+            int id = exploringNodes.remove().nodeId;
             if (id == endNodeId) {
                 break;
             }
             int quantity = graph.nodeOutDegree(id);
+            if(Float.NEGATIVE_INFINITY == distance[id]){
+                continue;
+            }
             for (int i = 0; i < quantity; i++) {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
-                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
+                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0) {
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float dd = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
+                    float distanceBirdFliies = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
                     if (d < distance[NP]) {
                         distance[NP] = d;
                         predecessor[NP] = id;
-                        p.add(new WeightedNode(NP, dd));
+                        exploringNodes.add(new WeightedNode(NP, distanceBirdFliies));
                     }
                 }
             }
             distance[id] = Float.NEGATIVE_INFINITY;
-        } while (!p.isEmpty());
+        } while (!exploringNodes.isEmpty());
 
         int i = endNodeId;
         nodePath.add(i);
 
+        //Extracting the correct path looking backward on predecessors.
         while (i != 0) {
             i = predecessor[i];
             nodePath.add(i);
@@ -91,6 +95,7 @@ public final class RouteComputer {
 
         Collections.reverse(nodePath);
 
+        //Computing the edges between each node.
         for (int j = 1; j < nodePath.size() - 1; j++) {
             boolean found = false;
             int edgeID = 0;
@@ -103,6 +108,7 @@ public final class RouteComputer {
             }
 
         }
+
         if(edges.isEmpty()){
             return null;
         }
