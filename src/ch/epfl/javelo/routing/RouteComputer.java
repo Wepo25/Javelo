@@ -102,6 +102,9 @@ public final class RouteComputer {
             }
 
         }
+        if(edges.isEmpty()){
+            return null;
+        }
         return new SingleRoute(edges);
     }
 }

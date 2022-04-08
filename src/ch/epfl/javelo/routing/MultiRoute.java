@@ -5,6 +5,7 @@ import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,17 +51,12 @@ public final class MultiRoute implements Route {
      * @param position - double : position given in meter.
      * @return - int : the index link to the position.
      */
-    private int indexOfSegmentOnRoute(double position) { // refaire + comme SingleRoute binary
+    private int indexOfSegmentOnRoute(double position) {
         position = Math2.clamp(0, position, length());
-        double distance = 0;
-        for (Route route : segments) {
-            if (distance + route.length() >= position) {
-                return segments.indexOf(route);
-            } else {
-                distance += route.length();
-            }
-        }
-        return -1;
+        int resultSearch = Arrays.binarySearch(positions, position);
+        int segmentIndex;
+        segmentIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
+        return Math2.clamp(0, segmentIndex, segments.size() - 1);
     }
 
     /**

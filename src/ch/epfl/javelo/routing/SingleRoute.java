@@ -22,15 +22,15 @@ public final class SingleRoute implements Route {
     private final double[] positions;
 
     /**
-     * This method constructs a SingleRoute with the list of edges given and a table
-     * containing the length at each edge position.
-     *
+     * This method constructs a SingleRoute with a list of edges (edges) given and a table
+     * containing the length at each edge position (positions).
      */
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
         positions = createPositions(edges);
     }
+
 
     private double[] createPositions(List<Edge> edges) {
         final double[] positions;
