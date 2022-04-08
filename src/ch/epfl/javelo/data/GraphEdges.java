@@ -39,6 +39,26 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     private static final int OFFSET_ATTRIBUTE = 8;
 
+    /**
+     * The number of samples of a profile 2 edge stored inside 16 bits.
+     */
+    private static final int SAMPLE_PROFILE_2 = 2;
+
+    /**
+     * The number of samples of a profile 3 edge stored inside 16 bits.
+     */
+    private static final int SAMPLE_PROFILE_3 = 4;
+
+    /**
+     * The OFFSET needed to collect each sample for a profile 2 edge.
+     */
+    private static final int EXTRACT_PROFILE_2 = 8;
+
+    /**
+     * The OFFSET needed to collect each sample for a profile 2 edge.
+     */
+    private static final int EXTRACT_PROFILE_3 = 4;
+
 
     /**
      * This method allows us to know if an edge goes in the same direction as the OMS path it comes from.
@@ -110,6 +130,35 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             }
         } else {
             samples[0] = Math.scalb(toUnsignedInt(elevations.get(sampleId)), -4);
+            int index = 1;
+            int profile_size = (pf == 2)? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
+            int profile_length = (pf == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
+            for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
+                for (int j = 0; j < profile_size; j++) {
+                    samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i), profile_length * (profile_size-j-1), profile_length), -4);
+                    if (index == samples.length-1) {
+                        break;
+                    }
+                    index++;
+                }
+
+            }
+        }
+        return (isInverted(edgeId)) ? reverse(samples) : samples;
+    }
+    /*public float[] profileSamples(int edgeId) {
+        int pf = extractUnsigned(profileIds.get(edgeId), 30, 2);
+        int sampleId = extractUnsigned(profileIds.get(edgeId), 0, 29);
+        int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
+        float[] samples = new float[quantity];
+        if (pf == 0) {
+            return new float[0];
+        } else if (pf == 1) {
+            for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
+                samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -4);
+            }
+        } else {
+            samples[0] = Math.scalb(toUnsignedInt(elevations.get(sampleId)), -4);
             for (int i = sampleId + 1, j = 0, index = 1; i <= (sampleId + Math2.ceilDiv(quantity - 1, ((pf == 2) ? 2 : 4)));
                  i = ((((pf == 2) ? 1 : 3) - j % ((pf == 2) ? 2 : 4)) == 0) ? i + 1 : i, j++, index++) {
                 samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i),
@@ -121,6 +170,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         }
         return (isInverted(edgeId)) ? reverse(samples) : samples;
     }
+
+     */
 
     /**
      * This method allows us to find the ID of a set of attribute given an edge.

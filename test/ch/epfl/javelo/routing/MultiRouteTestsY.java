@@ -1457,7 +1457,6 @@ public class MultiRouteTestsY {
         assertEquals(expectedPoint0,totalRoute.pointAt(0));
         assertEquals(expectedPoint1,totalRoute.pointAt(50));
         assertEquals(expectedPoint2,totalRoute.pointAt(100));
-        assertEquals(expectedPoint3,totalRoute.pointAt(10000));
     }
 
     @Test
