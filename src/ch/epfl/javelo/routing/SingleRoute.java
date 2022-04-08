@@ -30,9 +30,6 @@ public final class SingleRoute implements Route {
         positions = createPositions(edges);
     }
 
-
-
-
     /**
      * This method is not usefull for this type of route which contain only one segment.
      * @param position - double : position given in meter.
@@ -97,7 +94,6 @@ public final class SingleRoute implements Route {
         return edges.get(edgeIndex).pointAt(newPos);
     }
 
-
     /**
      * This method allows us to get the height for a given position along the route.
      *
@@ -127,8 +123,6 @@ public final class SingleRoute implements Route {
         return (diff1 <= diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
-
-
     /**
      * This method allows us to get the point closest to an other given point.
      *
@@ -148,6 +142,11 @@ public final class SingleRoute implements Route {
         return closest;
     }
 
+    /**
+     * This method create an Array containing the length at a certain edge.
+     * @param edges - List<Edge> : list of edge contained in this.
+     * @return - double[] : the Array containing the lengths of at edge index.
+     */
     private double[] createPositions(List<Edge> edges) {
         final double[] positions;
         double length = 0;
@@ -160,6 +159,12 @@ public final class SingleRoute implements Route {
         return positions;
     }
 
+    /**
+     * This method allows us to find the edge index at a given positions.
+     *
+     * @param position - double : position.
+     * @return - int : the index of the edge.
+     */
     private int edgeIndex(double position) {
         position = Math2.clamp(0, position, length());
         int resultSearch = Arrays.binarySearch(positions, position);
@@ -167,5 +172,4 @@ public final class SingleRoute implements Route {
         edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
         return Math2.clamp(0, edgeIndex, edges.size() - 1);
     }
-
 }
