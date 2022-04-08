@@ -1,5 +1,6 @@
 package ch.epfl.javelo.routing;
 
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
 
@@ -70,10 +71,11 @@ public final class RouteComputer {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 && Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    if (d < distance[NP]) {
-                        distance[NP] = d;
+                    float dd = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
+                    if (dd < distance[NP]) {
+                        distance[NP] = dd;
                         predecessor[NP] = id;
-                        p.add(new WeightedNode(NP, d));
+                        p.add(new WeightedNode(NP, dd));
                     }
                 }
             }
