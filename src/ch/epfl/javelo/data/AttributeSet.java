@@ -16,7 +16,8 @@ public record AttributeSet(long bits) {
      * Constructor checking the validity of its argument.
      *
      * @param bits - long : A long containing the indexes of different Attributes.
-     * @throws IllegalArgumentException (checkArgument) : Throws an exception if one of the indexes is greater than the number of Attributes.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if one of the
+     * indexes is greater than the number of Attributes.
      */
     public AttributeSet {
 
@@ -66,11 +67,10 @@ public record AttributeSet(long bits) {
     @Override
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
-        String bitsToString = Long.toBinaryString(bits);
-        for (int i = 0; i < bitsToString.length(); i++) {
-            if (bitsToString.charAt(bitsToString.length() - 1 - i) == '1') {
-                j.add((Attribute.ALL.get(i)).keyValue());
-            }
+        for (Attribute attribute : Attribute.ALL) {
+           if (this.contains(attribute)){
+               j.add(attribute.toString());
+           }
         }
         return j.toString();
     }

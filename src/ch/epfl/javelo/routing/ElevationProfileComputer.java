@@ -69,7 +69,8 @@ public final class ElevationProfileComputer {
         //Interpolating
         for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
             int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
-            DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)], samples[indexes.get(2 * i + 1)]}, quantity);
+            DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
+                    samples[indexes.get(2 * i + 1)]}, quantity);
             for (int j = 1; j < quantity; j++) {
                 samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
             }

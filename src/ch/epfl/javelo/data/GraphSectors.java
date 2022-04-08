@@ -15,7 +15,7 @@ import static ch.epfl.javelo.Math2.clamp;
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  *
- * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes .
+ * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes.
  */
 public record GraphSectors(ByteBuffer buffer) {
 
@@ -57,9 +57,6 @@ public record GraphSectors(ByteBuffer buffer) {
      * @return - List<Sector> : A list containing all sectors includes into the square ( dimensions distance*2 and centered on center).
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
-        if (distance == 0) {
-            distance = 1;
-        }
 
         double XMax = clamp(SwissBounds.MIN_E, center.e() + distance, SwissBounds.MAX_E);
         double XMin = clamp(SwissBounds.MIN_E, center.e() - distance, SwissBounds.MAX_E);
