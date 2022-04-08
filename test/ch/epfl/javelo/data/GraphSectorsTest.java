@@ -1,16 +1,13 @@
 package ch.epfl.javelo.data;
 
 import ch.epfl.javelo.projection.PointCh;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
-import java.util.BitSet;
 import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraphSectorsTest {
     private static final double SWISS_MIN_E = 2_485_000;
@@ -128,7 +125,7 @@ class GraphSectorsTest {
         var sectors = graphSectors.sectorsInArea(new PointCh(e, n), d);
         assertEquals(List.of(new GraphSectors.Sector(0, maxSectorSize)), sectors);
     }
-
+/*
     @Disabled
     @Test
     void graphSectorsSectorsInAreaWorksForAllOfThem() {
@@ -145,4 +142,5 @@ class GraphSectorsTest {
         }
         assertEquals(0, expectedSectors.cardinality());
     }
+*/
 }

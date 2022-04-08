@@ -66,11 +66,10 @@ public record AttributeSet(long bits) {
     @Override
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
-        String bitsToString = Long.toBinaryString(bits);
-        for (int i = 0; i < bitsToString.length(); i++) {
-            if (bitsToString.charAt(bitsToString.length() - 1 - i) == '1') {
-                j.add((Attribute.ALL.get(i)).keyValue());
-            }
+        for (Attribute attribute : Attribute.ALL) {
+           if (this.contains(attribute)){
+               j.add(attribute.toString());
+           }
         }
         return j.toString();
     }
