@@ -16,7 +16,7 @@ public record AttributeSet(long bits) {
      * Constructor checking the validity of its argument.
      *
      * @param bits - long : A long containing the indexes of different Attributes.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if one of the indexes is greater than the number of Attributes.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if one of the indexes is greater than the number of Attributes.
      */
     public AttributeSet {
 

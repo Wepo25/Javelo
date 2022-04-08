@@ -47,7 +47,6 @@ public final class Graph {
      * @return - Graph : A graph composed of the extracted data.
      * @throws IOException : Throws an exception if it was unable to open the given file.
      */
-
     public static Graph loadFrom(Path basePath) throws IOException {
         IntBuffer nodes = tryAndOpen(basePath.resolve("nodes.bin")).asIntBuffer();
         ByteBuffer sectors = tryAndOpen(basePath.resolve("sectors.bin")).asReadOnlyBuffer();
@@ -118,13 +117,12 @@ public final class Graph {
         return nodes.edgeId(nodeId, edgeIndex);
     }
 
-    //TODO
     /**
      * This method allows us to determine the closest node to a given point at a given distance.
      *
      * @param point - PointCh : The point from which we're trying to determine the closest node.
-     * @param searchDistance - double :
-     * @return
+     * @param searchDistance - double : The search distance.
+     * @return - int : The identity of the closest node to the given point, or -1 if no nodes satisfy criteria.
      */
     public int nodeClosestTo(PointCh point, double searchDistance) {
         int closestNodeId = -1;
