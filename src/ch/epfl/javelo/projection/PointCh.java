@@ -20,7 +20,7 @@ public record PointCh(double e, double n) {
      *
      * @param e - double : The point's East coordinate in the Swiss system.
      * @param n - double : The point's North coordinate in the Swiss system.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if the point is not located in Switzerland.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if the point is not located in Switzerland.
      */
     public PointCh {
         checkArgument(SwissBounds.containsEN(e, n));

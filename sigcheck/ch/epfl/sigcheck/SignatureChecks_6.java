@@ -5,7 +5,7 @@ package ch.epfl.sigcheck;
 // possible, que les noms et les types des différentes entités à définir
 // pour cette étape du projet sont corrects.
 
-import ch.epfl.javelo.routing.RouteComputerNON_OPTI;
+import ch.epfl.javelo.routing.RouteComputer;
 
 final class SignatureChecks_6 {
     private SignatureChecks_6() {}
@@ -23,7 +23,7 @@ final class SignatureChecks_6 {
     }
 
     void checkRouteComputer() throws Exception {
-        v09 = new RouteComputerNON_OPTI(v10, v11);
+        v09 = new RouteComputer(v10, v11);
         v12 = v09.bestRouteBetween(v05, v05);
     }
 
@@ -35,7 +35,7 @@ final class SignatureChecks_6 {
     ch.epfl.javelo.projection.PointCh v06;
     ch.epfl.javelo.routing.RoutePoint v07;
     java.util.List<ch.epfl.javelo.projection.PointCh> v08;
-    RouteComputerNON_OPTI v09;
+    RouteComputer v09;
     ch.epfl.javelo.data.Graph v10;
     ch.epfl.javelo.routing.CostFunction v11;
     ch.epfl.javelo.routing.Route v12;

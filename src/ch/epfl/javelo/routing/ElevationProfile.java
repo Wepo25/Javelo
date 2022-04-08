@@ -20,8 +20,10 @@ public final class ElevationProfile {
     /**
      * This method is the constructor of the ElevationProfile class.
      *
-     * @param length - double : The length of our sequence of elevations.
+     * @param length           - double : The length of our sequence of elevations.
      * @param elevationSamples - float[] : The sequence of elevations.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if the length is negative or the
+     *                                  sequence of elevations contain less than two elements.
      */
     public ElevationProfile(double length, float[] elevationSamples) {
         Preconditions.checkArgument(length > 0 && elevationSamples.length >= 2);

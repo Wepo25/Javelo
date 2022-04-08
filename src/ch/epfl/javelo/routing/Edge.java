@@ -9,6 +9,12 @@ import java.util.function.DoubleUnaryOperator;
 /**
  * A record representing an edge.
  *
+ * @param fromNodeId - int : Edge's starting nodeIdentity.
+ * @param toNodeId   - int : Edge's final nodeIdentity.
+ * @param fromPoint  - PointCh : Edge's first PointCh.
+ * @param toPoint    - PointCh : Edge's last PointCh.
+ * @param length     - double : Edge's length.
+ * @param profile    - DoubleUnaryOperator : Function giving the profile of the edge.
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
