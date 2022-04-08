@@ -22,7 +22,7 @@ public class Math2 {
      * @param x - int : the numerator.
      * @param y - int : the denominator.
      * @return - int : The upper-bound of the division x/y.
-     * @throw IllegalArgumentException - checkArgument : Throws an exception if at least one of the value is negative or equal to zero.
+     * @throws IllegalArgumentException - checkArgument : Throws an exception if at least one of the value is negative or equal to zero.
      */
     public static int ceilDiv(int x, int y) {
         checkArgument(!(y <= 0 || x < 0));

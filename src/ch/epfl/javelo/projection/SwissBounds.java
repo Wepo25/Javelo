@@ -1,7 +1,7 @@
 package ch.epfl.javelo.projection;
 
 /**
- * This class contains values and function to describe the geographic limit of the Swiss.
+ * This not instantiable class contains values and function to describe the geographic limit of the Swiss.
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)

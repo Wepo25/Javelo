@@ -26,6 +26,8 @@ public final class MultiRoute implements Route {
      * This method constructs a MultiRoute with a list of Route given ,and a table (positions)
      * containing the length at each segment positions.
      *
+     * @param segments - List<Route> : List containing all the segments constituting this route.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception is the list of segment given is empty.
      */
     public MultiRoute(List<Route> segments) {
         Preconditions.checkArgument(!segments.isEmpty());
@@ -46,7 +48,7 @@ public final class MultiRoute implements Route {
     }
 
     /**
-     * Private method to optimize finding the right index of segment at the scale of this MultiRoute.
+     * Private method to find the right index of segment at the scale of this MultiRoute.
      *
      * @param position - double : position given in meter.
      * @return - int : the index link to the position.

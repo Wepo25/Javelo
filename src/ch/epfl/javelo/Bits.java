@@ -23,7 +23,7 @@ public final class Bits {
      * @param start  - int : The index at which we start extracting the bits.
      * @param length - int : The length of the bit extraction.
      * @return - int : The signed representation of the extracted bits.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
      */
     public static int extractSigned(int value, int start, int length) {
         checkArgument((start + length) <= 32 && start <= 31 && start >= 0 &&

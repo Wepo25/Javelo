@@ -25,9 +25,11 @@ public final class ElevationProfileComputer {
     /**
      * This method allows us to build an ElevationProfile while interpolating the missing data.
      *
-     * @param route - Route : The route of which we compute the ElevationProfile.
+     * @param route         - Route : The route of which we compute the ElevationProfile.
      * @param maxStepLength - double : The gap between edges.
      * @return - ElevationProfile : The ElevationProfile associated to the given route.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if
+     *                                  the gap between two edges is negative or null.
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);

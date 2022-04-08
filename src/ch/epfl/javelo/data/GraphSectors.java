@@ -14,6 +14,8 @@ import static ch.epfl.javelo.Math2.clamp;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes .
  */
 public record GraphSectors(ByteBuffer buffer) {
 
@@ -85,6 +87,9 @@ public record GraphSectors(ByteBuffer buffer) {
 
     /**
      * Record of a sector with the first node and the one after the last node in attributes.
+     *
+     * @param startNodeId - int : The first node's identity of the sector.
+     * @param endNodeId - int : The identity of the node after the last of the sector.
      */
     public record Sector(int startNodeId, int endNodeId) {
     }
