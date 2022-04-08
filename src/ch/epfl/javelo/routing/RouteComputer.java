@@ -73,11 +73,11 @@ public final class RouteComputer {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0) {
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float distanceBirdFliies = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
+                    float distanceBirdFlies = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
                     if (d < distance[NP]) {
                         distance[NP] = d;
                         predecessor[NP] = id;
-                        exploringNodes.add(new WeightedNode(NP, distanceBirdFliies));
+                        exploringNodes.add(new WeightedNode(NP, distanceBirdFlies));
                     }
                 }
             }

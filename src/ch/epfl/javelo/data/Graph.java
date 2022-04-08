@@ -65,7 +65,6 @@ public final class Graph {
     }
 
 
-
     /**
      * This method allows us to know the number of nodes in this graph.
      * @return - int : The number of nodes in this graph.

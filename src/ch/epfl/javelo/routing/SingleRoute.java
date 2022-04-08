@@ -31,25 +31,7 @@ public final class SingleRoute implements Route {
     }
 
 
-    private double[] createPositions(List<Edge> edges) {
-        final double[] positions;
-        double length = 0;
-        positions = new double[edges.size() + 1];
-        positions[0] = 0;
-        for (int i = 0; i < edges().size(); i++) {
-            length += edges.get(i).length();
-            positions[i + 1] = length;
-        }
-        return positions;
-    }
 
-    private int edgeIndex(double position) {
-        position = Math2.clamp(0, position, length());
-        int resultSearch = Arrays.binarySearch(positions, position);
-        int edgeIndex;
-        edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
-        return Math2.clamp(0, edgeIndex, edges.size() - 1);
-    }
 
     /**
      * This method is not usefull for this type of route which contain only one segment.
@@ -164,6 +146,26 @@ public final class SingleRoute implements Route {
                     point.distanceTo(edge.pointAt(actualPosition)));
         }
         return closest;
+    }
+
+    private double[] createPositions(List<Edge> edges) {
+        final double[] positions;
+        double length = 0;
+        positions = new double[edges.size() + 1];
+        positions[0] = 0;
+        for (int i = 0; i < edges().size(); i++) {
+            length += edges.get(i).length();
+            positions[i + 1] = length;
+        }
+        return positions;
+    }
+
+    private int edgeIndex(double position) {
+        position = Math2.clamp(0, position, length());
+        int resultSearch = Arrays.binarySearch(positions, position);
+        int edgeIndex;
+        edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
+        return Math2.clamp(0, edgeIndex, edges.size() - 1);
     }
 
 }
