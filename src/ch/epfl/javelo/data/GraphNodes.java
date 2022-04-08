@@ -10,6 +10,8 @@ import java.nio.IntBuffer;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param buffer - IntBuffer : Buffer containing nodes attributes.
  */
 public record GraphNodes(IntBuffer buffer) {
 

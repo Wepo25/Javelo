@@ -14,6 +14,8 @@ import static ch.epfl.javelo.Math2.clamp;
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
+ *
+ * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes .
  */
 public record GraphSectors(ByteBuffer buffer) {
 
