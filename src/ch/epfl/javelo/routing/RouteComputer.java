@@ -54,40 +54,38 @@ public final class RouteComputer {
         Arrays.fill(distance, Float.POSITIVE_INFINITY);
         distance[startNodeId] = 0;
 
-        PriorityQueue<WeightedNode> exploringNodes = new PriorityQueue<WeightedNode>();
+        PriorityQueue<WeightedNode> p = new PriorityQueue<>();
         List<Integer> nodePath = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
 
-        exploringNodes.add(new WeightedNode(startNodeId, distance[startNodeId]));
+        p.add(new WeightedNode(startNodeId, distance[startNodeId]));
 
         do {
-            int id = exploringNodes.remove().nodeId;
+            int id = p.remove().nodeId;
             if (id == endNodeId) {
                 break;
             }
             int quantity = graph.nodeOutDegree(id);
-            if(Float.NEGATIVE_INFINITY == distance[id]){
-                continue;
-            }
             for (int i = 0; i < quantity; i++) {
                 int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
-                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0) {
-                    float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float distanceBirdFlies = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
+                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 &&
+                        Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
+                    float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
+                            * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
+                    float dd = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
                     if (d < distance[NP]) {
                         distance[NP] = d;
                         predecessor[NP] = id;
-                        exploringNodes.add(new WeightedNode(NP, distanceBirdFlies));
+                        p.add(new WeightedNode(NP, dd));
                     }
                 }
             }
             distance[id] = Float.NEGATIVE_INFINITY;
-        } while (!exploringNodes.isEmpty());
+        } while (!p.isEmpty());
 
         int i = endNodeId;
         nodePath.add(i);
 
-        //Extracting the correct path looking backward on predecessors.
         while (i != 0) {
             i = predecessor[i];
             nodePath.add(i);
@@ -95,20 +93,19 @@ public final class RouteComputer {
 
         Collections.reverse(nodePath);
 
-        //Computing the edges between each node.
         for (int j = 1; j < nodePath.size() - 1; j++) {
             boolean found = false;
             int edgeID = 0;
             while (!found) {
                 if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(nodePath.get(j), edgeID)) == nodePath.get(j + 1)) {
-                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(nodePath.get(j), edgeID), nodePath.get(j), nodePath.get(j + 1)));
+                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(nodePath.get(j), edgeID), nodePath.get(j),
+                            nodePath.get(j + 1)));
                     found = true;
                 }
                 edgeID++;
             }
 
         }
-
         if(edges.isEmpty()){
             return null;
         }

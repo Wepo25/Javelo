@@ -159,6 +159,11 @@ public final class MultiRoute implements Route {
         return points;
     }
 
+    /**
+     * This method create an Array containing the length at a certain segment.
+     * @param segments - List<Route> : list of route contained in this.
+     * @return - double[] : the Array containing the lengths of at segment index.
+     */
     private double[] createPositions(List<Route> segments) {
         final double[] positions;
         double length = 0;
