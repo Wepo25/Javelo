@@ -15,10 +15,11 @@ import java.util.Map;
 import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 
 public final class TileManager {
-
+    private static final int MAX_CAP_MEMORY = 100;
     private final Path path;
     private final String serv;
-    private final LinkedHashMap<TileId, Image> cacheMemory = new LinkedHashMap<>(100, 1, true);//Map a la place tuileID et image?
+    private final LinkedHashMap<TileId, Image> cacheMemory =
+            new LinkedHashMap<>(MAX_CAP_MEMORY, 1, true);
 
     public TileManager(Path path, String serv) {
         this.path = path;
@@ -50,10 +51,10 @@ public final class TileManager {
                 i.transferTo(t);
                 Image newImage = new Image(i);
                 int counter = 0;
-                if (cacheMemory.size() == 100) {
+                if (cacheMemory.size() == MAX_CAP_MEMORY) {
                     for (Map.Entry<TileId, Image> e : cacheMemory.entrySet()) {
                         ++counter;
-                        if (counter == 100)
+                        if (counter == MAX_CAP_MEMORY)
                             cacheMemory.remove(e.getKey());
                     }
 
