@@ -1,7 +1,5 @@
 package ch.epfl.javelo;
 
-
-
 /**
  * This final not instantiable allows us to represent the Q_28 representation and to switch between it and classic representations.
  *
