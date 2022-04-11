@@ -47,7 +47,6 @@ public final class TileManager {
             c.setRequestProperty("User-Agent", "JaVelo");
             try (InputStream i = c.getInputStream();
                  OutputStream t = new FileOutputStream(fullPath.toString())) {
-                //create the directorie and add the image created thanks to the url.
                 i.transferTo(t);
                 Image newImage = new Image(i);
                 int counter = 0;
