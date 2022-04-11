@@ -30,7 +30,6 @@ public final class TileManager {
         Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
         String partialPath = "/" + tileId.zoomLevel + "/" + tileId.xTile + "/" + tileId.yTile + ".png";
-
         if (cacheMemory.containsKey(tileId)) {
             return cacheMemory.get(tileId);
         }
@@ -50,7 +49,6 @@ public final class TileManager {
                 //create the directorie and add the image created thanks to the url.
                 i.transferTo(t);
                 Image newImage = new Image(i);
-                cacheMemory.put(tileId, newImage);
                 int counter = 0;
                 if (cacheMemory.size() == 100) {
                     for (Map.Entry<TileId, Image> e : cacheMemory.entrySet()) {
@@ -58,8 +56,8 @@ public final class TileManager {
                         if (counter == 100)
                             cacheMemory.remove(e.getKey());
                     }
-                    cacheMemory.put(tileId, newImage);
-                }
+
+                }cacheMemory.put(tileId, newImage);
                 return newImage;
             }
         }
