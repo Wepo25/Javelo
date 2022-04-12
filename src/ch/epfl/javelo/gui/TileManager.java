@@ -42,13 +42,13 @@ public final class TileManager {
      * This record represent a TileId useful to identify a Tile thanks to zoomLevel, x and y coordinate.
      *
      * @param zoomLevel - int : the zoomLevel.
-     * @param xTile - int : the x coordinate of the Tile.
-     * @param yTile - int : the y coordinate of the Tile.
+     * @param xTile     - int : the x coordinate of the Tile.
+     * @param yTile     - int : the y coordinate of the Tile.
      */
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
         public static boolean isValid(int zoom, int x, int y) {
-            return !((x > (1<<zoom) ) || y > (1<<zoom)) && (x > 0) && (y > 0);
+            return !((x > (1 << zoom)) || y > (1 << zoom)) && (x > 0) && (y > 0);
         }
     }
 
@@ -60,43 +60,35 @@ public final class TileManager {
      * @throws IOException : Throw an exception if the TileId is not valid.
      */
     public Image imageForTileAt(TileId tileId) throws IOException {
+
         Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
-        String partialPath = "/" + tileId.zoomLevel + "/" + tileId.xTile + "/" + tileId.yTile + ".png";
-        if (cacheMemory.containsKey(tileId)) { return cacheMemory.get(tileId); }
         Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
-                resolve(String.valueOf(tileId.xTile)).resolve(tileId.xTile+".png");
+                resolve(String.valueOf(tileId.xTile)).resolve(tileId.xTile + ".png");
 
-        if (Files.exists(fullPath)) {
-            try (FileInputStream accessImage = new FileInputStream(fullPath.toString())) {
-                return new Image(accessImage);
+        if (!cacheMemory.containsKey(tileId)) {
+
+            if (!Files.exists(fullPath)) {
+                Files.createDirectories(fullPath.getParent());
+                URL u = new URL("https://" + serv +"/" + tileId.zoomLevel
+                        + "/" + tileId.xTile + "/" + tileId.yTile + ".png");
+                URLConnection c = u.openConnection();
+                c.setRequestProperty("User-Agent", "JaVelo");
+
+                try (InputStream i = c.getInputStream();
+                     OutputStream t = new FileOutputStream(fullPath.toString())) {
+                    i.transferTo(t);
+                }
             }
-        }
-
-        return stockImage(tileId, partialPath, fullPath);
-    }
-
-    private Image stockImage(TileId tileId, String partialPath, Path fullPath) throws IOException {
-
-        Files.createDirectories(Path.of(path + "/" + tileId.zoomLevel + "/" + tileId.xTile));
-
-        URL u = new URL("https://" + serv + partialPath);
-        URLConnection c = u.openConnection();
-        c.setRequestProperty("User-Agent", "JaVelo");
-
-        try (InputStream i = c.getInputStream();
-             OutputStream t = new FileOutputStream(fullPath.toString())) {
-            i.transferTo(t);
-
-            if (cacheMemory.size() == MAX_CAP_MEMORY) {
-                TileId toRemove = cacheMemory.keySet().iterator().next();
-                cacheMemory.remove(toRemove);
+                try(InputStream i = new FileInputStream(fullPath.toString())){
+                    Image newImage = new Image(i);
+                    if (cacheMemory.size() == MAX_CAP_MEMORY) {
+                        TileId toRemove = cacheMemory.keySet().iterator().next();
+                        cacheMemory.remove(toRemove);
+                    }
+                    cacheMemory.put(tileId, newImage);
             }
+        } return cacheMemory.get(tileId);
 
-            Image newImage = new Image(i);
-            cacheMemory.put(tileId, newImage);
-            return newImage;
-
-        }
     }
 }
