@@ -10,7 +10,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 
@@ -19,7 +18,7 @@ public final class TileManager {
     private final Path path;
     private final String serv;
     private final LinkedHashMap<TileId, Image> cacheMemory =
-            new LinkedHashMap<>(MAX_CAP_MEMORY, 1, true);
+            new LinkedHashMap<>(MAX_CAP_MEMORY, 0.75f, true);
 
     public TileManager(Path path, String serv) {
         this.path = path;
@@ -34,12 +33,13 @@ public final class TileManager {
         if (cacheMemory.containsKey(tileId)) {
             return cacheMemory.get(tileId);
         }
-        Path fullPath = Path.of(path + partialPath);
+        Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
+                resolve(String.valueOf(tileId.xTile)).resolve(tileId.xTile+".png");
         if (Files.exists(fullPath)) {
             try (FileInputStream accessImage = new FileInputStream(fullPath.toString())) {
                 return new Image(accessImage);
             }
-        } else {
+        }
             Files.createDirectories(Path.of(path + "/" + tileId.zoomLevel + "/" + tileId.xTile));
             URL u = new URL(
                     "https://" + serv + partialPath);
@@ -49,17 +49,14 @@ public final class TileManager {
                  OutputStream t = new FileOutputStream(fullPath.toString())) {
                 i.transferTo(t);
                 Image newImage = new Image(i);
-                int counter = 0;
                 if (cacheMemory.size() == MAX_CAP_MEMORY) {
-                    for (Map.Entry<TileId, Image> e : cacheMemory.entrySet()) {
-                        ++counter;
-                        if (counter == MAX_CAP_MEMORY)
-                            cacheMemory.remove(e.getKey());
+                    TileId toRemove = cacheMemory.keySet().iterator().next();
+                    cacheMemory.remove(toRemove);
                     }
 
-                }cacheMemory.put(tileId, newImage);
+                cacheMemory.put(tileId, newImage);
                 return newImage;
-            }
+
         }
 
 
@@ -68,7 +65,7 @@ public final class TileManager {
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
         public static boolean isValid(int zoom, int x, int y) {
-            return !(x > Math.scalb(2, zoom) || y > Math.scalb(2, zoom));
+            return !((x > (1<<zoom) ) || y > (1<<zoom)) && (x > 0) && (y > 0);
         }
     }
 }
