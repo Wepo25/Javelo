@@ -16,6 +16,7 @@ import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 /**
  * This method allows us to manage our Tiles representing our map. It can download and stock the Tile into
  * a cache memory and a cache disk.
+ *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
@@ -53,7 +54,7 @@ public final class TileManager {
     }
 
     /**
-     * This method allows us to get a Tile (format Image) from a TileId.
+     * This method allows us to get a Tile (format Image) from a TileId. And register it if it's not done yet.
      *
      * @param tileId - TileId : tileId from the Tile to get.
      * @return - Image : Image representing the Tile.
@@ -67,28 +68,41 @@ public final class TileManager {
                 resolve(String.valueOf(tileId.xTile)).resolve(tileId.xTile + ".png");
 
         if (!cacheMemory.containsKey(tileId)) {
-
             if (!Files.exists(fullPath)) {
-                Files.createDirectories(fullPath.getParent());
-                URL u = new URL("https://" + serv +"/" + tileId.zoomLevel
-                        + "/" + tileId.xTile + "/" + tileId.yTile + ".png");
-                URLConnection c = u.openConnection();
-                c.setRequestProperty("User-Agent", "JaVelo");
-
-                try (InputStream i = c.getInputStream();
-                     OutputStream t = new FileOutputStream(fullPath.toString())) {
-                    i.transferTo(t);
-                }
+                diskTileRegister(tileId, fullPath);
             }
-                try(InputStream i = new FileInputStream(fullPath.toString())){
-                    Image newImage = new Image(i);
-                    if (cacheMemory.size() == MAX_CAP_MEMORY) {
-                        TileId toRemove = cacheMemory.keySet().iterator().next();
-                        cacheMemory.remove(toRemove);
-                    }
-                    cacheMemory.put(tileId, newImage);
-            }
-        } return cacheMemory.get(tileId);
+            memoryTileRegister(tileId, fullPath);
+        }
+        return cacheMemory.get(tileId);
+    }
 
+    /**
+     * Register the tile into the cache memory.
+     */
+    private void memoryTileRegister(TileId tileId, Path fullPath) throws IOException {
+        try (InputStream i = new FileInputStream(fullPath.toString())) {
+            Image newImage = new Image(i);
+            if (cacheMemory.size() == MAX_CAP_MEMORY) {
+                TileId toRemove = cacheMemory.keySet().iterator().next();
+                cacheMemory.remove(toRemove);
+            }
+            cacheMemory.put(tileId, newImage);
+        }
+    }
+
+    /**
+     * Register the tile into the cache disk.
+     */
+    private void diskTileRegister(TileId tileId, Path fullPath) throws IOException {
+        Files.createDirectories(fullPath.getParent());
+        URL u = new URL("https://" + serv + "/" + tileId.zoomLevel
+                + "/" + tileId.xTile + "/" + tileId.yTile + ".png");
+        URLConnection c = u.openConnection();
+        c.setRequestProperty("User-Agent", "JaVelo");
+
+        try (InputStream i = c.getInputStream();
+             OutputStream t = new FileOutputStream(fullPath.toString())) {
+            i.transferTo(t);
+        }
     }
 }
