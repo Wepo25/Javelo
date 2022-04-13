@@ -66,7 +66,6 @@ public final class TileManager {
 
         Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
                 resolve(String.valueOf(tileId.xTile)).resolve(tileId.yTile + ".png");
-        System.out.println(fullPath);
 
         if (!cacheMemory.containsKey(tileId)) {
             if (!Files.exists(fullPath)) {
