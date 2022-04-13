@@ -17,8 +17,10 @@ public class TileManagerTest extends Application {
                     Path.of("."), "tile.openstreetmap.org");
             Image tileImage = tm.imageForTileAt(
                     new TileManager.TileId(19, 271725, 185422));
+            for (int i = 185422; i <185422+100; i++) {
             Image tileImage1 = tm.imageForTileAt(
-                    new TileManager.TileId(19, 271765, 187422));
+                    new TileManager.TileId(19, 271765,i ));
+            }
             Platform.exit();
         }
     }

@@ -65,7 +65,8 @@ public final class TileManager {
         Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
         Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
-                resolve(String.valueOf(tileId.xTile)).resolve(tileId.xTile + ".png");
+                resolve(String.valueOf(tileId.xTile)).resolve(tileId.yTile + ".png");
+        System.out.println(fullPath);
 
         if (!cacheMemory.containsKey(tileId)) {
             if (!Files.exists(fullPath)) {
