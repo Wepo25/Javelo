@@ -43,6 +43,23 @@ public final class WaypointsManager {
             Group g = pointScheme();
             setGroupPosition(g, wp.get(i));
 
+            g.setOnMouseDragged(event -> {
+                g.setLayoutX(event.getSceneX());
+                g.setLayoutY(event.getSceneY());});
+
+            g.setOnMouseReleased(event -> {
+                Waypoint waypoint = findClosestNode((int)event.getSceneX(), (int) event.getSceneY());
+                System.out.println(6);
+                if(waypoint != null){
+                 g.relocate(waypoint.point().e(), waypoint.point().n());
+                }
+            });
+
+            int a = i;
+           /* g.setOnMouseClicked(event -> {  {wp.remove(a); // comment ne pas suppr sans le vouloir
+                pane.getChildren().remove(g);}});
+           */
+
             if (i == 0) {
                 g.getStyleClass().add("first");
             } else {
@@ -84,18 +101,18 @@ public final class WaypointsManager {
 
     public void addWaypoint(int x, int y) {// ajout a la list des waypoint.mofify the color with middle or lase etc faut
         // faut il suppr 1 point et tout recrere ou on supprime
-
-       int nodeId =  routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
-
-       if(nodeId == -1){
-            errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
-        }else{ // pas sur faut il arreter
-        Waypoint point = new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
-                nodeId);
-        wp.add(point);
+        wp.add(findClosestNode(x,y));
         paneActualisation();
        }
 
+       public Waypoint findClosestNode(int x , int y){
+        int nodeId =  routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
+        if(nodeId == -1){
+            errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
+        }else { // pas sur faut il arreter
+            return  new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
+                    nodeId);
+        }return null;
 
 
 
