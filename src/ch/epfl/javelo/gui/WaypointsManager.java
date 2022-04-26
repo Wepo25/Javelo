@@ -32,6 +32,7 @@ public final class WaypointsManager {
         pane = new Pane(new Canvas());
         // poss de recreer a chaque fois en appelant cette methode
         paneActualisation();
+        pane.setPickOnBounds(false);
     }
 
     private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
