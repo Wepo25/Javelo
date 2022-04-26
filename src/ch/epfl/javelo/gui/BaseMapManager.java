@@ -72,7 +72,6 @@ public final class BaseMapManager {
                 int mouseY = (int) event.getY();
 
                 wm.addWaypoint(mouseX, mouseY);
-                System.out.println("oui");
                 redrawOnNextPulse();
             }
         });
