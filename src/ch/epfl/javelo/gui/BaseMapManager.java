@@ -1,15 +1,11 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 
-import java.awt.*;
 import java.io.IOException;
 
 
@@ -30,7 +26,7 @@ public final class BaseMapManager {
         this.tm = tm;
         this.wm = wm;
         this.mvp = mvp;
-        Canvas canvas = new Canvas();
+         canvas = new Canvas();
         pane = new Pane(canvas);
 
         canvas.widthProperty().bind(pane.widthProperty());
@@ -42,29 +38,6 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
-
-        canvas.widthProperty().addListener(o -> redrawOnNextPulse());
-        canvas.heightProperty().addListener(o -> redrawOnNextPulse());
-
-        pane.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-
-                int oldZ = mvp.get().zoomLevel();
-                int newZ = (int) Math.round(oldZ + event.getDeltaY());
-
-                int mouseX = (int) event.getX();
-                int mouseY = (int) event.getY();
-                PointWebMercator temp = mvp.get().pointAt(mouseX,mouseY);
-
-                int newX = (int) (temp.xAtZoomLevel(newZ)-mouseX);
-                int newY = (int) (temp.yAtZoomLevel(newZ)-mouseY);
-                mvp.set(new MapViewParameters(newZ, newX, newY));
-
-                redrawOnNextPulse();
-            }
-        });
-
         redrawOnNextPulse();
 
     }
@@ -73,16 +46,17 @@ public final class BaseMapManager {
         return pane;
     }
 
-    private void draw() { // try catch and continue do not stop the programme ?
+    private void draw() { // try catch and continue do not stop the programme ? -(y %256) peut etre ca
         int x = mvp.get().x();
         int y = mvp.get().y();
-        int z = mvp.get().zoomLevel();
-        for (int i = 0; i < pane.getWidth()+256; i += 256) {
-            for (int j = 0; j < pane.getHeight()+256; j += 256) {
-                try {
-                    TileManager.TileId ti = new TileManager.TileId(z, Math.floorDiv(i + x, 256), Math.floorDiv(y+j, 256));
-                    graphContext.drawImage(tm.imageForTileAt(ti), i-x%256, j-y%256);
 
+        int z = mvp.get().zoomLevel();
+        for (int i = 0; i < canvas.getWidth(); i += 256) {
+            for (int j = 0; j < canvas.getHeight(); j += 256) {
+                try {
+                    TileManager.TileId ti = new TileManager.TileId(z,
+                            Math.floorDiv(i + x, 256) +1, Math.floorDiv(j + y, 256)+1);
+                    graphContext.drawImage(tm.imageForTileAt(ti), i, j);
                 } catch (IOException e) {
                     continue;
                 }

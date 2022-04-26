@@ -41,6 +41,8 @@ public final class Stage8Test extends Application {
                         mapViewParametersP,
                         waypoints,
                         errorConsumer);
+        waypointsManager.addWaypoint(100, 50);
+
         BaseMapManager baseMapManager =
                 new BaseMapManager(tileManager,
                         waypointsManager,
