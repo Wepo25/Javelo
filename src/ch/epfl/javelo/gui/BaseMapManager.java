@@ -26,7 +26,7 @@ public final class BaseMapManager {
         this.tm = tm;
         this.wm = wm;
         this.mvp = mvp;
-        Canvas canvas = new Canvas();
+         canvas = new Canvas();
         pane = new Pane(canvas);
 
         canvas.widthProperty().bind(pane.widthProperty());
@@ -54,7 +54,7 @@ public final class BaseMapManager {
             for (int j = 0; j < canvas.getHeight(); j += 256) {
                 try {
                     TileManager.TileId ti = new TileManager.TileId(z, Math.floorDiv(i + x, 256), Math.floorDiv(j + y, 256));
-                    graphContext.drawImage(tm.imageForTileAt(ti), ti.xTile(), ti.yTile());
+                    graphContext.drawImage(tm.imageForTileAt(ti), i, j);
                 } catch (IOException e) {
                     System.out.println("oui bravo");
                     continue;
