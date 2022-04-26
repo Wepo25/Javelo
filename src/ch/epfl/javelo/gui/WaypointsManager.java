@@ -37,6 +37,10 @@ public final class WaypointsManager {
 
     private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
 
+        if (pane.getChildren().contains(pointScheme())) {//pas sur
+            pane.getChildren().remove(0, wp.size());
+        }
+
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
 
@@ -45,20 +49,25 @@ public final class WaypointsManager {
 
             g.setOnMouseDragged(event -> {
                 g.setLayoutX(event.getSceneX());
-                g.setLayoutY(event.getSceneY());});
+                g.setLayoutY(event.getSceneY());
+            });
 
             g.setOnMouseReleased(event -> {
-                Waypoint waypoint = findClosestNode((int)event.getSceneX(), (int) event.getSceneY());
-                System.out.println(6);
-                if(waypoint != null){
-                 g.relocate(waypoint.point().e(), waypoint.point().n());
+                Waypoint waypoint = findClosestNode((int) event.getSceneX(), (int) event.getSceneY());
+                if (waypoint != null) {
+                    setGroupPosition(g, waypoint);
                 }
             });
 
             int a = i;
-           /* g.setOnMouseClicked(event -> {  {wp.remove(a); // comment ne pas suppr sans le vouloir
-                pane.getChildren().remove(g);}});
-           */
+            g.setOnMouseClicked(event -> {
+                {
+                    wp.remove(a); // comment ne pas suppr sans le vouloir
+                    pane.getChildren().remove(g);
+
+                }
+            });
+
 
             if (i == 0) {
                 g.getStyleClass().add("first");
@@ -91,26 +100,24 @@ public final class WaypointsManager {
         return group1;
     }
 
-    public Pane pane(){// sufficient ?
+    public Pane pane() {// sufficient ?
         return pane;
-
     }
 
 
+    public void addWaypoint(int x, int y) {// appel fantome
 
-
-    public void addWaypoint(int x, int y) {// ajout a la list des waypoint.mofify the color with middle or lase etc faut
-        // faut il suppr 1 point et tout recrere ou on supprime
-        wp.add(findClosestNode(x,y));
+        System.out.println(2);
+        wp.add(findClosestNode(x, y));
         paneActualisation();
-       }
+    }
 
-       public Waypoint findClosestNode(int x , int y){
-        int nodeId =  routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
-        if(nodeId == -1){
+    public Waypoint findClosestNode(int x, int y) {
+        int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
+        if (nodeId == -1) {
             errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
-        }else { // pas sur faut il arreter
-            return  new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
+        } else { // pas sur faut il arreter
+            return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
                     nodeId);
         }return null;
 
