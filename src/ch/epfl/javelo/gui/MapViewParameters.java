@@ -10,8 +10,8 @@ public record MapViewParameters(int zoomLevel, int x, int y) {
         return new Point2D.Double(x,y);
     }
 
-    public MapViewParameters withMinXY(int newX){
-        return new MapViewParameters(zoomLevel, newX, y);
+    public MapViewParameters withMinXY(int newX, int newY){
+        return new MapViewParameters(zoomLevel, newX, newY);
     }
 
     public PointWebMercator pointAt(int x, int y){
@@ -19,10 +19,10 @@ public record MapViewParameters(int zoomLevel, int x, int y) {
     }
 
     public double viewX(PointWebMercator point){
-        return point.xAtZoomLevel(zoomLevel) + this.x;
+        return point.xAtZoomLevel(zoomLevel) - this.x;
     }
 
     public double viewY(PointWebMercator point){
-        return point.yAtZoomLevel(zoomLevel) + this.y;
+        return point.yAtZoomLevel(zoomLevel) - this.y;
     }
 }
