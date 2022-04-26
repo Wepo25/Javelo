@@ -44,6 +44,8 @@ public final class WaypointsManager {
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
 
+            int a = i;
+
             Group g = pointScheme();
             setGroupPosition(g, wp.get(i));
 
@@ -53,20 +55,22 @@ public final class WaypointsManager {
             });
 
             g.setOnMouseReleased(event -> {
-                Waypoint waypoint = findClosestNode((int) event.getSceneX(), (int) event.getSceneY());
+                Waypoint waypoint = findClosestNode((int) event.getX(), (int) event.getSceneY());
                 if (waypoint != null) {
                     setGroupPosition(g, waypoint);
+                }else{
+                    //g.relocate(wp.get(a).point().e(), wp.get(a).point().n());//ancienne location mais marche pas
                 }
             });
 
-            int a = i;
-            g.setOnMouseClicked(event -> {
+
+            /*g.setOnMouseClicked(event -> {
                 {
                     wp.remove(a); // comment ne pas suppr sans le vouloir
                     pane.getChildren().remove(g);
 
-                }
-            });
+                }});
+           */
 
 
             if (i == 0) {
