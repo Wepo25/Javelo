@@ -41,6 +41,8 @@ public final class Stage8Test extends Application {
                         mapViewParametersP,
                         waypoints,
                         errorConsumer);
+        waypointsManager.addWaypoint(100, 50);
+        waypointsManager.addWaypoint(200,300);
         BaseMapManager baseMapManager =
                 new BaseMapManager(tileManager,
                         waypointsManager,
@@ -52,8 +54,10 @@ public final class Stage8Test extends Application {
         mainPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);
+
         primaryStage.setScene(new Scene(mainPane));
         primaryStage.show();
+
     }
 
     private static final class ErrorConsumer

@@ -30,19 +30,28 @@ public final class WaypointsManager {
         this.wp = wp;
         this.errorConsumer = errorConsumer;
         pane = new Pane(new Canvas());
+        // poss de recreer a chaque fois en appelant cette methode
+        paneActualisation();
+    }
+
+    private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
+
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
             Group g = createWayPoint(wp.get(i));
-            listOfGroup.add(g);
-            if(i==0){
+
+            if (i == 0) {
                 g.getStyleClass().add("first");
+            } else {
+                if (i == wp.size() - 1) {
+                    g.getStyleClass().add("last");
+                } else g.getStyleClass().add("middle");
             }
-            if(i == wp.size()-1){
-                g.getStyleClass().add("last");
-            }
+            listOfGroup.add(g);
         }
         pane.getChildren().addAll(listOfGroup);
     }
+
     private Group createWayPoint(Waypoint waypoint){//accrocher a une node: creer tout les group dans une list,
         // apres on recrer une list que l'on stock en attribut. et apres on add les layout.
         PointWebMercator w = PointWebMercator.ofPointCh(waypoint.point());
@@ -52,7 +61,7 @@ public final class WaypointsManager {
         return g;
     }
 
-    public Pane pane(){// do a loop
+    public Pane pane(){// sufficient ?
         return pane;
 
     }
@@ -70,14 +79,19 @@ public final class WaypointsManager {
     }
 
 
-    public void addWaypoint(int x, int y){// ajout a la list des waypoint.mofify the color with middle or lase etc
+    public void addWaypoint(int x, int y) {// ajout a la list des waypoint.mofify the color with middle or lase etc faut
+        // faut il suppr 1 point et tout recrere ou on supprime
 
-        if(!wp.isEmpty()) {
-            Group p = (Group) pane.getChildren().get(pane.getChildren().size() - 1);
-            p.getStyleClass().add("middle");
+       int nodeId =  routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
+
+       if(nodeId == -1){
+            errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
         }
-        Waypoint point = new Waypoint(mvp.get().pointAt(x,y).toPointCh(), // the scale is good or not.
-                routeNetwork.nodeClosestTo(mvp.get().pointAt(x,y).toPointCh(), 500));
+        Waypoint point = new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
+                nodeId);
+
+        wp.add(point);
+        paneActualisation();
 
 
 

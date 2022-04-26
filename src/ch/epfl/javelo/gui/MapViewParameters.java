@@ -1,13 +1,12 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.projection.PointWebMercator;
-
-import java.awt.geom.Point2D;
+import javafx.geometry.Point2D;
 
 public record MapViewParameters(int zoomLevel, int x, int y) {
 
     public Point2D topLeft(){
-        return new Point2D.Double(x,y);
+        return new Point2D(x, y);
     }
 
     public MapViewParameters withMinXY(int newX, int newY){
@@ -15,7 +14,7 @@ public record MapViewParameters(int zoomLevel, int x, int y) {
     }
 
     public PointWebMercator pointAt(int x, int y){
-        return new PointWebMercator(x+this.x,y+this.y);
+        return PointWebMercator.of(zoomLevel, x + this.x, y + this.y);
     }
 
     public double viewX(PointWebMercator point){
