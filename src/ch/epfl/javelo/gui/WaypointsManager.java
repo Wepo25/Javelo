@@ -38,7 +38,9 @@ public final class WaypointsManager {
 
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
-            Group g = createWayPoint(wp.get(i));
+
+            Group g = pointScheme();
+            setGroupPosition(g, wp.get(i));
 
             if (i == 0) {
                 g.getStyleClass().add("first");
@@ -52,18 +54,11 @@ public final class WaypointsManager {
         pane.getChildren().addAll(listOfGroup);
     }
 
-    private Group createWayPoint(Waypoint waypoint){//accrocher a une node: creer tout les group dans une list,
+    private void setGroupPosition(Group g, Waypoint waypoint){//accrocher a une node: creer tout les group dans une list,
         // apres on recrer une list que l'on stock en attribut. et apres on add les layout.
         PointWebMercator w = PointWebMercator.ofPointCh(waypoint.point());
-        Group g = pointScheme();
         g.setLayoutX(mvp.get().viewX(w));
         g.setLayoutY(mvp.get().viewY(w));
-        return g;
-    }
-
-    public Pane pane(){// sufficient ?
-        return pane;
-
     }
 
     private Group pointScheme() {
@@ -78,6 +73,13 @@ public final class WaypointsManager {
         return group1;
     }
 
+    public Pane pane(){// sufficient ?
+        return pane;
+
+    }
+
+
+
 
     public void addWaypoint(int x, int y) {// ajout a la list des waypoint.mofify the color with middle or lase etc faut
         // faut il suppr 1 point et tout recrere ou on supprime
@@ -86,12 +88,14 @@ public final class WaypointsManager {
 
        if(nodeId == -1){
             errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
-        }
+        }else{ // pas sur faut il arreter
         Waypoint point = new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
                 nodeId);
-
         wp.add(point);
         paneActualisation();
+       }
+
+
 
 
 

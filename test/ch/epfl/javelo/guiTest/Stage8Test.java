@@ -42,7 +42,7 @@ public final class Stage8Test extends Application {
                         waypoints,
                         errorConsumer);
         waypointsManager.addWaypoint(100, 50);
-        waypointsManager.addWaypoint(200,300);
+
         BaseMapManager baseMapManager =
                 new BaseMapManager(tileManager,
                         waypointsManager,

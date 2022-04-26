@@ -46,17 +46,18 @@ public final class BaseMapManager {
         return pane;
     }
 
-    private void draw() { // try catch and continue do not stop the programme ?
+    private void draw() { // try catch and continue do not stop the programme ? -(y %256) peut etre ca
         int x = mvp.get().x();
         int y = mvp.get().y();
+
         int z = mvp.get().zoomLevel();
         for (int i = 0; i < canvas.getWidth(); i += 256) {
             for (int j = 0; j < canvas.getHeight(); j += 256) {
                 try {
-                    TileManager.TileId ti = new TileManager.TileId(z, Math.floorDiv(i + x, 256), Math.floorDiv(j + y, 256));
+                    TileManager.TileId ti = new TileManager.TileId(z,
+                            Math.floorDiv(i + x, 256) +1, Math.floorDiv(j + y, 256)+1);
                     graphContext.drawImage(tm.imageForTileAt(ti), i, j);
                 } catch (IOException e) {
-                    System.out.println("oui bravo");
                     continue;
                 }
             }
