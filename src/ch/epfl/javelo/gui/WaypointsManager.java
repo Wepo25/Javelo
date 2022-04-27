@@ -2,8 +2,11 @@ package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointWebMercator;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
@@ -37,9 +40,7 @@ public final class WaypointsManager {
 
     private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
 
-        if (pane.getChildren().contains(pointScheme())) {//pas sur
-            pane.getChildren().remove(0, wp.size());
-        }
+        pane.getChildren().clear();
 
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
@@ -49,28 +50,38 @@ public final class WaypointsManager {
             Group g = pointScheme();
             setGroupPosition(g, wp.get(i));
 
-            g.setOnMouseDragged(event -> {
-                g.setLayoutX(event.getSceneX());
-                g.setLayoutY(event.getSceneY());
+            ObjectProperty<Point2D> initialPoint = new SimpleObjectProperty<>();
+            ObjectProperty<Point2D> initialCoord = new SimpleObjectProperty<>();
+
+            g.setOnMousePressed(event -> {
+                initialPoint.setValue(new Point2D(event.getX(), event.getY()));
+                initialCoord.setValue(new Point2D(event.getSceneX(), event.getSceneY()));
+
             });
+
+            g.setOnMouseDragged(event -> {
+                g.setLayoutX(event.getSceneX()- initialPoint.get().getX());
+                g.setLayoutY(event.getSceneY()- initialPoint.get().getY());
+            });
+
 
             g.setOnMouseReleased(event -> {
-                Waypoint waypoint = findClosestNode((int) event.getX(), (int) event.getSceneY());
-                if (waypoint != null) {
-                    setGroupPosition(g, waypoint);
-                }else{
-                    //g.relocate(wp.get(a).point().e(), wp.get(a).point().n());//ancienne location mais marche pas
-                }
-            });
 
-
-            /*g.setOnMouseClicked(event -> {
-                {
+                if (event.isStillSincePress()) {
                     wp.remove(a); // comment ne pas suppr sans le vouloir
                     pane.getChildren().remove(g);
-
-                }});
-           */
+                }else{
+                    Waypoint waypoint = findClosestNode( event.getSceneX() - initialPoint.get().getX(),
+                            event.getSceneY() - initialPoint.get().getY());
+                    if (waypoint != null) {
+                    setGroupPosition(g, waypoint);
+                    wp.set(a, waypoint);
+                } else {
+                       // g.setLayoutX(initialCoord.get().getX());
+                        //g.setLayoutY(initialCoord.get().getY());
+                        ;//ancienne location mais marche pas
+                }}
+            });
 
 
             if (i == 0) {
@@ -108,15 +119,13 @@ public final class WaypointsManager {
         return pane;
     }
 
+    public void addWaypoint(double x, double y) {
 
-    public void addWaypoint(int x, int y) {// appel fantome
-
-        System.out.println(2);
         wp.add(findClosestNode(x, y));
         paneActualisation();
     }
 
-    public Waypoint findClosestNode(int x, int y) {
+    private Waypoint findClosestNode( double x, double y) {
         int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
         if (nodeId == -1) {
             errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment

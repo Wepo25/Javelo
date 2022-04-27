@@ -4,14 +4,11 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -62,15 +59,15 @@ public final class BaseMapManager {
     }
 
     private void draw() { // try catch and continue do not stop the programme ? -(y %256) peut etre ca
-        int x = mvp.get().x();
-        int y = mvp.get().y();
+        double x = mvp.get().x();
+        double y = mvp.get().y();
 
         int z = mvp.get().zoomLevel();
         for (int i = 0; i < pane.getWidth()+256; i += 256) {
             for (int j = 0; j < pane.getHeight()+256; j += 256) {
                 try {
 
-                    TileManager.TileId ti = new TileManager.TileId(z, Math.floorDiv(i + x, 256), Math.floorDiv(y+j, 256));
+                    TileManager.TileId ti = new TileManager.TileId(z, (int) Math.floor((i + x) / 256), (int) Math.floor((y+j)/ 256));
                     graphContext.drawImage(tm.imageForTileAt(ti), i-x%256, j-y%256);
 
                 } catch (IOException | IllegalArgumentException e) {
