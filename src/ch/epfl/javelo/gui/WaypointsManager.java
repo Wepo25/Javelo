@@ -55,7 +55,7 @@ public final class WaypointsManager {
 
             g.setOnMousePressed(event -> {
                 initialPoint.setValue(new Point2D(event.getX(), event.getY()));
-                initialCoord.setValue(new Point2D(event.getSceneX(), event.getSceneY()));
+                initialCoord.setValue(new Point2D(g.getLayoutX(), g.getLayoutY()));
 
             });
 
@@ -77,9 +77,9 @@ public final class WaypointsManager {
                     setGroupPosition(g, waypoint);
                     wp.set(a, waypoint);
                 } else {
-                       // g.setLayoutX(initialCoord.get().getX());
-                        //g.setLayoutY(initialCoord.get().getY());
-                        ;//ancienne location mais marche pas
+                        g.setLayoutX(initialCoord.get().getX());
+                       g.setLayoutY(initialCoord.get().getY());
+
                 }}
             });
 
