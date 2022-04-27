@@ -2,6 +2,7 @@ package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointWebMercator;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,9 +34,12 @@ public final class WaypointsManager {
         this.wp = wp;
         this.errorConsumer = errorConsumer;
         pane = new Pane(new Canvas());
-        // poss de recreer a chaque fois en appelant cette methode
         paneActualisation();
         pane.setPickOnBounds(false);
+
+        mvp.addListener((Observable o ) -> paneActualisation());
+        wp.addListener((Observable o) -> paneActualisation());
+
     }
 
     public Pane pane() {
@@ -49,10 +53,10 @@ public final class WaypointsManager {
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
 
-            int a = i;
-
             Group g = pointScheme();
             setGroupPosition(g, wp.get(i));
+
+            int a = i;
 
             ObjectProperty<Point2D> initialPoint = new SimpleObjectProperty<>();
             ObjectProperty<Point2D> initialCoord = new SimpleObjectProperty<>();
@@ -72,8 +76,9 @@ public final class WaypointsManager {
             g.setOnMouseReleased(event -> {
 
                 if (event.isStillSincePress()) {
-                    wp.remove(a); // comment ne pas suppr sans le vouloir
+                    wp.remove(a);
                     pane.getChildren().remove(g);
+                    paneActualisation();
                 }else{
                     Waypoint waypoint = findClosestNode( event.getSceneX() - initialPoint.get().getX(),
                             event.getSceneY() - initialPoint.get().getY());
