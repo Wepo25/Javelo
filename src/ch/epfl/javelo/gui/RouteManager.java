@@ -50,7 +50,6 @@ public final class RouteManager {
             pane.getChildren().add(pl);
             pane.getChildren().add(c);
         }
-
         pane.setPickOnBounds(false);
         pane.setVisible(!(rb.getRoute().get() == null));
     }
