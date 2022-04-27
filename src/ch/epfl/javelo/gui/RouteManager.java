@@ -33,6 +33,7 @@ public final class RouteManager {
 
         c = new Circle();
 
+        mvp.addListener(o -> rb.computeRoute());
         if(rb.getRoute().get() != null) {
 
             rb.getRoute().addListener(o -> {

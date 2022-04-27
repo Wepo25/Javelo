@@ -62,7 +62,7 @@ public final class RouteBean {
         highlightedPosition.set(value);
     }
 
-    private void computeRoute(){
+    public void computeRoute(){
         List<Route> r = new ArrayList<>();
         AtomicBoolean finish = new AtomicBoolean(true);
         waypoints.stream().
