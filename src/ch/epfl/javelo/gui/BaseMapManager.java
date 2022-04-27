@@ -66,16 +66,6 @@ public final class BaseMapManager {
         AtomicInteger draggedX = new AtomicInteger();
         AtomicInteger draggedY = new AtomicInteger();
 
-        pane.setOnMouseClicked(event -> {
-            if(event.isStillSincePress()) {
-                int mouseX = (int) event.getX();
-                int mouseY = (int) event.getY();
-
-                wm.addWaypoint(mouseX, mouseY);
-                redrawOnNextPulse();
-            }
-        });
-
 
 
         pane.setOnMousePressed(event -> {
@@ -90,6 +80,17 @@ public final class BaseMapManager {
             draggedX.set((int) event.getX());
             draggedY.set((int) event.getY());
             redrawOnNextPulse();
+
+        });
+
+        pane.setOnMouseReleased(event -> {
+            if(event.isStillSincePress()) {
+                int mouseX = (int) event.getX();
+                int mouseY = (int) event.getY();
+
+                wm.addWaypoint(mouseX, mouseY);
+                redrawOnNextPulse();
+            }
 
         });
 
