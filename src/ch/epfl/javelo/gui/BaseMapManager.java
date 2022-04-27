@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -87,8 +88,8 @@ public final class BaseMapManager {
         pane.setOnScroll(event -> {
 
             int oldZ = mvp.get().zoomLevel();
-            int newZ = (int) Math.round(oldZ + event.getDeltaY());
-
+            int newZ = Math2.clamp(1,(int) Math.round(oldZ + Math2.clamp(-1,event.getDeltaY(),1)),19);
+            System.out.println((int) Math.round(oldZ + Math2.clamp(-1,event.getDeltaY(),1)));
             PointWebMercator temp = mvp.get().pointAt((int) event.getX(),(int) event.getY());
 
             int newX = (int) (temp.xAtZoomLevel(newZ)-event.getX());
@@ -127,6 +128,7 @@ public final class BaseMapManager {
         redrawNeeded = false;
         draw();
     }
+
 
     private void redrawOnNextPulse() { //on appel ou ?
         redrawNeeded = true;

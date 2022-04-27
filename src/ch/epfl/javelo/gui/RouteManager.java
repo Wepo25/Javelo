@@ -22,6 +22,8 @@ public final class RouteManager {
 
     private final Pane pane;
 
+    private final Polyline pl;
+
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
         this.rb = rb;
         this.mvp = mvp;
@@ -29,15 +31,15 @@ public final class RouteManager {
 
         pane = new Pane();
 
+        pl = new Polyline();
+
         if(rb.getRoute().get() != null) {
-            List<double[]> routeEdges = rb.getRoute().get().points().stream().map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)), mvp.get().viewY(PointWebMercator.ofPointCh(d))}).collect(Collectors.toList());
-            double[] flattenedEdges = new double[2 * routeEdges.size()];
-            for (int i = 0; i < routeEdges.size(); i += 2) {
-                flattenedEdges[i] = routeEdges.get(i)[0];
-                flattenedEdges[i + 1] = routeEdges.get(i)[1];
-            }
-            Polyline pl = new Polyline(flattenedEdges);
+
+            rb.getRoute().addListener(o -> updatePolyline());
+
+            updatePolyline();
             pl.setId("route");
+
             PointWebMercator tempPoint = PointWebMercator.ofPointCh(rb.getRoute().get().pointAt(rb.highlightedPosition()));
 
             Circle c = new Circle(mvp.get().viewX(tempPoint), mvp.get().viewY(tempPoint), 5);
@@ -53,5 +55,22 @@ public final class RouteManager {
 
     public Pane pane(){
         return pane;
+    }
+
+    private Double[] buildRoute(){
+        List<double[]> routeEdges = rb.getRoute().get().points().stream().map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)), mvp.get().viewY(PointWebMercator.ofPointCh(d))}).collect(Collectors.toList());
+        Double[] flattenedEdges = new Double[2 * (routeEdges.size() - 1)];
+
+        for (int i = 0; i < routeEdges.size()-1; i ++) {
+            flattenedEdges[2*i] = routeEdges.get(i)[0];
+            flattenedEdges[2*i + 1] = routeEdges.get(i)[1];
+        }
+
+        return flattenedEdges;
+    }
+
+    private void updatePolyline(){
+        pl.getPoints().clear();
+        pl.getPoints().addAll(buildRoute());
     }
 }

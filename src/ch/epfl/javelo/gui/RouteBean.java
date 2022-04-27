@@ -7,7 +7,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class RouteBean {
@@ -15,10 +17,10 @@ public final class RouteBean {
     public ObservableList<Waypoint> waypoints;
 
     private final RouteComputer rc;
-    private final ObjectProperty<Route> route;
+    private ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
     private ObjectProperty<ElevationProfile> elevationProfile;
-    private final List<Pair> computedRoute = new ArrayList<>();
+    private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
 
     record Pair(Waypoint a, Waypoint b){}
 
@@ -27,7 +29,7 @@ public final class RouteBean {
         highlightedPosition = new SimpleDoubleProperty();
         highlightedPosition.setValue(0);
         ListChangeListener<Waypoint> listener = o ->
-            computeRoute();
+        computeRoute();
         waypoints = FXCollections.observableArrayList();
         waypoints.addListener(listener);
 
@@ -66,20 +68,28 @@ public final class RouteBean {
         waypoints.stream().
                 takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId())!=null).
                 forEach(a -> {
-                if (!computedRoute.contains(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
+                    System.out.println(a);
+                if (!computedRoute.containsKey(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
                     Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId());
                     r.add(temp);
-                    computedRoute.add(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)));
+                    computedRoute.put(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)), temp);
                     if(waypoints.indexOf(a) != waypoints.size() - 2 && rc.bestRouteBetween(waypoints.get(waypoints.indexOf(a) + 1).closestNodeId(),waypoints.get(waypoints.indexOf(a) + 2).closestNodeId()) == null){
                         finish.set(false);
                     }
-            }
+                }
+                else{
+                    r.add(computedRoute.get(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1))));
+                }
         });
-        for(Route rou : r){
-            System.out.println(rou.edges());
+        System.out.println(r.size());
+        for (int i = 0; i < r.size(); i++) {
+            System.out.println(r.get(i));
         }
         if ((waypoints.size() >= 2 && finish.get())) {
             route.set(new MultiRoute(r));
+        }
+        else {
+            route.set(null);
         }
     }
 
