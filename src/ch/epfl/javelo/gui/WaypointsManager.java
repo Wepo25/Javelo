@@ -78,7 +78,6 @@ public final class WaypointsManager {
                 if (event.isStillSincePress()) {
                     wp.remove(a);
                     pane.getChildren().remove(g);
-                    paneActualisation();
                 }else{
                     Waypoint waypoint = findClosestNode( event.getSceneX() - initialPoint.get().getX(),
                             event.getSceneY() - initialPoint.get().getY());
@@ -129,7 +128,6 @@ public final class WaypointsManager {
     public void addWaypoint(double x, double y) {
        if( findClosestNode(x, y) != null){
         wp.add(findClosestNode(x, y));
-        paneActualisation();
        }
     }
 

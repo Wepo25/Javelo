@@ -81,10 +81,7 @@ public final class RouteBean {
                     r.add(computedRoute.get(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1))));
                 }
         });
-        System.out.println(r.size());
-        for (int i = 0; i < r.size(); i++) {
-            System.out.println(r.get(i));
-        }
+
         if ((waypoints.size() >= 2 && finish.get())) {
             route.set(new MultiRoute(r));
         }
