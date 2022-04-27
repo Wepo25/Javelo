@@ -2,6 +2,7 @@ package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointWebMercator;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -33,9 +34,16 @@ public final class WaypointsManager {
         this.wp = wp;
         this.errorConsumer = errorConsumer;
         pane = new Pane(new Canvas());
-        // poss de recreer a chaque fois en appelant cette methode
         paneActualisation();
         pane.setPickOnBounds(false);
+
+        mvp.addListener((Observable o ) -> paneActualisation());
+        wp.addListener((Observable o) -> paneActualisation());
+
+    }
+
+    public Pane pane() {
+        return pane;
     }
 
     private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
@@ -45,10 +53,10 @@ public final class WaypointsManager {
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
 
-            int a = i;
-
             Group g = pointScheme();
             setGroupPosition(g, wp.get(i));
+
+            int a = i;
 
             ObjectProperty<Point2D> initialPoint = new SimpleObjectProperty<>();
             ObjectProperty<Point2D> initialCoord = new SimpleObjectProperty<>();
@@ -68,8 +76,9 @@ public final class WaypointsManager {
             g.setOnMouseReleased(event -> {
 
                 if (event.isStillSincePress()) {
-                    wp.remove(a); // comment ne pas suppr sans le vouloir
+                    wp.remove(a);
                     pane.getChildren().remove(g);
+                    paneActualisation();
                 }else{
                     Waypoint waypoint = findClosestNode( event.getSceneX() - initialPoint.get().getX(),
                             event.getSceneY() - initialPoint.get().getY());
@@ -115,21 +124,20 @@ public final class WaypointsManager {
         return group1;
     }
 
-    public Pane pane() {// sufficient ?
-        return pane;
-    }
+
 
     public void addWaypoint(double x, double y) {
-
+       if( findClosestNode(x, y) != null){
         wp.add(findClosestNode(x, y));
         paneActualisation();
+       }
     }
 
     private Waypoint findClosestNode( double x, double y) {
         int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
         if (nodeId == -1) {
-            errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
-        } else { // pas sur faut il arreter
+            errorConsumer.accept("Aucune route à proximité !");
+        } else {
             return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
                     nodeId);
         }return null;
