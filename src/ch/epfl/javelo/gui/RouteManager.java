@@ -1,28 +1,26 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class RouteManager {
 
-    private RouteBean rb;
-    private ReadOnlyObjectProperty<MapViewParameters> mvp;
+    private final RouteBean rb;
+    private final ReadOnlyObjectProperty<MapViewParameters> mvp;
     private Consumer<String> errorConsumer;
 
     private final Pane pane;
 
     private final Polyline pl;
+
+    private final Circle c;
 
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
         this.rb = rb;
@@ -33,16 +31,20 @@ public final class RouteManager {
 
         pl = new Polyline();
 
+        c = new Circle();
+
         if(rb.getRoute().get() != null) {
 
-            rb.getRoute().addListener(o -> updatePolyline());
+            rb.getRoute().addListener(o -> {
+                updatePolyline();
+                updateCircle();
+            }
+        );
 
             updatePolyline();
             pl.setId("route");
 
-            PointWebMercator tempPoint = PointWebMercator.ofPointCh(rb.getRoute().get().pointAt(rb.highlightedPosition()));
-
-            Circle c = new Circle(mvp.get().viewX(tempPoint), mvp.get().viewY(tempPoint), 5);
+            updateCircle();
             c.setId("highlight");
 
             pane.getChildren().add(pl);
@@ -67,6 +69,16 @@ public final class RouteManager {
         }
 
         return flattenedEdges;
+    }
+
+    private PointWebMercator buildCircleCenter(){
+        return PointWebMercator.ofPointCh(rb.getRoute().get().pointAt(rb.highlightedPosition()));
+    }
+
+    private void updateCircle(){
+        c.setCenterX(mvp.get().viewX(buildCircleCenter()));
+        c.setCenterY(mvp.get().viewY(buildCircleCenter()));
+        c.setRadius(5);
     }
 
     private void updatePolyline(){
