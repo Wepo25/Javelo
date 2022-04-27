@@ -38,6 +38,10 @@ public final class WaypointsManager {
         pane.setPickOnBounds(false);
     }
 
+    public Pane pane() {
+        return pane;
+    }
+
     private void paneActualisation() { // faut il recrer un liste ou add a chaque fois. y a t'il qqch a garder ou on refait tout a chaque fois
 
         pane.getChildren().clear();
@@ -115,21 +119,20 @@ public final class WaypointsManager {
         return group1;
     }
 
-    public Pane pane() {// sufficient ?
-        return pane;
-    }
+
 
     public void addWaypoint(double x, double y) {
-
+       if( findClosestNode(x, y) != null){
         wp.add(findClosestNode(x, y));
         paneActualisation();
+       }
     }
 
     private Waypoint findClosestNode( double x, double y) {
         int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
         if (nodeId == -1) {
-            errorConsumer.accept("Aucune route à proximité !"); // faut il lambda a 1 moment
-        } else { // pas sur faut il arreter
+            errorConsumer.accept("Aucune route à proximité !");
+        } else {
             return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
                     nodeId);
         }return null;
