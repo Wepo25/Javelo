@@ -104,8 +104,7 @@ public final class WaypointsManager {
         pane.getChildren().addAll(listOfGroup);
     }
 
-    private void setGroupPosition(Group g, Waypoint waypoint){//accrocher a une node: creer tout les group dans une list,
-        // apres on recrer une list que l'on stock en attribut. et apres on add les layout.
+    private void setGroupPosition(Group g, Waypoint waypoint){
         PointWebMercator w = PointWebMercator.ofPointCh(waypoint.point());
         g.setLayoutX(mvp.get().viewX(w));
         g.setLayoutY(mvp.get().viewY(w));
