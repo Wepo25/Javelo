@@ -21,8 +21,6 @@ public final class RouteManager {
 
     private final Polyline pl;
 
-
-
     private final Circle c;
 
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
@@ -45,7 +43,7 @@ public final class RouteManager {
             }else{
 
                 int tempIndex = rb.getRoute().get().indexOfSegmentAt(rb.highlightedPosition());
-                rb.waypoints.add(pointToAdd);
+                rb.waypoints.add(tempIndex +1 ,pointToAdd);
             }
         });
 
@@ -83,9 +81,10 @@ public final class RouteManager {
     }
 
     private Double[] buildRoute(){
-        List<double[]> routeEdges = rb.getRoute().get().points().
-                stream().map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)),
-                        mvp.get().viewY(PointWebMercator.ofPointCh(d))}).collect(Collectors.toList());
+        List<double[]> routeEdges = rb.getRoute().get().points().stream().
+                map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)),
+                        mvp.get().viewY(PointWebMercator.ofPointCh(d))}).
+                collect(Collectors.toList());
         Double[] flattenedEdges = new Double[2 * (routeEdges.size() - 1)];
 
         for (int i = 0; i < routeEdges.size()-1; i ++) {

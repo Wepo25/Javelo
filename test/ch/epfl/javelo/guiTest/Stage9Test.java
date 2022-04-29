@@ -30,7 +30,7 @@ public final class Stage9Test extends Application {
 
         RouteComputer rc = new RouteComputer(graph, cf);
         RouteBean rb = new RouteBean(rc);
-        rb.setHighlightedPosition(1000);
+        rb.setHighlightedPosition(5000);
         rb.waypoints.addAll(FXCollections.observableArrayList(
                 new Waypoint(new PointCh(2532697, 1152350), 159049),
                 new Waypoint(new PointCh(2538659, 1154350), 117669)));

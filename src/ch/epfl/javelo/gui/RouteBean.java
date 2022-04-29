@@ -38,6 +38,7 @@ public final class RouteBean {
 
         waypoints.addListener(listener);
 
+
         route = new SimpleObjectProperty<>();
         elevationProfile = new SimpleObjectProperty<>();
 
