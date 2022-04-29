@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class BaseMapManager {
 
+    private final int TILE_PIXEL_SIZE = 256;
     private final TileManager tm;
     private WaypointsManager wm;
     private final ObjectProperty<MapViewParameters> mvp;
@@ -63,12 +64,14 @@ public final class BaseMapManager {
         double y = mvp.get().y();
 
         int z = mvp.get().zoomLevel();
-        for (int i = 0; i < pane.getWidth()+256; i += 256) {
-            for (int j = 0; j < pane.getHeight()+256; j += 256) {
+        for (int i = 0; i < pane.getWidth()+TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
+            for (int j = 0; j < pane.getHeight()+TILE_PIXEL_SIZE; j += TILE_PIXEL_SIZE) {
                 try {
 
-                    TileManager.TileId ti = new TileManager.TileId(z, (int) Math.floor((i + x) / 256), (int) Math.floor((y+j)/ 256));
-                    graphContext.drawImage(tm.imageForTileAt(ti), i-x%256, j-y%256);
+                    TileManager.TileId ti = new TileManager.TileId(z,
+                            (int) Math.floor((i + x) / TILE_PIXEL_SIZE),
+                            (int) Math.floor((y+j)/ TILE_PIXEL_SIZE));
+                    graphContext.drawImage(tm.imageForTileAt(ti), i-x%TILE_PIXEL_SIZE, j-y%TILE_PIXEL_SIZE);
 
                 } catch (IOException | IllegalArgumentException e) {
                 }
