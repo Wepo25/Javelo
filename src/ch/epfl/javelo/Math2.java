@@ -8,7 +8,7 @@ import static ch.epfl.javelo.Preconditions.checkArgument;
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
-public class Math2 {
+public final class Math2 {
 
     /**
      * Private constructor.
@@ -25,7 +25,7 @@ public class Math2 {
      * @throws IllegalArgumentException - checkArgument : Throws an exception if at least one of the value is negative or equal to zero.
      */
     public static int ceilDiv(int x, int y) {
-        checkArgument(!(y <= 0 || x < 0));
+        checkArgument((y > 0 && x >= 0));
         return (x + y - 1) / y;
     }
 
@@ -51,7 +51,7 @@ public class Math2 {
      * @throw IllegalArgumentException - checkArgument : Throws an exception if the minimum value of the range is strictly greater than its given maximum.
      */
     public static int clamp(int min, int v, int max) {
-        checkArgument(!(min > max));
+        checkArgument((min <= max));
         return (v < min)? min : Math.min(v, max);
     }
 
@@ -65,7 +65,7 @@ public class Math2 {
      * @throw IllegalArgumentException - checkArgument : Throws an exception if the minimum value of the range is strictly greater than its given maximum.
      */
     public static double clamp(double min, double v, double max) {
-        checkArgument(!(min > max));
+        checkArgument((min <= max));
         return (v < min)? min : Math.min(v, max);
 
     }
@@ -101,7 +101,7 @@ public class Math2 {
      * @return - double : The squared norm of the given vector.
      */
     public static double squaredNorm(double uX, double uY) {
-        return Math.pow(uX, 2) + Math.pow(uY, 2);
+        return dotProduct(uX,uY,uX,uY);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Math2 {
      * @return - double : The norm of the given vector.
      */
     public static double norm(double uX, double uY) {
-        return Math.sqrt(Math.pow(uX, 2) + Math.pow(uY, 2));
+        return Math.sqrt(dotProduct(uX,uY,uX,uY));
     }
 
     /**

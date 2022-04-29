@@ -6,11 +6,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public final class RouteBean {
 
@@ -28,16 +27,26 @@ public final class RouteBean {
 
         highlightedPosition = new SimpleDoubleProperty();
         highlightedPosition.setValue(0);
-        ListChangeListener<Waypoint> listener = o ->
-        computeRoute();
+
+
         waypoints = FXCollections.observableArrayList();
+
+        ListChangeListener<Waypoint> listener = o -> {
+            if(sortedObservableList(waypoints).equals(waypoints)) {
+                computeRoute();
+            }
+            else{
+                waypoints.sort(Comparator.comparingInt(Waypoint::closestNodeId));
+            }
+        };
+
         waypoints.addListener(listener);
 
         route = new SimpleObjectProperty<>();
         elevationProfile = new SimpleObjectProperty<>();
 
         route.addListener( o ->
-                elevationProfile.set(ElevationProfileComputer.elevationProfile(route.get(),5))
+                elevationProfile.set(route.get() == null ? null : ElevationProfileComputer.elevationProfile(route.get(),5))
         );
         this.rc = rc;
     }
@@ -62,13 +71,16 @@ public final class RouteBean {
         highlightedPosition.set(value);
     }
 
+    public ReadOnlyObjectProperty<RouteComputer> getRouteComputer(){
+        return new SimpleObjectProperty<RouteComputer>(rc);
+    }
+
     public void computeRoute(){
         List<Route> r = new ArrayList<>();
         AtomicBoolean finish = new AtomicBoolean(true);
         waypoints.stream().
                 takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId())!=null).
                 forEach(a -> {
-                    System.out.println(a);
                 if (!computedRoute.containsKey(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
                     Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId());
                     r.add(temp);
@@ -81,16 +93,19 @@ public final class RouteBean {
                     r.add(computedRoute.get(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1))));
                 }
         });
-        System.out.println(r.size());
-        for (int i = 0; i < r.size(); i++) {
-            System.out.println(r.get(i));
-        }
-        if ((waypoints.size() >= 2 && finish.get())) {
+        if (waypoints.size() >= 2 && finish.get() && !r.isEmpty()) {
             route.set(new MultiRoute(r));
         }
         else {
             route.set(null);
         }
+    }
+
+    private ObservableList<Waypoint> sortedObservableList(ObservableList<Waypoint> w) {
+        ObservableList<Waypoint> temp = FXCollections.observableArrayList();
+        temp.addAll(w);
+        temp.sort(Comparator.comparingInt(Waypoint::closestNodeId));
+        return temp;
     }
 
 

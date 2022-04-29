@@ -1,6 +1,7 @@
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Functions;
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
 import java.util.ArrayList;
@@ -43,11 +44,13 @@ public final class ElevationProfileComputer {
         for (int i = 0; i < nbSamples; i++) {
             samples[i] = ((float) route.elevationAt(i * spaceBetween));
         }
-        if (firstValid(samples) == -1 || lastValid(samples) == -1) {
+        int firstValidIndex = firstValid(samples);
+        int lastValidIndex = lastValid(samples);
+        if (firstValidIndex == -1) {
             return new ElevationProfile(length, new float[nbSamples]);
         }
-        Arrays.fill(samples, 0, firstValid(samples), samples[firstValid(samples)]);
-        Arrays.fill(samples, lastValid(samples), samples.length, samples[lastValid(samples)]);
+        Arrays.fill(samples, 0, firstValidIndex, samples[firstValidIndex]);
+        Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
 
         if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) {
             indexes.add(0);
@@ -69,10 +72,15 @@ public final class ElevationProfileComputer {
         //Interpolating
         for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
             int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
-            DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
-                    samples[indexes.get(2 * i + 1)]}, quantity);
-            for (int j = 1; j < quantity; j++) {
-                samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
+            if(quantity == 1){
+                samples[indexes.get(2 * i) + 1] = (float) Math2.interpolate(samples[indexes.get(2 * i)], samples[indexes.get(2 * i)+1], 0.5);
+            }
+            else {
+                DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
+                        samples[indexes.get(2 * i + 1)]}, quantity);
+                for (int j = 1; j < quantity; j++) {
+                    samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
+                }
             }
 
         }

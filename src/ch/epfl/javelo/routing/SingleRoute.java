@@ -20,6 +20,8 @@ public final class SingleRoute implements Route {
     private final List<Edge> edges;
     private final double[] positions;
 
+    private final List<PointCh> pointList;
+
     /**
      * This method constructs a SingleRoute with a list of edges (edges) given and a table
      * containing the length at each edge position (positions).
@@ -28,6 +30,13 @@ public final class SingleRoute implements Route {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
         positions = createPositions(edges);
+
+        List<PointCh> list = new ArrayList<>();
+        list.add(edges.get(0).fromPoint());
+        for (Edge edge : edges) {
+            list.add((edge.toPoint()));
+        }
+        this.pointList = List.copyOf(list);
     }
 
     /**
@@ -47,11 +56,8 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double length() {
-        double length = 0;
-        for (Edge edge : edges) {
-            length += edge.length();
-        }
-        return length;
+
+        return positions[positions.length -1];
     }
 
     /**
@@ -71,13 +77,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public List<PointCh> points() {
-        List<PointCh> list = new ArrayList<>();
-        list.add(edges.get(0).fromPoint());
-        for (Edge edge : edges) {
-            list.add((edge.toPoint()));
-        }
-
-        return list;
+        return pointList;
     }
 
     /**
@@ -88,7 +88,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public PointCh pointAt(double position) {
-        position = Math2.clamp(0, position, length());
+        position = bounds(position);
         int edgeIndex = edgeIndex(position);
         double newPos = position - positions[edgeIndex];
         return edges.get(edgeIndex).pointAt(newPos);
@@ -102,7 +102,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double elevationAt(double position) {
-        position = Math2.clamp(0, position, length());
+        position = bounds(position);
         int edgeIndex = edgeIndex(position);
         double newPos = position - positions[edgeIndex];
         return edges.get(edgeIndex).elevationAt(newPos);
@@ -116,7 +116,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public int nodeClosestTo(double position) {
-        position = Math2.clamp(0, position, length());
+        position = bounds(position);
         int edgeIndex = edgeIndex(position);
         double diff1 = position - positions[edgeIndex];
         double diff2 = positions[edgeIndex + 1] - position;
@@ -171,5 +171,9 @@ public final class SingleRoute implements Route {
         int edgeIndex;
         edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
         return Math2.clamp(0, edgeIndex, edges.size() - 1);
+    }
+
+    private double bounds(double position){
+        return Math2.clamp(0, position, length());
     }
 }

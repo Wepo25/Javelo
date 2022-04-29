@@ -1,5 +1,7 @@
 package ch.epfl.javelo;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 /**
@@ -8,7 +10,7 @@ import java.util.function.DoubleUnaryOperator;
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
-public class Functions {
+public final class Functions {
 
     /**
      * private constructor which allows the class to be uninstantiable.
@@ -32,12 +34,19 @@ public class Functions {
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
         Preconditions.checkArgument(xMax > 0 && samples.length >= 2);
+        List<Float> temp = new ArrayList<>();
+
+        for(Float f : samples){
+            temp.add(f);
+        }
+
+        List<Float> immutableSamples = List.copyOf(temp);
         return (x) -> {
-            if (x < 0) return samples[0];
-            if (x >= xMax) return samples[samples.length - 1];
-            double gap = xMax / (samples.length - 1);
+            if (x < 0) return immutableSamples.get(0);
+            if (x >= xMax) return immutableSamples.get(immutableSamples.size()-1);
+            double gap = xMax / (immutableSamples.size() - 1);
             int borneInf = (int) (x / gap);
-            return Math2.interpolate(samples[borneInf], samples[borneInf + 1], ((x - borneInf * gap) / gap));
+            return Math2.interpolate(immutableSamples.get(borneInf), immutableSamples.get(borneInf+1), ((x - borneInf * gap) / gap));
         };
 
     }

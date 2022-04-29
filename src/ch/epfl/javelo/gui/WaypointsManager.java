@@ -19,11 +19,11 @@ import java.util.function.Consumer;
 
 public final class WaypointsManager {
 
-    private Graph routeNetwork;
-    private ReadOnlyObjectProperty<MapViewParameters> mvp;
+    private final Graph routeNetwork;
+    private final ReadOnlyObjectProperty<MapViewParameters> mvp;
     private final ObservableList<Waypoint> wp;
-    private Consumer<String> errorConsumer;
-    private Pane pane;
+    private final Consumer<String> errorConsumer;
+    private final Pane pane;
 
 
 

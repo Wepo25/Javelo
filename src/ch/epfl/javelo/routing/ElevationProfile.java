@@ -17,6 +17,10 @@ public final class ElevationProfile {
     private final double length;
     private final float[] samples;
 
+    private final double totalAscent;
+
+    private final double totalDescent;
+
     /**
      * This method is the constructor of the ElevationProfile class.
      *
@@ -28,7 +32,22 @@ public final class ElevationProfile {
     public ElevationProfile(double length, float[] elevationSamples) {
         Preconditions.checkArgument(length > 0 && elevationSamples.length >= 2);
         this.length = length;
-        this.samples = elevationSamples;
+        this.samples = new float[elevationSamples.length];
+        System.arraycopy(elevationSamples, 0, samples, 0, elevationSamples.length);
+
+        double ascent = 0;
+        double descent = 0;
+        for (int i = 0; i < samples.length - 1; i++) {
+            if (samples[i + 1] - samples[i] > 0) {
+                ascent += samples[i + 1] - samples[i];
+            }
+            if (samples[i + 1] - samples[i] < 0) {
+                descent += samples[i + 1] - samples[i];
+            }
+        }
+        this.totalAscent = ascent;
+        this.totalDescent = Math.abs(descent);
+
         for (float sample : samples) {
             s.accept(sample);
         }
@@ -67,13 +86,7 @@ public final class ElevationProfile {
      * @return - double : The total ascent of the path corresponding to this sequence of elevations.
      */
     public double totalAscent() {
-        double ascent = 0;
-        for (int i = 0; i < samples.length - 1; i++) {
-            if (samples[i + 1] - samples[i] > 0) {
-                ascent += samples[i + 1] - samples[i];
-            }
-        }
-        return Math.abs(ascent);
+        return totalAscent;
     }
 
     /**
@@ -83,13 +96,7 @@ public final class ElevationProfile {
      *
      */
     public double totalDescent() {
-        double descent = 0;
-        for (int i = 0; i < samples.length - 1; i++) {
-            if (samples[i + 1] - samples[i] < 0) {
-                descent += samples[i + 1] - samples[i];
-            }
-        }
-        return Math.abs(descent);
+        return totalDescent;
     }
 
     /**

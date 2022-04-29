@@ -1,6 +1,8 @@
 package ch.epfl.javelo.data;
 
 import ch.epfl.javelo.Preconditions;
+
+import java.util.Set;
 import java.util.StringJoiner;
 
 
@@ -32,8 +34,9 @@ public record AttributeSet(long bits) {
      * @return - AttributeSet : The long representation of these attributes indexes.
      */
     public static AttributeSet of(Attribute... attributes) {
+        Set<Attribute> temp = Set.of(attributes);
         long result = 0L;
-        for (Attribute attribute : attributes) {
+        for (Attribute attribute : temp) {
             result += 1L << attribute.ordinal();
         }
         return new AttributeSet(result);

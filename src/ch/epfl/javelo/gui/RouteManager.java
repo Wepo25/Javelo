@@ -1,8 +1,10 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
@@ -31,14 +33,40 @@ public final class RouteManager {
 
         pl = new Polyline();
 
+        pl.setOnMouseClicked(event -> {
+                    PointWebMercator tempPWM = mvp.get().pointAt(event.getX(), event.getY());
+                    PointCh tempPC = tempPWM.toPointCh();
+                    int closestNode = rb.getRouteComputer().get().getGraph().get().nodeClosestTo(tempPC, 500);
+                    rb.waypoints.add(new Waypoint(tempPC, closestNode));
+                });
+
+
         c = new Circle();
+
+        //Listener to move the position circle on the polyline :)
+
+        /*c.setOnMouseDragged(event -> {
+            PointWebMercator tempPWM = PointWebMercator.ofPointCh(rb.getRoute().get().pointClosestTo(mvp.get().pointAt(event.getX(),event.getY()).toPointCh()).point());
+            c.setCenterX(mvp.get().viewX(tempPWM));
+            c.setCenterY(mvp.get().viewY(tempPWM));
+            c.setRadius(5);
+        }
+        );
+
+         */
 
         mvp.addListener(o -> rb.computeRoute());
         if(rb.getRoute().get() != null) {
 
             rb.getRoute().addListener(o -> {
-                updatePolyline();
-                updateCircle();
+                if(rb.getRoute().get() != null) {
+                    pane.setVisible(true);
+                    updatePolyline();
+                    updateCircle();
+                }
+                else{
+                    pane.setVisible(false);
+                }
             }
         );
 
@@ -52,7 +80,6 @@ public final class RouteManager {
             pane.getChildren().add(c);
         }
         pane.setPickOnBounds(false);
-        pane.setVisible(!(rb.getRoute().get() == null));
     }
 
     public Pane pane(){

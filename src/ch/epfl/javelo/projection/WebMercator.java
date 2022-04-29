@@ -2,16 +2,15 @@ package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Math2;
 
+import static java.lang.Math.PI;
+
 /**
  * This class not instantiable allows us to switch between WGS 84 and Web Mercator coordinates.
  *
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
  */
-public class WebMercator {
-
-
-    private final static double pi = Math.PI;
+public final class WebMercator {
 
     /**
      * Private constructor.
@@ -26,7 +25,7 @@ public class WebMercator {
      * @return - double : The x coordinate of the point located at this Longitude.
      */
     public static double x(double lon) {
-        return (lon + pi) / (2.0 * pi);
+        return (lon + PI) / (2.0 * PI);
     }
 
     /**
@@ -36,7 +35,7 @@ public class WebMercator {
      * @return - double : The x coordinate of the point located at this Latitude.
      */
     public static double y(double lat) {
-        return (1 / (2 * pi)) * (pi - Math2.asinh(Math.tan(lat)));
+        return (1 / (2 * PI)) * (PI - Math2.asinh(Math.tan(lat)));
     }
 
     /**
@@ -46,7 +45,7 @@ public class WebMercator {
      * @return - double : The Longitude of the point located at this x coordinate.
      */
     public static double lon(double x) {
-        return 2 * pi * x - pi;
+        return 2 * PI * x - PI;
     }
 
     /**
@@ -56,6 +55,6 @@ public class WebMercator {
      * @return - double : The Latitude of the point located at this y coordinate.
      */
     public static double lat(double y) {
-        return Math.atan(Math.sinh(pi - 2 * pi * y));
+        return Math.atan(Math.sinh(PI - 2 * PI * y));
     }
 }

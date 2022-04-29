@@ -138,14 +138,14 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                 samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -4);
             }
         } else {
-            samples[0] = Math.scalb(toUnsignedInt(elevations.get(sampleId)), -4);
+            samples[0] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));
             int index = 1;
             int profile_size = (pf == 2)? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
             int profile_length = (pf == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
             for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
                 for (int j = 0; j < profile_size; j++) {
-                    samples[index] = samples[index - 1] + Math.scalb(extractSigned(elevations.get(i),
-                            profile_length * (profile_size-j-1), profile_length), -4);
+                    samples[index] = samples[index - 1] + Q28_4.asFloat(extractSigned(elevations.get(i),
+                            profile_length * (profile_size-j-1), profile_length));
                     if (index == samples.length-1) {
                         break;
                     }
@@ -174,10 +174,13 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - float[] : The given float array but reversed.
      */
     private float[] reverse(float[] a) {
-        float[] temp = new float[a.length];
-        for (int i = a.length - 1; i >= 0; --i) {
-            temp[(a.length - 1) - i] = a[i];
+
+        for (int i = 0; i < a.length / 2; i++) {
+            float temp1 = a[i];
+            a[i] = a[a.length-i-1];
+            a[a.length-i-1] = temp1;
         }
-        return temp;
+
+        return a;
     }
 }

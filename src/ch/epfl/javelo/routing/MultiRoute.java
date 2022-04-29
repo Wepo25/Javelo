@@ -81,7 +81,7 @@ public final class MultiRoute implements Route {
         for (Route route : segments) {
             edges.addAll(route.edges());
         }
-        return List.copyOf(edges);
+        return edges;
     }
 
     /**
@@ -96,11 +96,11 @@ public final class MultiRoute implements Route {
         for (Route route : segments) {
             points.addAll(route.points());
             points.remove(points.size() - 1);
-
         }
+
         List<PointCh> list = segments.get(segments.size() - 1).points();
         points.add(list.get(list.size() - 1));
-        return List.copyOf(points);
+        return points;
     }
 
     /**

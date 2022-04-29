@@ -86,7 +86,7 @@ public final class BaseMapManager {
 
             int oldZ = mvp.get().zoomLevel();
             int newZ = Math2.clamp(8,(int) Math.round(oldZ + Math2.clamp(-1,event.getDeltaY(),1)),19);
-            System.out.println((int) Math.round(oldZ + Math2.clamp(-1,event.getDeltaY(),1)));
+
             PointWebMercator temp = mvp.get().pointAt((int) event.getX(),(int) event.getY());
 
             int newX = (int) (temp.xAtZoomLevel(newZ)-event.getX());

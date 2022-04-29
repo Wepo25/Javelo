@@ -10,6 +10,7 @@ import static ch.epfl.javelo.Preconditions.checkArgument;
  */
 public record PointWebMercator(double x, double y) {
 
+    private static final int MIN_ZOOM = 8;
     /**
      * Constructor checking the validity of its arguments.
      *
@@ -31,7 +32,7 @@ public record PointWebMercator(double x, double y) {
      * @return - PointWebMercator : The given object with its coordinates at zoom level 0.
      */
     public static PointWebMercator of(int zoomLevel, double x, double y) {
-        return new PointWebMercator(Math.scalb(x, -8 - zoomLevel), Math.scalb(y, -8 - zoomLevel));
+        return new PointWebMercator(Math.scalb(x, -MIN_ZOOM - zoomLevel), Math.scalb(y, -MIN_ZOOM - zoomLevel));
     }
 
     /**
@@ -51,7 +52,7 @@ public record PointWebMercator(double x, double y) {
      * @return - double : This point's x coordinates with the given zoom applied.
      */
     public double xAtZoomLevel(int zoomLevel) {
-        return Math.scalb(x, 8 + zoomLevel);
+        return Math.scalb(x, MIN_ZOOM + zoomLevel);
     }
 
     /**
@@ -61,7 +62,7 @@ public record PointWebMercator(double x, double y) {
      * @return - double : This point's y coordinates with the given zoom applied.
      */
     public double yAtZoomLevel(int zoomLevel) {
-        return Math.scalb(y, 8 + zoomLevel);
+        return Math.scalb(y, MIN_ZOOM + zoomLevel);
     }
 
     /**
@@ -91,8 +92,6 @@ public record PointWebMercator(double x, double y) {
     public PointCh toPointCh() {
         double e = Ch1903.e(lon(), lat());
         double n = Ch1903.n(lon(), lat());
-        if (SwissBounds.containsEN(e, n))
-            return new PointCh(Ch1903.e(lon(), lat()), Ch1903.n(lon(), lat()));
-        else return null;
+        return SwissBounds.containsEN(e, n)? new PointCh(e, n) : null;
     }
 }

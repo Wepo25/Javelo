@@ -35,13 +35,21 @@ public record GraphNodes(IntBuffer buffer) {
      */
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
 
+    private static final int OUTDEGREE_INDEX = 28;
+
+    private static final int OUTDEGREE_LENGTH = 4;
+
+    private static final int EDGEID_INDEX = 0;
+
+    private static final int EDGEID_LENGTH = 28;
+
     /**
      * This method allows us to compute the number of nodes contained inside the buffer.
      *
      * @return - int : The total number of nodes contained in an object GraphNodes.
      */
     public int count() {
-        return buffer.capacity() / 3;
+        return buffer.capacity() / NODE_INTS;
     }
 
     /**
@@ -72,7 +80,7 @@ public record GraphNodes(IntBuffer buffer) {
      */
     public int outDegree(int nodeId) {
         int idEdge = buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES);
-        return Bits.extractUnsigned(idEdge, 28, 4);
+        return Bits.extractUnsigned(idEdge, OUTDEGREE_INDEX, OUTDEGREE_LENGTH);
     }
 
     /**
@@ -86,7 +94,7 @@ public record GraphNodes(IntBuffer buffer) {
     public int edgeId(int nodeId, int edgeIndex) {
         assert 0 <= edgeIndex && edgeIndex < outDegree(nodeId);
         int idEdge = buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES);
-        return Bits.extractUnsigned(idEdge, 0, 28) + edgeIndex;
+        return Bits.extractUnsigned(idEdge, EDGEID_INDEX, EDGEID_LENGTH) + edgeIndex;
     }
 
 }

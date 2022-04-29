@@ -26,8 +26,8 @@ public final class Bits {
      * @throws IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
      */
     public static int extractSigned(int value, int start, int length) {
-        checkArgument((start + length) <= 32 && start <= 31 && start >= 0 &&
-                length >= 0 && length <= 32);
+        checkArgument((start + length) <= Integer.SIZE && start < Integer.SIZE && start >= 0 &&
+                length >= 0 && length <= Integer.SIZE);
         return (value << (Integer.SIZE - (start + length)) ) >> Integer.SIZE - length;
     }
 
@@ -41,8 +41,8 @@ public final class Bits {
      * @throw IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
      */
     public static int extractUnsigned(int value, int start, int length) {
-        checkArgument((start + length) <= 32 && start <= 31 && start >= 0 &&
-                length >= 0 && length < 32);
+        checkArgument((start + length) <= Integer.SIZE && start < Integer.SIZE && start >= 0 &&
+                length >= 0 && length < Integer.SIZE);
         return (value << Integer.SIZE - (start + length)) >>> Integer.SIZE - length;
     }
 }

@@ -1,5 +1,7 @@
 package ch.epfl.javelo.projection;
 
+import ch.epfl.javelo.Math2;
+
 import static ch.epfl.javelo.Preconditions.checkArgument;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
@@ -34,7 +36,7 @@ public record PointCh(double e, double n) {
      * @return - double : The squared distance between this point and a given point.
      */
     public double squaredDistanceTo(PointCh that) {
-        return abs(pow(that.e - e(), 2) + pow(that.n - n(), 2));
+        return Math2.squaredNorm(that.e - e(),that.n - n());
     }
 
     /**

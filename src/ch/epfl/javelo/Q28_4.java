@@ -8,6 +8,8 @@ package ch.epfl.javelo;
  */
 public final class Q28_4 {
 
+    private static final int BIT_SHIFT = 4;
+
     /**
      * Private constructor. Uninstanciable class.
      */
@@ -21,7 +23,7 @@ public final class Q28_4 {
      * @return - int : The int which binary representation stores the given integer Q28.4 representation.
      */
     public static int ofInt(int i) {
-        return i << 4;
+        return i << BIT_SHIFT;
     }
 
     /**
@@ -31,7 +33,7 @@ public final class Q28_4 {
      * @return - double : The double stored inside the given integer binary representation.
      */
     public static double asDouble(int q28_4) {
-        return Math.scalb((double) q28_4, -4);
+        return Math.scalb((double) q28_4, -BIT_SHIFT);
     }
 
     /**
@@ -41,6 +43,6 @@ public final class Q28_4 {
      * @return - float : The float stored inside the given integer binary representation.
      */
     public static float asFloat(int q28_4) {
-        return Math.scalb(q28_4, -4);
+        return Math.scalb(q28_4, -BIT_SHIFT);
     }
 }

@@ -49,12 +49,12 @@ public final class Graph {
      */
     public static Graph loadFrom(Path basePath) throws IOException {
         IntBuffer nodes = tryAndOpen(basePath.resolve("nodes.bin")).asIntBuffer();
-        ByteBuffer sectors = tryAndOpen(basePath.resolve("sectors.bin")).asReadOnlyBuffer();
-        ByteBuffer edges = tryAndOpen(basePath.resolve("edges.bin")).asReadOnlyBuffer();
+        ByteBuffer sectors = tryAndOpen(basePath.resolve("sectors.bin"));
+        ByteBuffer edges = tryAndOpen(basePath.resolve("edges.bin"));
         IntBuffer profileIds = tryAndOpen(basePath.resolve("profile_ids.bin")).asIntBuffer();
         ShortBuffer elevations = tryAndOpen(basePath.resolve("elevations.bin")).asShortBuffer();
         LongBuffer attributes = tryAndOpen(basePath.resolve("attributes.bin")).asLongBuffer();
-        List<AttributeSet> attributeSets = new ArrayList<>();
+        List<AttributeSet> attributeSets = new ArrayList<>(attributes.capacity());
         for (int i = 0; i < attributes.capacity(); i++) {
             attributeSets.add(new AttributeSet(attributes.get(i)));
         }
@@ -114,13 +114,13 @@ public final class Graph {
      */
     public int nodeClosestTo(PointCh point, double searchDistance) {
         int closestNodeId = -1;
-        double NewSearchDistance = searchDistance * searchDistance;
+        double newSearchDistance = searchDistance * searchDistance;
         List<GraphSectors.Sector> temp = sectors.sectorsInArea(point, searchDistance);
         for (GraphSectors.Sector sect : temp) {
             for (int i = sect.startNodeId(); i < sect.endNodeId(); ++i) {
                 double tempDistance = point.squaredDistanceTo(nodePoint(i));
-                if ((tempDistance <= NewSearchDistance)) {
-                    NewSearchDistance = tempDistance;
+                if ((tempDistance <= newSearchDistance)) {
+                    newSearchDistance = tempDistance;
                     closestNodeId = i;
                 }
             }

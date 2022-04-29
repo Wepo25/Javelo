@@ -2,6 +2,8 @@ package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.*;
 
@@ -110,6 +112,10 @@ public final class RouteComputer {
             return null;
         }
         return new SingleRoute(edges);
+    }
+
+    public ReadOnlyObjectProperty<Graph> getGraph(){
+        return new SimpleObjectProperty<Graph>(graph);
     }
 }
 
