@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.routing.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -21,6 +22,9 @@ public final class RouteBean {
 
     record Pair(Waypoint a, Waypoint b){}
 
+    private Waypoint firstWp;
+    private Waypoint lastWp;
+
     public RouteBean(RouteComputer rc){
 
         highlightedPosition = new SimpleDoubleProperty();
@@ -30,11 +34,17 @@ public final class RouteBean {
         waypoints = FXCollections.observableArrayList();
 
         ListChangeListener<Waypoint> listener = o -> {
-            if(sortedObservableList(waypoints).equals(waypoints)) {
+            if(waypoints.size() == 2){
+                firstWp = waypoints.get(0);
+                lastWp = waypoints.get(waypoints.size() - 1);
                 computeRoute();
             }
-            else{
-                waypoints.sort(Comparator.comparingInt(Waypoint::closestNodeId));
+            else if(sortedObservableList(waypoints).equals(waypoints)) {
+                computeRoute();
+            }
+            else if (waypoints.size() >2 ){
+                waypoints = sortedObservableList(waypoints);
+                computeRoute();
             }
         };
 
@@ -79,6 +89,8 @@ public final class RouteBean {
         waypoints.stream().
                 takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId())!=null).
                 forEach(a -> {
+                    System.out.println(a);
+                    System.out.println(waypoints.get(waypoints.indexOf(a) + 1));
                 if (!computedRoute.containsKey(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
                     Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId());
                     r.add(temp);
@@ -101,9 +113,31 @@ public final class RouteBean {
 
     private ObservableList<Waypoint> sortedObservableList(ObservableList<Waypoint> w) {
         ObservableList<Waypoint> temp = FXCollections.observableArrayList();
+        ObservableList<Waypoint> finaleTemp = FXCollections.observableArrayList();
         temp.addAll(w);
-        temp.sort(Comparator.comparingInt(Waypoint::closestNodeId));
-        return temp;
+        temp.remove(firstWp);
+        temp.remove(lastWp);
+        int index = w.indexOf(firstWp);
+        while(temp.size()<w.size() -2) {
+            double distance = Double.POSITIVE_INFINITY;
+            Waypoint tempWp = w.get(index);
+            for (int j = 0; j < w.size(); j++) {
+                if(temp.size() < w.size()-2 || !temp.contains(w.get(j))){
+                    double tempDistance = w.get(index).point().distanceTo(w.get(j).point());
+                    if(tempDistance < distance){
+                        distance = tempDistance;
+                        tempWp = w.get(j);
+                    }
+
+                }
+            }
+            temp.add(tempWp);
+            index = w.indexOf(tempWp);
+        }
+        finaleTemp.add(firstWp);
+        finaleTemp.addAll(temp);
+        finaleTemp.add(lastWp);
+        return finaleTemp;
     }
 
 
