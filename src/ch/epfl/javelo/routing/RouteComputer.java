@@ -18,6 +18,10 @@ public final class RouteComputer {
     private final Graph graph;
     private final CostFunction costFunction;
 
+    private final static float POSITIVE_INFINITY = Float.POSITIVE_INFINITY;
+
+    private final static float COMPUTED_DISTANCE = Float.NEGATIVE_INFINITY;
+
 
     /**
      * The constructor of the RouteComputer class.
@@ -53,12 +57,10 @@ public final class RouteComputer {
 
         float[] distance = new float[graph.nodeCount()];
         int[] predecessor = new int[graph.nodeCount()];
-        Arrays.fill(distance, Float.POSITIVE_INFINITY);
+        Arrays.fill(distance, POSITIVE_INFINITY);
         distance[startNodeId] = 0;
 
         PriorityQueue<WeightedNode> p = new PriorityQueue<>();
-        List<Integer> nodePath = new ArrayList<>();
-        List<Edge> edges = new ArrayList<>();
 
         p.add(new WeightedNode(startNodeId, distance[startNodeId]));
 
@@ -69,54 +71,54 @@ public final class RouteComputer {
             }
             int quantity = graph.nodeOutDegree(id);
             for (int i = 0; i < quantity; i++) {
-                int NP = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
-                if (Float.compare(Float.NEGATIVE_INFINITY, distance[NP]) != 0 &&
-                        Float.compare(Float.NEGATIVE_INFINITY, distance[id]) != 0) {
+                int nextNodeId = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
+                if (COMPUTED_DISTANCE != distance[nextNodeId] &&
+                        COMPUTED_DISTANCE != distance[id]) {
                     float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
                             * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float dd = (float) (d + graph.nodePoint(NP).distanceTo(graph.nodePoint(endNodeId)));
-                    if (d < distance[NP]) {
-                        distance[NP] = d;
-                        predecessor[NP] = id;
-                        p.add(new WeightedNode(NP, dd));
+                    float dd = (float) (d + graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
+                    if (d < distance[nextNodeId]) {
+                        distance[nextNodeId] = d;
+                        predecessor[nextNodeId] = id;
+                        p.add(new WeightedNode(nextNodeId, dd));
                     }
                 }
             }
-            distance[id] = Float.NEGATIVE_INFINITY;
+            distance[id] = COMPUTED_DISTANCE;
         } while (!p.isEmpty());
 
-        int i = endNodeId;
-        nodePath.add(i);
 
-        while (i != 0) {
-            i = predecessor[i];
-            nodePath.add(i);
-        }
+        List<Edge> edges = edges(predecessor, endNodeId);
+        Collections.reverse(edges);
 
-        Collections.reverse(nodePath);
-
-        for (int j = 1; j < nodePath.size() - 1; j++) {
-            boolean found = false;
-            int edgeID = 0;
-            while (!found) {
-                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(nodePath.get(j), edgeID)) == nodePath.get(j + 1)) {
-                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(nodePath.get(j), edgeID), nodePath.get(j),
-                            nodePath.get(j + 1)));
-                    found = true;
-                }
-                edgeID++;
-            }
-
-        }
         if(edges.isEmpty()){
             return null;
         }
         return new SingleRoute(edges);
     }
+    
+    private List<Edge> edges(int[] predecessor, int endNodeId){
 
-    public ReadOnlyObjectProperty<Graph> getGraph(){
-        return new SimpleObjectProperty<Graph>(graph);
+        List<Edge> edges = new ArrayList<>();
+        int i = endNodeId;
+
+        while (predecessor[i] != 0) {
+            boolean found = false;
+            int edgeID = 0;
+            while (!found) {
+                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(predecessor[i], edgeID)) == i) {
+                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(predecessor[i], edgeID), predecessor[i],
+                            i));
+                    found = true;
+                }
+                edgeID++;
+            }
+            i = predecessor[i];
+
+        }
+        return edges;
     }
+
 }
 
 

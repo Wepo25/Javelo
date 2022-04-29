@@ -35,27 +35,10 @@ public final class RouteManager {
 
         pl = new Polyline();
 
-        pl.setOnMouseClicked(event -> {
-                    PointWebMercator tempPWM = mvp.get().pointAt(event.getX(), event.getY());
-                    PointCh tempPC = tempPWM.toPointCh();
-                    int closestNode = rb.getRouteComputer().get().getGraph().get().nodeClosestTo(tempPC, 500);
-                    rb.waypoints.add(new Waypoint(tempPC, closestNode));
-                });
 
 
         c = new Circle();
 
-        //Listener to move the position circle on the polyline :)
-
-        /*c.setOnMouseDragged(event -> {
-            PointWebMercator tempPWM = PointWebMercator.ofPointCh(rb.getRoute().get().pointClosestTo(mvp.get().pointAt(event.getX(),event.getY()).toPointCh()).point());
-            c.setCenterX(mvp.get().viewX(tempPWM));
-            c.setCenterY(mvp.get().viewY(tempPWM));
-            c.setRadius(5);
-        }
-        );
-
-         */
 
         mvp.addListener(o -> rb.computeRoute());
         if(rb.getRoute().get() != null) {
