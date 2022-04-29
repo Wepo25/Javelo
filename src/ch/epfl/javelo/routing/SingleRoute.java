@@ -33,6 +33,7 @@ public final class SingleRoute implements Route {
 
         List<PointCh> list = new ArrayList<>();
         list.add(edges.get(0).fromPoint());
+
         for (Edge edge : edges) {
             list.add((edge.toPoint()));
         }
@@ -56,11 +57,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double length() {
-        double length = 0;
-        for (Edge edge : edges) {
-            length += edge.length();
-        }
-        return length;
+        return positions[positions.length -1];
     }
 
     /**
@@ -70,7 +67,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public List<Edge> edges() {
-        return List.copyOf(edges);
+        return edges;
     }
 
     /**
@@ -135,12 +132,13 @@ public final class SingleRoute implements Route {
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
-
+        int counter = 0;
         for (Edge edge : edges) {
             double actualPosition = Math2.clamp(0, edge.positionClosestTo(point), edge.length());
-            double position = actualPosition + positions[edges.indexOf(edge)];
+            double position = actualPosition + positions[counter];
             closest = closest.min(edge.pointAt(actualPosition), position,
                     point.distanceTo(edge.pointAt(actualPosition)));
+            ++counter;
         }
         return closest;
     }
