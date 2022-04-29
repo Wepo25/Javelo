@@ -1,10 +1,9 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
@@ -35,25 +34,36 @@ public final class RouteManager {
 
         pl = new Polyline();
 
-
-
         c = new Circle();
 
+        c.setOnMouseClicked(e -> {
+            Point2D position = c.localToParent(e.getX(),e.getY());
+            int nodeId= rb.getRoute().get().nodeClosestTo(rb.highlightedPosition());
+            Waypoint pointToAdd = new Waypoint(mvp.get().pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
+            if( rb.waypoints.contains(pointToAdd)){
+                errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
+            }else{
+
+                int tempIndex = rb.getRoute().get().indexOfSegmentAt(rb.highlightedPosition());
+                rb.waypoints.add(pointToAdd);
+            }
+        });
 
         mvp.addListener(o -> rb.computeRoute());
+
         if(rb.getRoute().get() != null) {
 
             rb.getRoute().addListener(o -> {
-                if(rb.getRoute().get() != null) {
-                    pane.setVisible(true);
-                    updatePolyline();
-                    updateCircle();
-                }
-                else{
-                    pane.setVisible(false);
-                }
-            }
-        );
+                        if(rb.getRoute().get() != null) {
+                            pane.setVisible(true);
+                            updatePolyline();
+                            updateCircle();
+                        }
+                        else{
+                            pane.setVisible(false);
+                        }
+                    }
+            );
 
             updatePolyline();
             pl.setId("route");
@@ -64,6 +74,7 @@ public final class RouteManager {
             pane.getChildren().add(pl);
             pane.getChildren().add(c);
         }
+
         pane.setPickOnBounds(false);
     }
 
@@ -72,7 +83,9 @@ public final class RouteManager {
     }
 
     private Double[] buildRoute(){
-        List<double[]> routeEdges = rb.getRoute().get().points().stream().map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)), mvp.get().viewY(PointWebMercator.ofPointCh(d))}).collect(Collectors.toList());
+        List<double[]> routeEdges = rb.getRoute().get().points().
+                stream().map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)),
+                        mvp.get().viewY(PointWebMercator.ofPointCh(d))}).collect(Collectors.toList());
         Double[] flattenedEdges = new Double[2 * (routeEdges.size() - 1)];
 
         for (int i = 0; i < routeEdges.size()-1; i ++) {
@@ -88,6 +101,7 @@ public final class RouteManager {
     }
 
     private void updateCircle(){
+
         c.setCenterX(mvp.get().viewX(buildCircleCenter()));
         c.setCenterY(mvp.get().viewY(buildCircleCenter()));
         c.setRadius(5);
