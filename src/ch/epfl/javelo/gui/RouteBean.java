@@ -8,17 +8,15 @@ import javafx.collections.ObservableList;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public final class RouteBean {
 
     public ObservableList<Waypoint> waypoints;
 
     private final RouteComputer rc;
-    private ObjectProperty<Route> route;
+    private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
-    private ObjectProperty<ElevationProfile> elevationProfile;
+    private final ObjectProperty<ElevationProfile> elevationProfile;
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
 
     record Pair(Waypoint a, Waypoint b){}

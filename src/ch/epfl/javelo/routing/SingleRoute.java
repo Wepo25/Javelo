@@ -56,8 +56,11 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double length() {
-
-        return positions[positions.length -1];
+        double length = 0;
+        for (Edge edge : edges) {
+            length += edge.length();
+        }
+        return length;
     }
 
     /**
