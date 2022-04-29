@@ -22,6 +22,8 @@ public final class RouteManager {
 
     private final Polyline pl;
 
+
+
     private final Circle c;
 
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
