@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Point2D;
@@ -7,6 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class RouteManager {
@@ -59,15 +62,15 @@ public final class RouteManager {
         mvp.addListener((prop,last,updated) ->{
 
             if((!(last.zoomLevel() == updated.zoomLevel()))){
+                System.out.println(0);
                 updateCircle();
                 updatePolyline();
             } else{ if(!last.topLeft().equals(updated.topLeft())){
 
                 System.out.println(pl.getLayoutX());
                 updateCircle();
-           pl.setLayoutX(-last.topLeft().getX());
-           pl.setLayoutY(updated.viewX(-last.topLeft().getY()));
-           // pl.setLayoutY(rb.waypoints.get(0).point().n());
+                setPolylineLayout();
+                // pl.setLayoutY(rb.waypoints.get(0).point().n());
                 //pl.getLayoutX()-(last.topLeft().getX())-updated.topLeft().getX()
 
                 }}
@@ -101,19 +104,31 @@ public final class RouteManager {
         pane.setPickOnBounds(false);
     }
 
+    private void setPolylineLayout() {
+        pl.setLayoutX(-mvp.get().topLeft().getX());
+        pl.setLayoutY(-mvp.get().topLeft().getY());
+    }
+
     public Pane pane(){
         return pane;
     }
 
     private void buildRoute(Polyline pl){ // mieux de addAll et on ne set pas les layouts donc
         // faut-il changer les coords
-        rb.getRoute().get().points().stream().
+       /* rb.getRoute().get().points().stream().
                 map(d -> new Point2D(mvp.get().viewX(PointWebMercator.ofPointCh(d)),
                         mvp.get().viewY(PointWebMercator.ofPointCh(d)))).toList().
                 forEach(p -> {
                     pl.getPoints().add(p.getX());
                     pl.getPoints().add(p.getY());
-                });
+                });*/
+        List<Double> list = new ArrayList<>();
+        for (PointCh point: rb.getRoute().get().points()) {
+            list.add(PointWebMercator.ofPointCh(point).xAtZoomLevel(mvp.get().zoomLevel()));
+            list.add(PointWebMercator.ofPointCh(point).yAtZoomLevel(mvp.get().zoomLevel()));
+        }
+        pl.getPoints().addAll(list);
+        setPolylineLayout();
     }
 
     private PointWebMercator buildCircleCenter(){
