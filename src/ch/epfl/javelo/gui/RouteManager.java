@@ -7,9 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public final class RouteManager {
 
@@ -30,16 +28,27 @@ public final class RouteManager {
 
         pane = new Pane();
 
-        pl = new Polyline();
+        pl = new Polyline(); // coord pour les points qui rend simple
 
         c = new Circle();
 
+        updatePolyline();
+        pl.setId("route");
+
+        updateCircle();
+        c.setId("highlight");
+
+        pane.getChildren().add(pl);
+        pane.getChildren().add(c);
+
         c.setOnMouseClicked(e -> {
             Point2D position = c.localToParent(e.getX(),e.getY());
+
             int nodeId= rb.getRoute().get().nodeClosestTo(rb.highlightedPosition());
+
             Waypoint pointToAdd = new Waypoint(mvp.get().pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
             if( rb.waypoints.contains(pointToAdd)){
-                errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
+                this.errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
             }else{
 
                 int tempIndex = rb.getRoute().get().indexOfSegmentAt(rb.highlightedPosition());
@@ -47,7 +56,30 @@ public final class RouteManager {
             }
         });
 
-        mvp.addListener(o -> rb.computeRoute());
+        mvp.addListener((prop,last,updated) ->{
+
+            if((!(last.zoomLevel() == updated.zoomLevel()))){
+                updateCircle();
+                updatePolyline();
+            } else{ if(!last.topLeft().equals(updated.topLeft())){
+
+                System.out.println(pl.getLayoutX());
+                updateCircle();
+           pl.setLayoutX(-last.topLeft().getX());
+           pl.setLayoutY(updated.viewX(-last.topLeft().getY()));
+           // pl.setLayoutY(rb.waypoints.get(0).point().n());
+                //pl.getLayoutX()-(last.topLeft().getX())-updated.topLeft().getX()
+
+                }}
+
+        });
+
+        rb.highlightedPositionProperty().addListener(e -> {
+            updateCircle();
+        });
+
+
+
 
         if(rb.getRoute().get() != null) {
 
@@ -63,14 +95,7 @@ public final class RouteManager {
                     }
             );
 
-            updatePolyline();
-            pl.setId("route");
 
-            updateCircle();
-            c.setId("highlight");
-
-            pane.getChildren().add(pl);
-            pane.getChildren().add(c);
         }
 
         pane.setPickOnBounds(false);
@@ -80,19 +105,15 @@ public final class RouteManager {
         return pane;
     }
 
-    private Double[] buildRoute(){
-        List<double[]> routeEdges = rb.getRoute().get().points().stream().
-                map(d -> new double[]{mvp.get().viewX(PointWebMercator.ofPointCh(d)),
-                        mvp.get().viewY(PointWebMercator.ofPointCh(d))}).
-                collect(Collectors.toList());
-        Double[] flattenedEdges = new Double[2 * (routeEdges.size() - 1)];
-
-        for (int i = 0; i < routeEdges.size()-1; i ++) {
-            flattenedEdges[2*i] = routeEdges.get(i)[0];
-            flattenedEdges[2*i + 1] = routeEdges.get(i)[1];
-        }
-
-        return flattenedEdges;
+    private void buildRoute(Polyline pl){ // mieux de addAll et on ne set pas les layouts donc
+        // faut-il changer les coords
+        rb.getRoute().get().points().stream().
+                map(d -> new Point2D(mvp.get().viewX(PointWebMercator.ofPointCh(d)),
+                        mvp.get().viewY(PointWebMercator.ofPointCh(d)))).toList().
+                forEach(p -> {
+                    pl.getPoints().add(p.getX());
+                    pl.getPoints().add(p.getY());
+                });
     }
 
     private PointWebMercator buildCircleCenter(){
@@ -106,8 +127,8 @@ public final class RouteManager {
         c.setRadius(5);
     }
 
-    private void updatePolyline(){
+    private void updatePolyline(){ // changer toute la position
         pl.getPoints().clear();
-        pl.getPoints().addAll(buildRoute());
+        buildRoute(pl);
     }
 }

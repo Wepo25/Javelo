@@ -71,7 +71,7 @@ public final class RouteBean {
         return new SimpleObjectProperty<RouteComputer>(rc);
     }
 
-    public void computeRoute() {
+    private void computeRoute() {
         List<Route> r = new ArrayList<>();
         AtomicBoolean finish = new AtomicBoolean(true);
         waypoints.stream().
