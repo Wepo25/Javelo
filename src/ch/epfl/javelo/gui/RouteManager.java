@@ -67,12 +67,8 @@ public final class RouteManager {
                 updatePolyline();
             } else{ if(!last.topLeft().equals(updated.topLeft())){
 
-                System.out.println(pl.getLayoutX());
                 updateCircle();
                 setPolylineLayout();
-                // pl.setLayoutY(rb.waypoints.get(0).point().n());
-                //pl.getLayoutX()-(last.topLeft().getX())-updated.topLeft().getX()
-
                 }}
 
         });
@@ -113,7 +109,7 @@ public final class RouteManager {
         return pane;
     }
 
-    private void buildRoute(Polyline pl){ // mieux de addAll et on ne set pas les layouts donc
+    private void buildRoute(){ // mieux de addAll et on ne set pas les layouts donc
         // faut-il changer les coords
        /* rb.getRoute().get().points().stream().
                 map(d -> new Point2D(mvp.get().viewX(PointWebMercator.ofPointCh(d)),
@@ -142,8 +138,8 @@ public final class RouteManager {
         c.setRadius(5);
     }
 
-    private void updatePolyline(){ // changer toute la position
+    private void updatePolyline(){
         pl.getPoints().clear();
-        buildRoute(pl);
+        buildRoute();
     }
 }
