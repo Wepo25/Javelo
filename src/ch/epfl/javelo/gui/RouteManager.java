@@ -35,11 +35,7 @@ public final class RouteManager {
 
         c = new Circle();
 
-        updatePolyline();
-        pl.setId("route");
 
-        updateCircle();
-        c.setId("highlight");
 
         pane.getChildren().add(pl);
         pane.getChildren().add(c);
@@ -77,10 +73,11 @@ public final class RouteManager {
             updateCircle();
         });
 
+        updatePolyline();
+        pl.setId("route");
 
-
-
-        if(rb.getRoute().get() != null) {
+        updateCircle();
+        c.setId("highlight");
 
             rb.getRoute().addListener(o -> {
                         if(rb.getRoute().get() != null) {
@@ -95,7 +92,7 @@ public final class RouteManager {
             );
 
 
-        }
+
 
         pane.setPickOnBounds(false);
     }
@@ -132,14 +129,15 @@ public final class RouteManager {
     }
 
     private void updateCircle(){
-
+        if(rb.getRoute().get() != null){
         c.setCenterX(mvp.get().viewX(buildCircleCenter()));
         c.setCenterY(mvp.get().viewY(buildCircleCenter()));
-        c.setRadius(5);
+        c.setRadius(5);}
     }
 
     private void updatePolyline(){
+        if(rb.getRoute().get() != null){
         pl.getPoints().clear();
-        buildRoute();
+        buildRoute();}
     }
 }

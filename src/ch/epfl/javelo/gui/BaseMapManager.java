@@ -97,6 +97,14 @@ public final class BaseMapManager {
             mvp.set(new MapViewParameters(newZ, newX, newY));
 
             redrawOnNextPulse();
+            /*
+            PointWebMercator coord = PointWebMercator.of(mvp.get().zoomLevel(),
+                    mvp.get().x() +event.getX(),
+                    mvp.get().y() + event.getY());
+
+
+            PointW
+             */
         });
 
         pane.setOnMousePressed(event -> {
