@@ -47,8 +47,6 @@ public final class WaypointsManager {
 
     private void paneActualisation() {
 
-        pane.getChildren().clear();
-
         List<Group> listOfGroup = new ArrayList<>();
         for (int i = 0; i < wp.size(); i++) {
 
@@ -67,7 +65,7 @@ public final class WaypointsManager {
             }
             listOfGroup.add(g);
         }
-        pane.getChildren().addAll(listOfGroup);
+        pane.getChildren().setAll(listOfGroup);
     }
 
     private void handlerCreation(int i, Group g) {

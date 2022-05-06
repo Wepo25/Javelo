@@ -1,13 +1,15 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.routing.*;
+import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -32,17 +34,14 @@ public final class RouteBean {
 
         waypoints = FXCollections.observableArrayList();
 
-        ListChangeListener<Waypoint> listener = o -> {
-            computeRoute();
-        };
-
-        waypoints.addListener(listener);
+        waypoints.addListener( (Observable o) -> computeRoute());
 
 
         route = new SimpleObjectProperty<>();
         elevationProfile = new SimpleObjectProperty<>();
 
-        route.addListener(o -> elevationProfile.set(route.get() == null ? null : ElevationProfileComputer.elevationProfile(route.get(), 5))
+        route.addListener(o -> elevationProfile.set(route.get() == null ?
+                null : ElevationProfileComputer.elevationProfile(route.get(), 5))
         );
         this.rc = rc;
     }
@@ -71,17 +70,22 @@ public final class RouteBean {
         return new SimpleObjectProperty<RouteComputer>(rc);
     }
 
+    //Todo refaire en mode bg/gucci stp
     private void computeRoute() {
         List<Route> r = new ArrayList<>();
         AtomicBoolean finish = new AtomicBoolean(true);
         waypoints.stream().
-                takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId()) != null).
+                takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(),
+                        waypoints.get(waypoints.indexOf(a) + 1).closestNodeId()) != null).
                 forEach(a -> {
                     if (!computedRoute.containsKey(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
-                        Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1).closestNodeId());
+                        Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1)
+                                .closestNodeId());
                         r.add(temp);
                         computedRoute.put(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)), temp);
-                        if (waypoints.indexOf(a) != waypoints.size() - 2 && rc.bestRouteBetween(waypoints.get(waypoints.indexOf(a) + 1).closestNodeId(), waypoints.get(waypoints.indexOf(a) + 2).closestNodeId()) == null) {
+                        if (waypoints.indexOf(a) != waypoints.size() - 2 &&
+                                rc.bestRouteBetween(waypoints.get(waypoints.indexOf(a) + 1).closestNodeId(),
+                                        waypoints.get(waypoints.indexOf(a) + 2).closestNodeId()) == null) {
                             finish.set(false);
                         }
                     } else {

@@ -24,6 +24,7 @@ public final class RouteManager {
 
     private final Circle c;
 
+    //Todo checher si il y a les mêmes node id (loop qui compare toute les node id )
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
         this.rb = rb;
         this.mvp = mvp;
@@ -46,7 +47,7 @@ public final class RouteManager {
             int nodeId= rb.getRoute().get().nodeClosestTo(rb.highlightedPosition());
 
             Waypoint pointToAdd = new Waypoint(mvp.get().pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
-            if( rb.waypoints.contains(pointToAdd)){
+            if( NodeIdAlready(pointToAdd)){
                 this.errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
             }else{
 
@@ -104,6 +105,14 @@ public final class RouteManager {
 
     public Pane pane(){
         return pane;
+    }
+
+    private boolean NodeIdAlready(Waypoint waypoint){
+        for(Waypoint wp : rb.waypoints){
+            if(wp.closestNodeId() == waypoint.closestNodeId()){
+                return true;
+            }
+        }return false;
     }
 
     private void buildRoute(){ // mieux de addAll et on ne set pas les layouts donc
