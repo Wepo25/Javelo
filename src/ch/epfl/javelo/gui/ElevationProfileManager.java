@@ -4,6 +4,7 @@ import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -17,6 +18,9 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public final class ElevationProfileManager {
@@ -35,7 +39,7 @@ public final class ElevationProfileManager {
     private Line highlightedPosition;
     private Text profileStats;
 
-    private ObjectProperty<Rectangle2D> rectangle;
+    private ObjectProperty<Rectangle2D> rectangle = new SimpleObjectProperty<>();
     private ObjectProperty<Transform> screenToWorld;
     private ObjectProperty<Transform> worldToScreen;
 
@@ -104,8 +108,8 @@ public final class ElevationProfileManager {
         insets = new Insets(10, 10, 20, 40);
 
         rectangle.set(new Rectangle2D(insets.getLeft(), insets.getBottom(),
-                pane.getWidth()- insets.getRight()- insets.getLeft(),
-                pane.getHeight()- insets.getTop()-insets.getBottom()));
+                Math.max(0,pane.getWidth()- insets.getRight()- insets.getLeft()),
+                Math.max(0,pane.getHeight()- insets.getTop()-insets.getBottom())));
 
         borderPane.setOnMousePressed(e->{
             System.out.println(e.getX()-40);
@@ -116,12 +120,25 @@ public final class ElevationProfileManager {
         //pane.setOnMouseMoved(); // pas sur
         //pane.setOnMouseExited();
 
-        //41.0
-        //252.0
-        //242.0
+        
+        createProfile();
 
-        createTransfo();
-// listener pour create transfo
+    }
+
+    private void createProfile() {
+        List<Double> toAdd = new ArrayList<>();
+        for (double i = 0; i < rectangle.get().getWidth(); i++) {
+            toAdd.add(i);
+                toAdd.add( worldToScreen.get().transform(0, elevationProfile.get()
+                        .elevationAt(screenToWorld.get().transform(i, 0).getX())).getY());
+        }
+        toAdd.add(rectangle.get().getMinX());
+        toAdd.add(rectangle.get().getMaxY());
+        toAdd.add(rectangle.get().getMaxX());
+        toAdd.add(rectangle.get().getMaxY());
+        profileGraph.getPoints().addAll(toAdd);
+
+        
     }
 
     private void createTransfo() {// signe peut etre
