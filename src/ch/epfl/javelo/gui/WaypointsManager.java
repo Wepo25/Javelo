@@ -132,17 +132,28 @@ public final class WaypointsManager {
         }
     }
 
-    private Waypoint findClosestNode(double x, double y) {
+    private Waypoint findClosestNode(double x, double y) { // pas sur faire checker
+        // car je ckeck 2 fois 1 fois dans route manager et ici NodeIdAlready.
         int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
-        if (nodeId == -1) {
+        if (nodeId == -1 ) {
             errorConsumer.accept("Aucune route à proximité !");
         } else {
-            return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
+            Waypoint p = new  Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
                     nodeId);
+            if(nodeIdAlready(p)){
+                errorConsumer.accept("Aucune route à proximité !");
+            }else return p;
         }
         return null;
 
 
+    }
+    private boolean nodeIdAlready(Waypoint waypoint){
+        for(Waypoint wp : wp){
+            if(wp.closestNodeId() == waypoint.closestNodeId()){
+                return true;
+            }
+        }return false;
     }
 
 }
