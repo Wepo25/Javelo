@@ -21,14 +21,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * This class managed interactions with the route's profile in width.
+ *
+ * @author Alexandre Mourot (346365)
+ * @author Gaspard Thoral (345230)
+ */
 public final class ElevationProfileManager {
 
+    /**
+     * Array representing the separating spaces possible between verticals lines.
+     */
     private static final int[] POS_STEPS = {1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000};
+
+    /**
+     * Array representing the separating spaces possible between horizontals lines.
+     */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
-    private ReadOnlyDoubleProperty highlightPosition;
-    private ObjectProperty<Double> mousePositionOnProfileProperty = new SimpleObjectProperty<>();
+    private  ReadOnlyDoubleProperty highlightPosition;
+    private final ObjectProperty<Double> mousePositionOnProfileProperty = new SimpleObjectProperty<>();
 
     private final Insets insets;
 
@@ -51,6 +64,11 @@ public final class ElevationProfileManager {
     private final ObjectProperty<Transform> worldToScreen = new SimpleObjectProperty<>();
 
 
+    /**
+     * The constructor. Initialization of the arguments and pane. Attaches events handler and listener too.
+     * @param elevationProfile elevation Profile corresponding to the route.
+     * @param position the position to highlight along the profile.
+     */
     public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile, ReadOnlyDoubleProperty position) {
 
         this.elevationProfile = elevationProfile;
@@ -87,11 +105,9 @@ public final class ElevationProfileManager {
         pane.widthProperty().addListener(l -> operationsSequence(highlightPosition));
         pane.heightProperty().addListener(l -> operationsSequence(highlightPosition));
 
-        rectangle.bind(Bindings.createObjectBinding(() -> {
-                    return new Rectangle2D(insets.getLeft(), insets.getTop(),
-                            Math.max(0, pane.getWidth() - insets.getLeft() - insets.getRight()),
-                            Math.max(0, pane.getHeight() - insets.getTop() - insets.getBottom()));
-                }, pane.widthProperty(), pane.heightProperty()
+        rectangle.bind(Bindings.createObjectBinding(() -> new Rectangle2D(insets.getLeft(), insets.getTop(),
+                Math.max(0, pane.getWidth() - insets.getLeft() - insets.getRight()),
+                Math.max(0, pane.getHeight() - insets.getTop() - insets.getBottom())), pane.widthProperty(), pane.heightProperty()
         ));
 
 
@@ -108,10 +124,18 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * This method return the BorderPane representing the elevation on screen.
+     * @return the BorderPane.
+     */
     public BorderPane pane() {
         return borderPane;
     }
 
+    /**
+     * This method is used to actualise the profile.
+     * @param pos
+     */
     private void operationsSequence(ReadOnlyDoubleProperty pos) {
         createTransformation();
         line(pos);
@@ -122,6 +146,9 @@ public final class ElevationProfileManager {
         createStats();
     }
 
+    /**
+     * This method create or re-create the grid when needed.
+     */
     private void createGrid(){
 
         double horizontalSpace = createHorizontalSpace();
@@ -157,6 +184,10 @@ public final class ElevationProfileManager {
 
     }
 
+    /**
+     * This method compute the space between horizontal lines.
+     * @return the space under a double's.
+     */
     private double createHorizontalSpace(){
         double horizontalSpace = 0;
         for (int i = 0; i < ELE_STEPS.length; i++) {
@@ -168,6 +199,10 @@ public final class ElevationProfileManager {
         return (horizontalSpace == 0)? ELE_STEPS[ELE_STEPS.length-1] : horizontalSpace;
     }
 
+    /**
+     * This method compute the vertical space between vertical lines.
+     * @return the space under a double's.
+     */
     private double createVerticalSpace(){
         double verticalSpace = 0;
         for (int i = 0; i < POS_STEPS.length; i++) {
@@ -179,6 +214,12 @@ public final class ElevationProfileManager {
         return (verticalSpace == 0)? POS_STEPS[POS_STEPS.length-1] : verticalSpace;
     }
 
+    /**
+     * This method allows us to create the verticals label indicating the length.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param s the text to show.
+     */
     private void createVerticalLabel(double x, double y, String s){
         Text label = new Text();
         label.setText(s);
@@ -190,6 +231,12 @@ public final class ElevationProfileManager {
     }
 
 
+    /**
+     * This method allows us to create the horizontal label indicating the height.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param s the text to show.
+     */
     private void createHorizontalLabel(double x, double y, String s){
         Text label = new Text();
         label.setText(s);
@@ -200,11 +247,14 @@ public final class ElevationProfileManager {
         textGroup.getChildren().add(label);
     }
 
+    /**
+     * This method is used to set the line (add bindings) representing the highlighted position on the profile.
+     * @param pos position to be highlighted.
+     */
     private void line(ReadOnlyDoubleProperty pos) {
 
-        highlightedPosition.layoutXProperty().bind(Bindings.createObjectBinding(() -> {
-            return worldToScreen.get().transform(highlightPosition.get(),0).getX();
-        },highlightPosition, worldToScreen));
+        highlightedPosition.layoutXProperty().bind(Bindings.createObjectBinding(() ->
+                worldToScreen.get().transform(highlightPosition.get(),0).getX(),highlightPosition, worldToScreen));
 
         highlightedPosition.startYProperty().bind(Bindings.select(rectangle, "minY"));
         highlightedPosition.endYProperty().bind(Bindings.select(rectangle, "maxY"));
@@ -213,6 +263,9 @@ public final class ElevationProfileManager {
         );
     }
 
+    /**
+     * This method create the polygon representing the profile graph.
+     */
     private void createProfile() {
 
         List<Double> toAdd = new ArrayList<>();
@@ -234,7 +287,10 @@ public final class ElevationProfileManager {
 
     }
 
-
+    /**
+     * This method is used to create the transformation allowing to change coordinate between
+     * the real world and the screen and vice versa.
+     */
     private void createTransformation() {
         Affine transfo = new Affine();
         transfo.prependTranslation(-rectangle.get().getMinX(), -rectangle.get().getMinY());
@@ -250,6 +306,9 @@ public final class ElevationProfileManager {
         }
     }
 
+    /**
+     * This method allows us to create the label indicating the statistics of the profile.
+     */
     private void createStats() {
 ElevationProfile ele= elevationProfile.get();
         vboxText.setText(String.format("Longueur : %.1f km" +
@@ -259,12 +318,19 @@ ElevationProfile ele= elevationProfile.get();
                 ele.minElevation(),ele.maxElevation()));
 
     }
-    //line.visiblePro.bind
-    //highlitedprop.greaterThan
 
+    /**
+     * This method is used to set the highlighted position.
+     * @param pos position to highlight.
+     */
     private void setHighlightPosition(double pos) {
         highlightPosition = new SimpleDoubleProperty(worldToScreen.get().transform(pos, 0).getX());
     }
+
+    /**
+     * This method returns us the mouse position on the profile.
+     * @return a property containing the mouse position.
+     */
     public ReadOnlyObjectProperty<Double> mousePositionOnProfileProperty(){
         return mousePositionOnProfileProperty;
     }
