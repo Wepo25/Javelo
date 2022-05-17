@@ -111,14 +111,12 @@ public final class ElevationProfileManager {
         borderPane.setBottom(vbox);
         borderPane.getStylesheets().setAll("elevation_profile.css");
 
+        pane.widthProperty().addListener(l -> operationsSequence());
+        pane.heightProperty().addListener(l -> operationsSequence());
 
-
-        pane.widthProperty().addListener(l -> operationsSequence(highlightPosition));
-        pane.heightProperty().addListener(l -> operationsSequence(highlightPosition));
-
-        rectangle.bind(Bindings.createObjectBinding(() -> new Rectangle2D(insets.getLeft(), insets.getTop(),
-                Math.max(0, pane.getWidth() - insets.getLeft() - insets.getRight()),
-                Math.max(0, pane.getHeight() - insets.getTop() - insets.getBottom())), pane.widthProperty(), pane.heightProperty()
+        rectangle.bind(Bindings.createObjectBinding(() -> new Rectangle2D(LEFT_INSET, TOP_INSET,
+                Math.max(0,pane.getWidth()-WIDTH_INSET),
+                Math.max(0, pane.getHeight()-HEIGHT_INSET)),pane.widthProperty(), pane.heightProperty()
         ));
 
 
@@ -133,6 +131,8 @@ public final class ElevationProfileManager {
         );
         borderPane.setOnMouseExited(event -> mousePositionOnProfileProperty.setValue(Double.NaN));
 
+        elevationProfile.addListener(e -> operationsSequence());
+
     }
 
     /**
@@ -145,17 +145,18 @@ public final class ElevationProfileManager {
 
     /**
      * This method is used to actualise the profile.
-     * @param pos
+
      */
-    private void operationsSequence(ReadOnlyDoubleProperty pos) {
+    private void operationsSequence() {
+        if(elevationProfile.get() != null){
         createTransformation();
-        line(pos);
+        line();
         textGroup.getChildren().clear();
         path.getElements().clear();
         createGrid();
         createProfile();
         createStats();
-    }
+    }}
 
     /**
      * This method create or re-create the grid when needed.
@@ -182,20 +183,15 @@ public final class ElevationProfileManager {
             path.getElements().addAll(new MoveTo(fromPoint.getX() ,fromPoint.getY()), new LineTo(toPoint.getX(), toPoint.getY()));
             createVerticalLabel(fromPoint.getX(), fromPoint.getY(), String.valueOf(verticalIndex));
             verticalIndex++;
-
         }
 
     }
 
-    /**
-     * This method compute the space between horizontal lines.
-     * @return the space under a double's.
-     */
     private int createHorizontalSpace(){
         int horizontalSpace = 0;
-        for (int i = 0; i < ELE_STEPS.length; i++) {
-            if(worldToScreen.get().deltaTransform(0,-ELE_STEPS[i]).getY()>=25){
-                horizontalSpace = ELE_STEPS[i];
+        for (int eleStep : ELE_STEPS) {
+            if (worldToScreen.get().deltaTransform(0, -eleStep).getY() >= 25) {
+                horizontalSpace = eleStep;
                 break;
             }
         }
@@ -224,12 +220,6 @@ public final class ElevationProfileManager {
     }
 
 
-    /**
-     * This method allows us to create the horizontal label indicating the height.
-     * @param x the x coordinate.
-     * @param y the y coordinate.
-     * @param s the text to show.
-     */
     private void createHorizontalLabel(double x, double y, String s){
         Text label = new Text(s);
         label.setTextOrigin(VPos.CENTER);
@@ -239,16 +229,13 @@ public final class ElevationProfileManager {
         label.setY(y);
         textGroup.getChildren().add(label);
     }
-
     /**
      * This method is used to set the line (add bindings) representing the highlighted position on the profile.
-     * @param pos position to be highlighted.
      */
-    private void line(ReadOnlyDoubleProperty pos) {
+    private void line() {
 
         highlightedPosition.layoutXProperty().bind(Bindings.createObjectBinding(() ->
                 worldToScreen.get().transform(highlightPosition.get(),0).getX(),highlightPosition, worldToScreen));
-
         highlightedPosition.startYProperty().bind(Bindings.select(rectangle, "minY"));
         highlightedPosition.endYProperty().bind(Bindings.select(rectangle, "maxY"));
         highlightedPosition.visibleProperty().bind(
