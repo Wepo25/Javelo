@@ -33,58 +33,60 @@ public final class ElevationProfileComputer {
      *                                  the gap between two edges is negative or null.
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
-        Preconditions.checkArgument(maxStepLength > 0);
-        int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
-        double length = route.length();
-        double spaceBetween = length / (nbSamples - 1);
-        float[] samples = new float[nbSamples];
-        List<Integer> indexes = new ArrayList<>();
+        if(route != null) {
+            Preconditions.checkArgument(maxStepLength > 0);
+            int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
+            double length = route.length();
+            double spaceBetween = length / (nbSamples - 1);
+            float[] samples = new float[nbSamples];
+            List<Integer> indexes = new ArrayList<>();
 
 
-        for (int i = 0; i < nbSamples; i++) {
-            samples[i] = ((float) route.elevationAt(i * spaceBetween));
-        }
-        int firstValidIndex = firstValid(samples);
-        int lastValidIndex = lastValid(samples);
-        if (firstValidIndex == -1) {
-            return new ElevationProfile(length, new float[nbSamples]);
-        }
-        Arrays.fill(samples, 0, firstValidIndex, samples[firstValidIndex]);
-        Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
-
-        if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) {
-            indexes.add(0);
-        }
-
-        //Taking the indexes of values surrounding NaNs to facilitate interpolation.
-        for (int i = 1; i < samples.length - 1; i++) {
-            if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
-                indexes.add(i);
-                indexes.add(i);
-            } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
-                indexes.add(i);
+            for (int i = 0; i < nbSamples; i++) {
+                samples[i] = ((float) route.elevationAt(i * spaceBetween));
             }
-        }
-        if (!Float.isNaN(samples[samples.length - 1]) && Float.isNaN(samples[samples.length - 2])) {
-            indexes.add(samples.length - 1);
-        }
-
-        //Interpolating
-        for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
-            int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
-            if(quantity == 1){
-                samples[indexes.get(2 * i) + 1] = (float) Math2.interpolate(samples[indexes.get(2 * i)], samples[indexes.get(2 * i)+1], 0.5);
+            int firstValidIndex = firstValid(samples);
+            int lastValidIndex = lastValid(samples);
+            if (firstValidIndex == -1) {
+                return new ElevationProfile(length, new float[nbSamples]);
             }
-            else {
-                DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
-                        samples[indexes.get(2 * i + 1)]}, quantity);
-                for (int j = 1; j < quantity; j++) {
-                    samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
+            Arrays.fill(samples, 0, firstValidIndex, samples[firstValidIndex]);
+            Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
+
+            if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) {
+                indexes.add(0);
+            }
+
+            //Taking the indexes of values surrounding NaNs to facilitate interpolation.
+            for (int i = 1; i < samples.length - 1; i++) {
+                if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
+                    indexes.add(i);
+                    indexes.add(i);
+                } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
+                    indexes.add(i);
                 }
             }
+            if (!Float.isNaN(samples[samples.length - 1]) && Float.isNaN(samples[samples.length - 2])) {
+                indexes.add(samples.length - 1);
+            }
 
+            //Interpolating
+            for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
+                int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
+                if (quantity == 1) {
+                    samples[indexes.get(2 * i) + 1] = (float) Math2.interpolate(samples[indexes.get(2 * i)], samples[indexes.get(2 * i) + 1], 0.5);
+                } else {
+                    DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
+                            samples[indexes.get(2 * i + 1)]}, quantity);
+                    for (int j = 1; j < quantity; j++) {
+                        samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
+                    }
+                }
+
+            }
+            return new ElevationProfile(length, samples);
         }
-        return new ElevationProfile(length, samples);
+        return null;
     }
 
     /**

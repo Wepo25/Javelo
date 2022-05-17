@@ -12,12 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * This method is managing the display of the route and the interaction with it.
- * @author Alexandre Mourot (346365)
- * @author Gaspard Thoral (345230)
- */
 public final class RouteManager {
+
+    private final static int CIRCLE_RADIUS = 5;
 
     private final RouteBean rb;
     private final ReadOnlyObjectProperty<MapViewParameters> mvp;
@@ -29,14 +26,7 @@ public final class RouteManager {
 
     private final Circle c;
 
-
-    /**
-     * The constructor. Initializing the argument and attach them event handler.
-     * Initializing the pane and giving it children to display the route.
-     * @param rb the RouteBean of the route.
-     * @param mvp the property containing the parameters of the map displayed.
-     * @param errorConsumer allowing to signal errors.
-     */
+    //Todo checher si il y a les mêmes node id (loop qui compare toute les node id )
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorConsumer){
         this.rb = rb;
         this.mvp = mvp;
@@ -44,9 +34,11 @@ public final class RouteManager {
 
         pane = new Pane();
 
-        pl = new Polyline();
+        pl = new Polyline(); // coord pour les points qui rend simple
 
         c = new Circle();
+
+
 
         pane.getChildren().add(pl);
         pane.getChildren().add(c);
@@ -57,19 +49,21 @@ public final class RouteManager {
             int nodeId= rb.getRoute().get().nodeClosestTo(rb.highlightedPosition());
 
             Waypoint pointToAdd = new Waypoint(mvp.get().pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
-            if( nodeIdAlready(pointToAdd)){
+            if(rb.waypoints.size() >= 1 && rb.waypoints.get(rb.waypoints.size()-1).closestNodeId() == pointToAdd.closestNodeId()) {
                 this.errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
-            }else{
 
-                int tempIndex = rb.getRoute().get().indexOfSegmentAt(rb.highlightedPosition());
+            }
+            else{
+
+                int tempIndex = rb.indexOfNonEmptySegmentAt(rb.highlightedPosition());
                 rb.waypoints.add(tempIndex +1 ,pointToAdd);
             }
         });
 
+
         mvp.addListener((prop,last,updated) ->{
 
             if((!(last.zoomLevel() == updated.zoomLevel()))){
-                System.out.println(0);
                 updateCircle();
                 updatePolyline();
             } else{ if(!last.topLeft().equals(updated.topLeft())){
@@ -108,38 +102,23 @@ public final class RouteManager {
         pane.setPickOnBounds(false);
     }
 
-    /**
-     * Method setting the layout (positioning) of the polyline representing the route .
-     */
     private void setPolylineLayout() {
         pl.setLayoutX(-mvp.get().topLeft().getX());
         pl.setLayoutY(-mvp.get().topLeft().getY());
     }
 
-    /**
-     * This method return the pane displaying the route.
-     * @return the pane.
-     */
     public Pane pane(){
         return pane;
     }
 
-    /**
-     * This method is used to check if a waypoint has the same nodeId as an other.
-     * @param waypoint to be checked.
-     * @return a boolean indicating if an other waypoint has same nodeId.
-     */
-    private boolean nodeIdAlready(Waypoint waypoint){
-        for(Waypoint wp : rb.waypoints){
-            if(wp.closestNodeId() == waypoint.closestNodeId()){
-                return true;
-            }
-        }return false;
-    }
+//    private boolean NodeIdAlready(Waypoint waypoint){
+//        for(Waypoint wp : rb.waypoints){
+//            if(wp.closestNodeId() == waypoint.closestNodeId()){
+//                return true;
+//            }
+//        }return false;
+//    }
 
-    /**
-     * This method creates the Polyline representing the route.
-     */
     private void buildRoute(){ // mieux de addAll et on ne set pas les layouts donc
         // faut-il changer les coords
        /* rb.getRoute().get().points().stream().
@@ -158,27 +137,17 @@ public final class RouteManager {
         setPolylineLayout();
     }
 
-    /**
-     * This method gives the highlighted position in the form of a WebPointMercator.
-     * @return the PointWebMercator corresponding to the position.
-     */
     private PointWebMercator buildCircleCenter(){
         return PointWebMercator.ofPointCh(rb.getRoute().get().pointAt(rb.highlightedPosition()));
     }
 
-    /**
-     * This method update the highlighted position on the screen.
-     */
     private void updateCircle(){
         if(rb.getRoute().get() != null){
         c.setCenterX(mvp.get().viewX(buildCircleCenter()));
         c.setCenterY(mvp.get().viewY(buildCircleCenter()));
-        c.setRadius(5);}
+        c.setRadius(CIRCLE_RADIUS);}
     }
 
-    /**
-     * This method update the route on screen.
-     */
     private void updatePolyline(){
         if(rb.getRoute().get() != null){
         pl.getPoints().clear();

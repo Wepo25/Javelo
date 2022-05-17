@@ -25,6 +25,9 @@ public final class Stage10Test extends Application {
 
         Route route = routeComputer
                 .bestRouteBetween(159049, 117669);
+
+        System.out.println(route);
+
         ElevationProfile profile = ElevationProfileComputer
                 .elevationProfile(route, 5);
 
@@ -37,8 +40,8 @@ public final class Stage10Test extends Application {
                 new ElevationProfileManager(profileProperty,
                         highlightProperty);
 
-        highlightProperty.bind(
-               profileManager.mousePositionOnProfileProperty());
+        //highlightProperty.bind(
+       //         profileManager.mousePositionOnProfileProperty());
 
         Scene scene = new Scene(profileManager.pane());
 

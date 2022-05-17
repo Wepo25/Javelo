@@ -18,9 +18,9 @@ public final class RouteBean {
     public ObservableList<Waypoint> waypoints;
 
     private final RouteComputer rc;
-    private ObjectProperty<Route> route;
+    private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
-    private ObjectProperty<ElevationProfile> elevationProfile;
+    private final ObjectProperty<ElevationProfile> elevationProfile;
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
 
 
@@ -66,9 +66,6 @@ public final class RouteBean {
         highlightedPosition.set(value);
     }
 
-    public ReadOnlyObjectProperty<RouteComputer> getRouteComputer() {
-        return new SimpleObjectProperty<RouteComputer>(rc);
-    }
 
     //Todo refaire en mode bg/gucci stp
     private void computeRoute() {
@@ -97,6 +94,16 @@ public final class RouteBean {
         } else {
             route.set(null);
         }
+    }
+
+    public int indexOfNonEmptySegmentAt(double position) {
+        int index = route.get().indexOfSegmentAt(position);
+        for (int i = 0; i <= index; i += 1) {
+            int n1 = waypoints.get(i).closestNodeId();
+            int n2 = waypoints.get(i + 1).closestNodeId();
+            if (n1 == n2) index += 1;
+        }
+        return index;
     }
 
 

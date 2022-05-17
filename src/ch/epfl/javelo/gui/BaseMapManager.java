@@ -4,6 +4,9 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
@@ -16,14 +19,14 @@ public final class BaseMapManager {
 
     private final int TILE_PIXEL_SIZE = 256;
     private final TileManager tm;
-    private WaypointsManager wm;
+    private final WaypointsManager wm;
     private final ObjectProperty<MapViewParameters> mvp;
-    private Canvas canvas;
+
     private final Pane pane;
+    private final GraphicsContext graphContext;
 
     private boolean redrawNeeded;
 
-    private final GraphicsContext graphContext;
 
 
     public BaseMapManager(TileManager tm, WaypointsManager wm, ObjectProperty<MapViewParameters> mvp) {
@@ -32,7 +35,7 @@ public final class BaseMapManager {
         this.wm = wm;
         this.mvp = mvp;
 
-        canvas = new Canvas();
+        Canvas canvas = new Canvas();
         pane = new Pane(canvas);
 
         paneEvent();
@@ -59,21 +62,20 @@ public final class BaseMapManager {
         return pane;
     }
 
-    private void draw() { // try catch and continue do not stop the programme ? -(y %256) peut etre ca
-        double x = mvp.get().x();
-        double y = mvp.get().y();
-
+    private void draw() {
+        double x = mvp.get().topLeft().getX();
+        double y = mvp.get().topLeft().getY();
         int z = mvp.get().zoomLevel();
-        for (int i = 0; i < pane.getWidth()+TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
-            for (int j = 0; j < pane.getHeight()+TILE_PIXEL_SIZE; j += TILE_PIXEL_SIZE) {
-                try {
 
+        for (int i = 0; i < pane.getWidth() + TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
+            for (int j = 0; j < pane.getHeight() + TILE_PIXEL_SIZE; j += TILE_PIXEL_SIZE) {
+                try {
                     TileManager.TileId ti = new TileManager.TileId(z,
                             (int) Math.floor((i + x) / TILE_PIXEL_SIZE),
-                            (int) Math.floor((y+j)/ TILE_PIXEL_SIZE));
-                    graphContext.drawImage(tm.imageForTileAt(ti), i-x%TILE_PIXEL_SIZE, j-y%TILE_PIXEL_SIZE);
+                            (int) Math.floor((y + j)/ TILE_PIXEL_SIZE));
+                    graphContext.drawImage(tm.imageForTileAt(ti), i - x % TILE_PIXEL_SIZE, j - y % TILE_PIXEL_SIZE);
 
-                } catch (IOException | IllegalArgumentException e) {
+                } catch (IOException | IllegalArgumentException ignored) {
                 }
 
             }
@@ -82,42 +84,33 @@ public final class BaseMapManager {
 
     private void paneEvent(){
 
-        AtomicInteger draggedX = new AtomicInteger();
-        AtomicInteger draggedY = new AtomicInteger();
+        ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();
 
-        pane.setOnScroll(event -> {
-
+        SimpleLongProperty minScrollTime = new SimpleLongProperty();
+        pane.setOnScroll(e -> {
+            if (e.getDeltaY() == 0d) return;
+            long currentTime = System.currentTimeMillis();
+            if (currentTime < minScrollTime.get()) return;
+            minScrollTime.set(currentTime + 200);
+            int zoomDelta = (int) Math.signum(e.getDeltaY());
             int oldZ = mvp.get().zoomLevel();
-            int newZ = Math2.clamp(8,(int) Math.round(oldZ + Math2.clamp(-1,event.getDeltaY(),1)),19);
 
-            PointWebMercator temp = mvp.get().pointAt((int) event.getX(),(int) event.getY());
-
-            int newX = (int) (temp.xAtZoomLevel(newZ)-event.getX());
-            int newY = (int) (temp.yAtZoomLevel(newZ)-event.getY());
-            mvp.set(new MapViewParameters(newZ, newX, newY));
-
+            PointWebMercator temp = mvp.get().pointAt((int) e.getX(),(int) e.getY());
+            int newX = (int) (temp.xAtZoomLevel(oldZ + zoomDelta)-e.getX());
+            int newY = (int) (temp.yAtZoomLevel(oldZ + zoomDelta)-e.getY());
+            mvp.set(new MapViewParameters(oldZ + zoomDelta, newX, newY));
             redrawOnNextPulse();
-            /*
-            PointWebMercator coord = PointWebMercator.of(mvp.get().zoomLevel(),
-                    mvp.get().x() +event.getX(),
-                    mvp.get().y() + event.getY());
-
-
-            PointW
-             */
         });
 
         pane.setOnMousePressed(event -> {
-            draggedX.set((int) event.getX());
-            draggedY.set((int) event.getY());
+            dragged.set(new Point2D(event.getX(), event.getY()));
         });
 
         pane.setOnMouseDragged(event -> {
-            int diffX = (int) (event.getX()-draggedX.get());
-            int diffY = (int) (event.getY()-draggedY.get());
-            mvp.set(new MapViewParameters(mvp.get().zoomLevel(),mvp.get().x()-diffX, mvp.get().y()-diffY));
-            draggedX.set((int) event.getX());
-            draggedY.set((int) event.getY());
+            int diffX = (int) (event.getX()-dragged.get().getX());
+            int diffY = (int) (event.getY()-dragged.get().getY());
+            mvp.set(new MapViewParameters(mvp.get().zoomLevel(),mvp.get().topLeft().getX() - diffX, mvp.get().topLeft().getY() - diffY));
+            dragged.set(new Point2D(event.getX(), event.getY()));
             redrawOnNextPulse();
 
         });
@@ -138,7 +131,7 @@ public final class BaseMapManager {
     }
 
 
-    private void redrawOnNextPulse() { //on appel ou ?
+    private void redrawOnNextPulse() {
         redrawNeeded = true;
         Platform.requestNextPulse();
     }

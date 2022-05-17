@@ -87,9 +87,9 @@ public final class RouteComputer {
             distance[id] = COMPUTED_DISTANCE;
         } while (!p.isEmpty());
 
-
         List<Edge> edges = edges(predecessor, endNodeId);
         Collections.reverse(edges);
+
 
         if(edges.isEmpty()){
             return null;

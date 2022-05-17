@@ -2,7 +2,6 @@ package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.ElevationProfile;
-import ch.epfl.javelo.routing.ElevationProfileComputer;
 import ch.epfl.javelo.routing.Route;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,11 +13,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Locale;
 
 public class GpxGenerator {
 
@@ -71,6 +67,7 @@ public class GpxGenerator {
         Transformer transformer = TransformerFactory
                 .newDefaultInstance()
                 .newTransformer();
+
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.transform(new DOMSource(doc),
                 new StreamResult(w));

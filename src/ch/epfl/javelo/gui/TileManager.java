@@ -95,8 +95,11 @@ public final class TileManager {
      */
     private void diskTileRegister(TileId tileId, Path fullPath) throws IOException {
         Files.createDirectories(fullPath.getParent());
-        URL u = new URL("https://" + serv + "/" + tileId.zoomLevel
-                + "/" + tileId.xTile + "/" + tileId.yTile + ".png");
+        URL u = new URL("https://" +
+                serv + "/" +
+                tileId.zoomLevel + "/" +
+                tileId.xTile + "/" +
+                tileId.yTile + ".png");
         URLConnection c = u.openConnection();
         c.setRequestProperty("User-Agent", "JaVelo");
 
