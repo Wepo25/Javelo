@@ -25,3 +25,4 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
         return point.yAtZoomLevel(zoomLevel) - this.y;
     }
 }
+
