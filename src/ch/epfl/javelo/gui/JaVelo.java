@@ -56,9 +56,22 @@ public final class JaVelo extends Application {
         BorderPane profileBorderPane = new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
                 rb.highlightedPositionProperty()).pane();
 
-        SplitPane sp = new SplitPane(amm.pane(),profileBorderPane);
+
+
+
+        SplitPane sp = new SplitPane(amm.pane());
         SplitPane.setResizableWithParent(profileBorderPane,false);
         sp.setOrientation(Orientation.VERTICAL);
+
+        rb.getElevationProfile().addListener(e-> {
+            if(rb.getElevationProfile().get() == null) {
+                sp.getItems().remove(profileBorderPane);
+            }
+            else if(!sp.getItems().contains(profileBorderPane)){
+                sp.getItems().add(profileBorderPane);
+            }
+        });
+
 
         MenuItem menuItem = new MenuItem("Exporter GPX");
         menuItem.disableProperty().bind(rb.getRoute().isNull());
@@ -75,7 +88,7 @@ public final class JaVelo extends Application {
         menuBar.setUseSystemMenuBar(true);
 
         Pane errorManagerPane = errorManager.pane();
-        StackPane stackPane = new StackPane( menuBar, errorManagerPane, sp);
+        StackPane stackPane = new StackPane( menuBar, sp, errorManagerPane);
 
         stackPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(800);
