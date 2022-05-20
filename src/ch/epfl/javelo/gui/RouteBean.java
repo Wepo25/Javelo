@@ -33,7 +33,6 @@ public final class RouteBean{
     public RouteBean(RouteComputer rc) {
 
         highlightedPosition = new SimpleDoubleProperty();
-        highlightedPosition.setValue(0);
 
         waypoints = FXCollections.observableArrayList();
 
@@ -89,6 +88,7 @@ public final class RouteBean{
                     listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
                 }
             }}
+
             MultiRoute multiRoute = new MultiRoute(listRoute);
             route.set(multiRoute);
             elevationProfile.set(ElevationProfileComputer.elevationProfile(multiRoute, 5));

@@ -48,4 +48,5 @@ public final class ErrorManager {
         java.awt.Toolkit.getDefaultToolkit().beep();
         transition.play();
     }
+
 }

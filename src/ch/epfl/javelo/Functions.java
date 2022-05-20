@@ -46,8 +46,7 @@ public final class Functions {
             if (x >= xMax) return immutableSamples.get(immutableSamples.size()-1);
             double gap = xMax / (immutableSamples.size() - 1);
             int borneInf = (int) (x / gap);
-
-            return Math2.interpolate(immutableSamples.get(borneInf), immutableSamples.get(borneInf+1), ((x - borneInf * gap) / gap));
+            return Math2.interpolate(immutableSamples.get(borneInf), immutableSamples.get(Math2.clamp(0,borneInf + 1, immutableSamples.size()-1)), ((x - borneInf * gap) / gap));
         };
 
     }
