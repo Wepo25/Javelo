@@ -57,7 +57,8 @@ public final class JaVelo extends Application {
 
 
 
-        ElevationProfileManager profileBorderPane = new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
+        ElevationProfileManager profileBorderPane =
+                new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
                 rb.highlightedPositionProperty());
 
 
@@ -65,7 +66,7 @@ public final class JaVelo extends Application {
         SplitPane.setResizableWithParent(profileBorderPane.pane(),false);
         sp.setOrientation(Orientation.VERTICAL);
 
-        rb.getElevationProfile().addListener((p, oldS, newS)-> {
+        rb.getElevationProfile().addListener((p, oldS, newS)-> {// pourquoi pas itinéraire
             if(oldS == null && newS != null) {
                 sp.getItems().add(1, profileBorderPane.pane());
 

@@ -75,7 +75,8 @@ public final class RouteManager {
             if((!(oldS.zoomLevel() == newS.zoomLevel()))){
                 updateCircle();
                 updatePolyline();
-            } else{ if(!oldS.topLeft().equals(newS.topLeft())){
+            } else{
+                if(!oldS.topLeft().equals(newS.topLeft())){
 
                 updateCircle();
                 setPolylineLayout();
@@ -139,15 +140,7 @@ public final class RouteManager {
     /**
      * This method creates the Polyline representing the route.
      */
-    private void buildRoute(){ // mieux de addAll et on ne set pas les layouts donc
-        // faut-il changer les coords
-       /* rb.getRoute().get().points().stream().
-                map(d -> new Point2D(mvp.get().viewX(PointWebMercator.ofPointCh(d)),
-                        mvp.get().viewY(PointWebMercator.ofPointCh(d)))).toList().
-                forEach(p -> {
-                    pl.getPoints().add(p.getX());
-                    pl.getPoints().add(p.getY());
-                });*/
+    private void buildRoute(){
         List<Double> list = new ArrayList<>();
         for (PointCh point: rb.getRoute().get().points()) {
             list.add(PointWebMercator.ofPointCh(point).xAtZoomLevel(mvp.get().zoomLevel()));

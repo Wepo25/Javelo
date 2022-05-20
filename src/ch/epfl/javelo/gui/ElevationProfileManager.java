@@ -55,13 +55,14 @@ public final class ElevationProfileManager {
     private final ObjectProperty<ElevationProfile> elevationProfile;
 
     //MODIFICATION MADE -> TO CHECK
-    private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty();
+    private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
+    private final ReadOnlyDoubleProperty highlightedPosition;
 
 
     private final Path path;
     private final Group textGroup;
     private final Polygon profileGraph;
-    private final Line highlightedPosition;
+    private final Line line;
     private final Pane pane;
 
     private final Text vboxText = new Text();
@@ -76,15 +77,16 @@ public final class ElevationProfileManager {
     /**
      * The constructor. Initialization of the arguments and pane. Attaches events handler and listener too.
      * @param elevationProfile elevation Profile corresponding to the route.
-     * @param position the position to highlight along the profile.
+     * @param highlightedPosition the position to highlight along the profile.
      */
-    public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile, ReadOnlyDoubleProperty position) {
+    public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile,
+                                   ReadOnlyDoubleProperty highlightedPosition) {
 
         this.elevationProfile = elevationProfile;
-        this.mousePositionOnProfileProperty.setValue(position.getValue());
+        this.highlightedPosition = highlightedPosition;
         textGroup = new Group();
 
-        highlightedPosition = new Line();
+        line = new Line();
 
         path = new Path();
         path.setId("grid");
@@ -100,7 +102,7 @@ public final class ElevationProfileManager {
 
         textGroup.getChildren().setAll(horizontalGridLabel, verticalGridLabel);
 
-        pane = new Pane(path, textGroup, profileGraph, highlightedPosition);
+        pane = new Pane(path, textGroup, profileGraph, line);
 
 
         VBox vbox = new VBox(vboxText);
@@ -130,7 +132,11 @@ public final class ElevationProfileManager {
                 }
             }
         );
-        borderPane.setOnMouseExited(event -> mousePositionOnProfileProperty.setValue(Double.NaN));
+        borderPane.setOnMouseExited(event -> {
+            if (!rectangle.get().contains(new Point2D(event.getX(), event.getY()))) {
+                mousePositionOnProfileProperty.set(Double.NaN);
+            }
+        });
 
         elevationProfile.addListener((p, oldS, newS) -> operationsSequence());
 
@@ -152,8 +158,6 @@ public final class ElevationProfileManager {
         if(elevationProfile.get() != null){
         createTransformation();
         line();
-        textGroup.getChildren().clear();
-        path.getElements().clear();
         createGrid();
         createProfile();
         createStats();
@@ -242,13 +246,17 @@ public final class ElevationProfileManager {
      * This method is used to set the line (add bindings) representing the highlighted position on the profile.
      */
     private void line() {
-        highlightedPosition.layoutXProperty().bind(Bindings.createObjectBinding(() ->
-                worldToScreen.get().transform(mousePositionOnProfileProperty.get(),0).getX(),mousePositionOnProfileProperty(), worldToScreen));
-        highlightedPosition.startYProperty().bind(Bindings.select(rectangle, "minY"));
-        highlightedPosition.endYProperty().bind(Bindings.select(rectangle, "maxY"));
-        highlightedPosition.visibleProperty().bind(
-                mousePositionOnProfileProperty.greaterThanOrEqualTo(0)
+        line.startYProperty().bind(Bindings.select(rectangle, "minY"));
+        line.endYProperty().bind(Bindings.select(rectangle, "maxY"));
+
+        line.visibleProperty().bind(
+                highlightedPosition.greaterThanOrEqualTo(0)
         );
+
+        line.layoutXProperty().bind(Bindings.createObjectBinding(() ->{
+            return worldToScreen.get().transform(highlightedPosition.get(),0).getX();
+        },highlightedPosition, worldToScreen));
+
     }
 
     /**
@@ -289,7 +297,7 @@ public final class ElevationProfileManager {
         try {
             worldToScreen.set(transformation.createInverse());
         } catch (NonInvertibleTransformException e) {
-            System.out.println(" Transformation not invertible");
+            System.out.println("Transformation non invertible");
         }
     }
 
@@ -297,7 +305,7 @@ public final class ElevationProfileManager {
      * This method allows us to create the label indicating the statistics of the profile.
      */
     private void createStats() {
-ElevationProfile ele= elevationProfile.get();
+    ElevationProfile ele= elevationProfile.get();
         vboxText.setText(String.format("Longueur : %.1f km" +
                 "     Montée : %.0f m" +
                 "     Descente : %.0f m" +

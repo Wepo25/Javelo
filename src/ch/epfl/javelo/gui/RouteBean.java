@@ -33,7 +33,6 @@ public final class RouteBean{
     public RouteBean(RouteComputer rc) {
 
         highlightedPosition = new SimpleDoubleProperty();
-        highlightedPosition.setValue(0);
 
         waypoints = FXCollections.observableArrayList();
 

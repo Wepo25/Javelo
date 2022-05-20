@@ -26,6 +26,8 @@ public final class WaypointsManager {
     private final Pane pane;
     private final ErrorManager errorManager;
 
+    private static final int SEARCH_DISTANCE = 500;
+
 
     public WaypointsManager(Graph routeNetwork, ReadOnlyObjectProperty<MapViewParameters> mvp,
                             ObservableList<Waypoint> wp, Consumer<String> errorConsumer) {
@@ -134,7 +136,7 @@ public final class WaypointsManager {
     }
 
     private Waypoint findClosestNode(double x, double y) {
-        int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), 500);
+        int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), SEARCH_DISTANCE);
         if (nodeId == -1) {
             errorManager.displayError("Aucune route à proximité !");
             errorConsumer.accept("Aucune route à proximité !");
