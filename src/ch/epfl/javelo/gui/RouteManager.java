@@ -70,13 +70,12 @@ public final class RouteManager {
             }
         });
 
-        mvp.addListener((prop,last,updated) ->{
+        mvp.addListener((p, oldS, newS) ->{
 
-            if((!(last.zoomLevel() == updated.zoomLevel()))){
-                System.out.println(0);
+            if((!(oldS.zoomLevel() == newS.zoomLevel()))){
                 updateCircle();
                 updatePolyline();
-            } else{ if(!last.topLeft().equals(updated.topLeft())){
+            } else{ if(!oldS.topLeft().equals(newS.topLeft())){
 
                 updateCircle();
                 setPolylineLayout();
@@ -84,7 +83,7 @@ public final class RouteManager {
 
         });
 
-        rb.highlightedPositionProperty().addListener(e -> {
+        rb.highlightedPositionProperty().addListener((p, oldS, newS) -> {
             updateCircle();
         });
 
@@ -94,7 +93,7 @@ public final class RouteManager {
         updateCircle();
         c.setId("highlight");
 
-        rb.getRoute().addListener(o -> {
+        rb.getRoute().addListener((p, oldS, newS) -> {
                     if(rb.getRoute().get() != null) {
                         pane.setVisible(true);
                         updatePolyline();
@@ -162,6 +161,7 @@ public final class RouteManager {
      * @return the PointWebMercator corresponding to the position.
      */
     private PointWebMercator buildCircleCenter(){
+
         return PointWebMercator.ofPointCh(rb.getRoute().get().pointAt(rb.highlightedPosition()));
     }
 

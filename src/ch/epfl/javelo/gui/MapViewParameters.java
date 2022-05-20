@@ -9,7 +9,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
         return new Point2D(x, y);
     }
 
-    public MapViewParameters withMinXY(int newX, int newY){
+    public MapViewParameters withMinXY(double newX, double newY){
         return new MapViewParameters(zoomLevel, newX, newY);
     }
 

@@ -22,10 +22,17 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+
+//TO BE REMOVED !
+import javafx.scene.input.KeyCode;
+//
+
 public final class JaVelo extends Application {
 
 
-    public static void main(String[] args) { launch(args); }
+
+    public static void main(String[] args) { launch(args);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -41,7 +48,6 @@ public final class JaVelo extends Application {
         CityBikeCF costFunction = new CityBikeCF(graph);
         RouteComputer routeComputer =
                 new RouteComputer(graph, costFunction);
-
 
         RouteBean rb = new RouteBean(routeComputer);
 
@@ -63,7 +69,7 @@ public final class JaVelo extends Application {
         SplitPane.setResizableWithParent(profileBorderPane,false);
         sp.setOrientation(Orientation.VERTICAL);
 
-        rb.getElevationProfile().addListener(e-> {
+        rb.getElevationProfile().addListener((p, oldS, newS)-> {
             if(rb.getElevationProfile().get() == null) {
                 sp.getItems().remove(profileBorderPane);
             }
@@ -73,10 +79,11 @@ public final class JaVelo extends Application {
         });
 
 
+
+
         MenuItem menuItem = new MenuItem("Exporter GPX");
         menuItem.disableProperty().bind(rb.getRoute().isNull());
         menuItem.setOnAction(a -> {
-            System.out.println("IN");
             try {
                 GpxGenerator.writeGpx("javelo.gpx",rb.getRoute().get(),rb.getElevationProfile().getValue());
             } catch (Exception e) {
@@ -88,12 +95,31 @@ public final class JaVelo extends Application {
         menuBar.setUseSystemMenuBar(true);
 
         Pane errorManagerPane = errorManager.pane();
-        StackPane stackPane = new StackPane( menuBar, sp, errorManagerPane);
+        StackPane stackPane = new StackPane(sp, errorManagerPane);
 
-        stackPane.getStylesheets().add("map.css");
+        BorderPane finalPane = new BorderPane(stackPane);
+        finalPane.setTop(menuBar);
+
+        finalPane.getStylesheets().add("map.css");
+
+        //TO BE REMOVED !
+        Scene temp = new Scene(finalPane);
+        //
+
+        //TO BE REMOVED !
+        temp.setOnKeyPressed(k -> {
+            if (k.getCode().equals(KeyCode.ENTER)) {
+                rb.waypoints.clear();
+            }
+        });
+        //
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);
-        primaryStage.setScene(new Scene(stackPane));
+        primaryStage.setScene(
+                //TO BE REMOVED !
+                temp
+                //
+        );
         primaryStage.setTitle("JaVelo");
         primaryStage.show();
     }

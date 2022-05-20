@@ -67,6 +67,16 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     private static final int EXTRACT_PROFILE_3 = 4;
 
+    private static final int PROFILE_INDEX = 30;
+
+    private static final int PROFILE_LENGTH = 2;
+
+    private static final int SAMPLE_INDEX = 0;
+
+    private static final int SAMPLE_LENGTH = 29;
+
+    private static final int ELEVATION_SHIFT = 4;
+
 
     /**
      * This method allows us to know if an edge goes in the same direction as the OMS path it comes from.
@@ -117,7 +127,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - boolean : True iff the given edge possesses a profile (different from 0).
      */
     public boolean hasProfile(int edgeId) {
-        return extractUnsigned(profileIds.get(edgeId), 30, 2) != 0;
+        return extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH) != 0;
     }
 
     /**
@@ -127,15 +137,15 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - float[] : An array of floats consisting of the different heights of a given edge.
      */
     public float[] profileSamples(int edgeId) {
-        int pf = extractUnsigned(profileIds.get(edgeId), 30, 2);
-        int sampleId = extractUnsigned(profileIds.get(edgeId), 0, 29);
+        int pf = extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH);
+        int sampleId = extractUnsigned(profileIds.get(edgeId), SAMPLE_INDEX, SAMPLE_LENGTH);
         int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
         float[] samples = new float[quantity];
         if (pf == 0) {
             return new float[0];
         } else if (pf == 1) {
             for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
-                samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -4);
+                samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -ELEVATION_SHIFT);
             }
         } else {
             samples[0] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));

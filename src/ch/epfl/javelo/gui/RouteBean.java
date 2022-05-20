@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public final class RouteBean {
+
+public final class RouteBean{
+
+    private static final int MAX_STEP_LENGTH = 5;
+
 
     public ObservableList<Waypoint> waypoints;
 
@@ -36,12 +39,11 @@ public final class RouteBean {
 
         waypoints.addListener( (Observable o) -> computeRoute());
 
-
         route = new SimpleObjectProperty<>();
         elevationProfile = new SimpleObjectProperty<>();
 
-        route.addListener(o -> elevationProfile.set(route.get() == null ?
-                null : ElevationProfileComputer.elevationProfile(route.get(), 5))
+        route.addListener((p, oldS, newS) -> elevationProfile.set(route.get() == null ?
+                null : ElevationProfileComputer.elevationProfile(route.get(), MAX_STEP_LENGTH))
         );
         this.rc = rc;
     }
@@ -67,32 +69,34 @@ public final class RouteBean {
     }
 
 
-    //Todo refaire en mode bg/gucci stp
     private void computeRoute() {
-        List<Route> r = new ArrayList<>();
-        AtomicBoolean finish = new AtomicBoolean(true);
-        waypoints.stream().
-                takeWhile(a -> waypoints.indexOf(a) != waypoints.size() - 1 && rc.bestRouteBetween(a.closestNodeId(),
-                        waypoints.get(waypoints.indexOf(a) + 1).closestNodeId()) != null).
-                forEach(a -> {
-                    if (!computedRoute.containsKey(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)))) {
-                        Route temp = rc.bestRouteBetween(a.closestNodeId(), waypoints.get(waypoints.indexOf(a) + 1)
-                                .closestNodeId());
-                        r.add(temp);
-                        computedRoute.put(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1)), temp);
-                        if (waypoints.indexOf(a) != waypoints.size() - 2 &&
-                                rc.bestRouteBetween(waypoints.get(waypoints.indexOf(a) + 1).closestNodeId(),
-                                        waypoints.get(waypoints.indexOf(a) + 2).closestNodeId()) == null) {
-                            finish.set(false);
-                        }
-                    } else {
-                        r.add(computedRoute.get(new Pair(a, waypoints.get(waypoints.indexOf(a) + 1))));
+        if (waypoints.size() >= 2) {
+            List<Route> listRoute = new ArrayList<>();
+            for (int i = 1; i < waypoints.size(); i++) {
+                Waypoint startWaypoint = waypoints.get(i - 1);
+                Waypoint endWaypoint = waypoints.get(i);
+                if (startWaypoint.equals(endWaypoint)) {
+                    return;
+                }
+                if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
+                    Route r = rc.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
+                    if (r == null) {
+                        route.set(null);
+                        elevationProfile.set(null);
+                        return;
                     }
-                });
-        if (waypoints.size() >= 2 && finish.get() && !r.isEmpty()) {
-            route.set(new MultiRoute(r));
+                    computedRoute.put(new Pair(startWaypoint, endWaypoint), r);
+                    listRoute.add(r);
+                } else {
+                    listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
+                }
+            }
+            MultiRoute multiRoute = new MultiRoute(listRoute);
+            route.set(multiRoute);
+            elevationProfile.set(ElevationProfileComputer.elevationProfile(multiRoute, 5));
         } else {
             route.set(null);
+            elevationProfile.set(null);
         }
     }
 

@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -12,12 +11,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 
 public final class BaseMapManager {
 
-    private final int TILE_PIXEL_SIZE = 256;
+    private static final int TILE_PIXEL_SIZE = 256;
     private final TileManager tm;
     private final WaypointsManager wm;
     private final ObjectProperty<MapViewParameters> mvp;
@@ -47,8 +44,8 @@ public final class BaseMapManager {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
-        canvas.widthProperty().addListener(o -> redrawOnNextPulse());
-        canvas.heightProperty().addListener(o -> redrawOnNextPulse());
+        canvas.widthProperty().addListener((p, oldS, newS) -> redrawOnNextPulse());
+        canvas.heightProperty().addListener((p, oldS, newS) -> redrawOnNextPulse());
 
         canvas.sceneProperty().addListener((p, oldS, newS) -> {
             assert oldS == null;
@@ -102,14 +99,12 @@ public final class BaseMapManager {
             redrawOnNextPulse();
         });
 
-        pane.setOnMousePressed(event -> {
-            dragged.set(new Point2D(event.getX(), event.getY()));
-        });
+        pane.setOnMousePressed(event -> dragged.set(new Point2D(event.getX(), event.getY())));
 
         pane.setOnMouseDragged(event -> {
             int diffX = (int) (event.getX()-dragged.get().getX());
             int diffY = (int) (event.getY()-dragged.get().getY());
-            mvp.set(new MapViewParameters(mvp.get().zoomLevel(),mvp.get().topLeft().getX() - diffX, mvp.get().topLeft().getY() - diffY));
+            mvp.set(mvp.get().withMinXY(mvp.get().topLeft().getX() - diffX, mvp.get().topLeft().getY() - diffY));
             dragged.set(new Point2D(event.getX(), event.getY()));
             redrawOnNextPulse();
 
