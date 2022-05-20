@@ -49,8 +49,6 @@ public final class JaVelo extends Application {
 
         RouteBean rb = new RouteBean(routeComputer);
 
-        Consumer<String> errorConsumer = new ErrorConsumer();
-
         ErrorManager errorManager = new ErrorManager();
 
         AnnotatedMapManager amm = new AnnotatedMapManager(graph, tileManager,rb,errorManager::displayError);
