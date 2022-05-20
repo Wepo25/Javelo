@@ -84,6 +84,7 @@ public final class RouteManager {
         });
 
         rb.highlightedPositionProperty().addListener((p, oldS, newS) -> {
+
             updateCircle();
         });
 
@@ -169,10 +170,18 @@ public final class RouteManager {
      * This method update the highlighted position on the screen.
      */
     private void updateCircle(){
+        if(Double.isNaN(rb.highlightedPosition())){
+        c.setVisible(false);
+        return;
+    }
         if(rb.getRoute().get() != null){
         c.setCenterX(mvp.get().viewX(buildCircleCenter()));
         c.setCenterY(mvp.get().viewY(buildCircleCenter()));
-        c.setRadius(CIRCLE_RADIUS);}
+        c.setRadius(CIRCLE_RADIUS);
+        c.setVisible(true);
+        }
+
+
     }
 
     /**

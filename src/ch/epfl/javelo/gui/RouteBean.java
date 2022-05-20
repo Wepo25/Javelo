@@ -75,9 +75,7 @@ public final class RouteBean{
             for (int i = 1; i < waypoints.size(); i++) {
                 Waypoint startWaypoint = waypoints.get(i - 1);
                 Waypoint endWaypoint = waypoints.get(i);
-                if (startWaypoint.equals(endWaypoint)) {
-                    return;
-                }
+                if (!(startWaypoint.closestNodeId()==endWaypoint.closestNodeId())) {
                 if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
                     Route r = rc.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
                     if (r == null) {
@@ -90,7 +88,7 @@ public final class RouteBean{
                 } else {
                     listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
                 }
-            }
+            }}
             MultiRoute multiRoute = new MultiRoute(listRoute);
             route.set(multiRoute);
             elevationProfile.set(ElevationProfileComputer.elevationProfile(multiRoute, 5));

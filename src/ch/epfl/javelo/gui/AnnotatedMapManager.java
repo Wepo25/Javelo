@@ -1,10 +1,11 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.RoutePoint;
-import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -43,23 +44,32 @@ public final class AnnotatedMapManager {
         this.wm = new WaypointsManager(this.graph, this.mvp,this.bean.waypoints, this.cons);
         this.bmm = new BaseMapManager(this.tiles,this.wm, this.mvp);
         this.pane = new StackPane(bmm.pane(), rm.pane(), wm.pane());
+
+        mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
+        () -> {
+            if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
+
+            PointCh pointActual = mvp.get().pointAt(mousePositionPoint2D.get().getX(),
+                    mousePositionPoint2D.get().getY()).toPointCh();
+            RoutePoint closestPoint = bean.getRoute().get().
+                    pointClosestTo(pointActual);
+
+            PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
+
+            if (Math2.norm(mousePositionPoint2D.get().getX() - mvp.get().viewX(p),
+                    mousePositionPoint2D.get().getY() - mvp.get().viewY(p)) <= 15) {
+
+                return closestPoint.position();
+
+            } else return Double.NaN;
+
+        }else return Double.NaN;
+
+        }, mvp,bean.getRoute(),mousePositionPoint2D));
         pane.setOnMouseMoved(event -> {
-            if (bean.getRoute().get() != null) {
                 mousePositionPoint2D.set(new Point2D(event.getX(), event.getY()));
-                PointCh pointActual = mvp.get().pointAt(event.getX(), event.getY()).toPointCh();
-                RoutePoint closestPoint = bean.getRoute().get().
-                        pointClosestTo(pointActual);
-                PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
-                if (mousePositionPoint2D.get().distance(new Point2D(mvp.get().viewX(p), mvp.get().viewY(p))) < 15) {//distance inf a 15 pixels
-                    mousePositionOnRouteProperty.set(closestPoint.distanceToReference());
-                }
-            }
         });
         pane.setOnMouseExited(event -> mousePositionPoint2D.set(null));
-        mousePositionPoint2D.addListener((Observable o) -> {
-            if(mousePositionPoint2D.get() == null){
-            mousePositionOnRouteProperty.set(Double.NaN);
-        }} );
     }
 
     public Pane pane(){

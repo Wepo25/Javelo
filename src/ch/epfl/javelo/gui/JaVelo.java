@@ -1,17 +1,19 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
-import ch.epfl.javelo.routing.*;
+import ch.epfl.javelo.routing.CityBikeCF;
+import ch.epfl.javelo.routing.ElevationProfile;
+import ch.epfl.javelo.routing.RouteComputer;
 import javafx.application.Application;
-
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -21,10 +23,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.function.Consumer;
-
-
-//TO BE REMOVED !
-import javafx.scene.input.KeyCode;
 //
 
 public final class JaVelo extends Application {
@@ -59,22 +57,21 @@ public final class JaVelo extends Application {
 
 
 
-        BorderPane profileBorderPane = new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
-                rb.highlightedPositionProperty()).pane();
-
-
+        ElevationProfileManager profileBorderPane = new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
+                rb.highlightedPositionProperty());
 
 
         SplitPane sp = new SplitPane(amm.pane());
-        SplitPane.setResizableWithParent(profileBorderPane,false);
+        SplitPane.setResizableWithParent(profileBorderPane.pane(),false);
         sp.setOrientation(Orientation.VERTICAL);
 
         rb.getElevationProfile().addListener((p, oldS, newS)-> {
-            if(rb.getElevationProfile().get() == null) {
-                sp.getItems().remove(profileBorderPane);
+            if(oldS == null && newS != null) {
+                sp.getItems().add(1, profileBorderPane.pane());
+
             }
-            else if(!sp.getItems().contains(profileBorderPane)){
-                sp.getItems().add(profileBorderPane);
+            else if(oldS != null && newS == null){
+                sp.getItems().remove(1);
             }
         });
 
@@ -102,11 +99,16 @@ public final class JaVelo extends Application {
 
         finalPane.getStylesheets().add("map.css");
 
+        rb.highlightedPositionProperty().bind(Bindings.when(amm.mousePositionOnRouteProperty()
+                .greaterThanOrEqualTo(0)).
+                        then(amm.mousePositionOnRouteProperty()).
+                        otherwise(profileBorderPane.mousePositionOnProfileProperty()));
+
         //TO BE REMOVED !
         Scene temp = new Scene(finalPane);
         //
 
-        //TO BE REMOVED !
+        //TODO BE REMOVED !
         temp.setOnKeyPressed(k -> {
             if (k.getCode().equals(KeyCode.ENTER)) {
                 rb.waypoints.clear();
