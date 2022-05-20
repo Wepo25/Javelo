@@ -6,7 +6,6 @@ import ch.epfl.javelo.routing.ElevationProfile;
 import ch.epfl.javelo.routing.RouteComputer;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -23,13 +22,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.Spliterator;
 import java.util.function.Consumer;
-
-
-
-//TO BE REMOVED !
-import javafx.scene.input.KeyCode;
 //
 
 public final class JaVelo extends Application {
@@ -42,7 +35,7 @@ public final class JaVelo extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Graph graph = Graph.loadFrom(Path.of("javelo-data"));
+        Graph graph = Graph.loadFrom(Path.of("lausanne"));
 
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "tile.openstreetmap.org";
@@ -56,50 +49,51 @@ public final class JaVelo extends Application {
 
         RouteBean rb = new RouteBean(routeComputer);
 
+        Consumer<String> errorConsumer = new ErrorConsumer();
+
         ErrorManager errorManager = new ErrorManager();
 
-        AnnotatedMapManager amm = new AnnotatedMapManager(graph, tileManager, rb, errorManager::displayError);
+        AnnotatedMapManager amm = new AnnotatedMapManager(graph, tileManager,rb,errorManager::displayError);
+
+
 
         ElevationProfileManager profileBorderPane =
                 new ElevationProfileManager((ObjectProperty<ElevationProfile>) rb.getElevationProfile(),
                 rb.highlightedPositionProperty());
 
-        DoubleProperty t = profileBorderPane.getHighlightProperty();
-        t.bind(Bindings.when(
-                        profileBorderPane.mousePositionOnProfileProperty().greaterThanOrEqualTo(0)).then(profileBorderPane.mousePositionOnProfileProperty()).otherwise(amm.mousePositionOnRouteProperty()));
-        SplitPane.setResizableWithParent(profileBorderPane.pane(),false);
 
         SplitPane sp = new SplitPane(amm.pane());
+        SplitPane.setResizableWithParent(profileBorderPane.pane(),false);
         sp.setOrientation(Orientation.VERTICAL);
 
         rb.getElevationProfile().addListener((p, oldS, newS)-> {// pourquoi pas itinéraire
             if(oldS == null && newS != null) {
-
                 sp.getItems().add(1, profileBorderPane.pane());
-
 
             }
             else if(oldS != null && newS == null){
                 sp.getItems().remove(1);
             }
         });
+
+
+
+
         MenuItem menuItem = new MenuItem("Exporter GPX");
         menuItem.disableProperty().bind(rb.getRoute().isNull());
         menuItem.setOnAction(a -> {
             try {
-                GpxGenerator.writeGpx("javelo.gpx", rb.getRoute().get(), rb.getElevationProfile().get());
+                GpxGenerator.writeGpx("javelo.gpx",rb.getRoute().get(),rb.getElevationProfile().getValue());
             } catch (Exception e) {
                 throw new UncheckedIOException(new IOException());
             }
         });
-        Menu menu = new Menu("Fichier", null, menuItem);
+        Menu menu = new Menu("Fichier",null,menuItem);
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setUseSystemMenuBar(true);
 
         Pane errorManagerPane = errorManager.pane();
-
         StackPane stackPane = new StackPane(sp, errorManagerPane);
-
 
         BorderPane finalPane = new BorderPane(stackPane);
         finalPane.setTop(menuBar);
@@ -131,5 +125,11 @@ public final class JaVelo extends Application {
         );
         primaryStage.setTitle("JaVelo");
         primaryStage.show();
+    }
+
+    private static final class ErrorConsumer
+            implements Consumer<String> {
+        @Override
+        public void accept(String s) { System.out.println(s); }
     }
 }
