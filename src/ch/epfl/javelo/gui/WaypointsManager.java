@@ -81,7 +81,7 @@ public final class WaypointsManager {
 
         g.setOnMousePressed(event -> {
             initialPoint.setValue(new Point2D(event.getX(), event.getY()));
-            initialCoord.setValue(new Point2D(event.getSceneX(), event.getSceneY()));
+            initialCoord.setValue(new Point2D(g.getLayoutX(), g.getLayoutY()));
 
         });
 
