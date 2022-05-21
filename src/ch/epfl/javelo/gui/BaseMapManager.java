@@ -15,9 +15,9 @@ import java.io.IOException;
 public final class BaseMapManager {
 
     private static final int TILE_PIXEL_SIZE = 256;
-    private final TileManager tm;
-    private final WaypointsManager wm;
-    private final ObjectProperty<MapViewParameters> mvp;
+    private final TileManager tileManager;
+    private final WaypointsManager waypointsManager;
+    private final ObjectProperty<MapViewParameters> mapViewParam;
 
     private final Pane pane;
     private final GraphicsContext graphContext;
@@ -28,18 +28,16 @@ public final class BaseMapManager {
 
     public BaseMapManager(TileManager tm, WaypointsManager wm, ObjectProperty<MapViewParameters> mvp) {
 
-        this.tm = tm;
-        this.wm = wm;
-        this.mvp = mvp;
+        this.tileManager = tm;
+        this.waypointsManager = wm;
+        this.mapViewParam = mvp;
 
         Canvas canvas = new Canvas();
         pane = new Pane(canvas);
 
         paneEvent();
-        pane.setPickOnBounds(false);
 
         graphContext = canvas.getGraphicsContext2D();
-
 
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
@@ -60,9 +58,9 @@ public final class BaseMapManager {
     }
 
     private void draw() {
-        double x = mvp.get().topLeft().getX();
-        double y = mvp.get().topLeft().getY();
-        int z = mvp.get().zoomLevel();
+        double x = mapViewParam.get().topLeft().getX();
+        double y = mapViewParam.get().topLeft().getY();
+        int z = mapViewParam.get().zoomLevel();
 
         for (int i = 0; i < pane.getWidth() + TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
             for (int j = 0; j < pane.getHeight() + TILE_PIXEL_SIZE; j += TILE_PIXEL_SIZE) {
@@ -70,9 +68,10 @@ public final class BaseMapManager {
                     TileManager.TileId ti = new TileManager.TileId(z,
                             (int) Math.floor((i + x) / TILE_PIXEL_SIZE),
                             (int) Math.floor((y + j)/ TILE_PIXEL_SIZE));
-                    graphContext.drawImage(tm.imageForTileAt(ti), i - x % TILE_PIXEL_SIZE, j - y % TILE_PIXEL_SIZE);
+                    graphContext.drawImage(tileManager.imageForTileAt(ti), i - x % TILE_PIXEL_SIZE, j - y % TILE_PIXEL_SIZE);
 
                 } catch (IOException | IllegalArgumentException ignored) {
+
                 }
 
             }
@@ -84,18 +83,19 @@ public final class BaseMapManager {
         ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();
 
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
+
         pane.setOnScroll(e -> {
             if (e.getDeltaY() == 0d) return;
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 200);
             int zoomDelta = (int) Math.signum(e.getDeltaY());
-            int oldZ = mvp.get().zoomLevel();
+            int oldZ = mapViewParam.get().zoomLevel();
 
-            PointWebMercator temp = mvp.get().pointAt((int) e.getX(),(int) e.getY());
+            PointWebMercator temp = mapViewParam.get().pointAt((int) e.getX(),(int) e.getY());
             int newX = (int) (temp.xAtZoomLevel(oldZ + zoomDelta)-e.getX());
             int newY = (int) (temp.yAtZoomLevel(oldZ + zoomDelta)-e.getY());
-            mvp.set(new MapViewParameters(oldZ + zoomDelta, newX, newY));
+            mapViewParam.set(new MapViewParameters(oldZ + zoomDelta, newX, newY));
             redrawOnNextPulse();
         });
 
@@ -104,7 +104,7 @@ public final class BaseMapManager {
         pane.setOnMouseDragged(event -> {
             int diffX = (int) (event.getX()-dragged.get().getX());
             int diffY = (int) (event.getY()-dragged.get().getY());
-            mvp.set(mvp.get().withMinXY(mvp.get().topLeft().getX() - diffX, mvp.get().topLeft().getY() - diffY));
+            mapViewParam.set(mapViewParam.get().withMinXY(mapViewParam.get().topLeft().getX() - diffX, mapViewParam.get().topLeft().getY() - diffY));
             dragged.set(new Point2D(event.getX(), event.getY()));
             redrawOnNextPulse();
 
@@ -112,11 +112,14 @@ public final class BaseMapManager {
 
         pane.setOnMouseReleased(event -> {
             if(event.isStillSincePress()) {
-                wm.addWaypoint((int) event.getX(), (int) event.getY());
+                waypointsManager.addWaypoint((int) event.getX(), (int) event.getY());
                 redrawOnNextPulse();
             }
 
         });
+
+        pane.setPickOnBounds(false);
+
     }
 
     private void redrawIfNeeded() {

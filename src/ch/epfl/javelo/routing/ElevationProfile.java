@@ -13,12 +13,11 @@ import java.util.DoubleSummaryStatistics;
  */
 public final class ElevationProfile {
 
-    private final DoubleSummaryStatistics s = new DoubleSummaryStatistics();
+    private final DoubleSummaryStatistics samplesStats = new DoubleSummaryStatistics();
     private final double length;
     private final float[] samples;
 
     private final double totalAscent;
-
     private final double totalDescent;
 
     /**
@@ -31,25 +30,24 @@ public final class ElevationProfile {
      */
     public ElevationProfile(double length, float[] elevationSamples) {
         Preconditions.checkArgument(length > 0 && elevationSamples.length >= 2);
+
         this.length = length;
         this.samples = new float[elevationSamples.length];
+
         System.arraycopy(elevationSamples, 0, samples, 0, elevationSamples.length);
 
         double ascent = 0;
         double descent = 0;
+
         for (int i = 0; i < samples.length - 1; i++) {
-            if (samples[i + 1] - samples[i] > 0) {
-                ascent += samples[i + 1] - samples[i];
-            }
-            if (samples[i + 1] - samples[i] < 0) {
-                descent += samples[i + 1] - samples[i];
-            }
+            if (samples[i + 1] - samples[i] > 0) ascent += samples[i + 1] - samples[i];
+            if (samples[i + 1] - samples[i] < 0) descent += samples[i + 1] - samples[i];
         }
-        this.totalAscent = ascent;
-        this.totalDescent = Math.abs(descent);
+        totalAscent = ascent;
+        totalDescent = Math.abs(descent);
 
         for (float sample : samples) {
-            s.accept(sample);
+            samplesStats.accept(sample);
         }
     }
 
@@ -68,7 +66,7 @@ public final class ElevationProfile {
      * @return - double : The minimal elevation.
      */
     public double minElevation() {
-        return s.getMin();
+        return samplesStats.getMin();
     }
 
     /**
@@ -77,7 +75,7 @@ public final class ElevationProfile {
      * @return - double : The maximal elevation.
      */
     public double maxElevation() {
-        return s.getMax();
+        return samplesStats.getMax();
     }
 
     /**

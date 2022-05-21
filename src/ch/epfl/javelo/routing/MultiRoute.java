@@ -26,12 +26,12 @@ public final class MultiRoute implements Route {
      * This method constructs a MultiRoute with a list of Route given ,and a table (positions)
      * containing the length at each segment positions.
      *
-     * @param segments - List<Route> : List containing all the segments constituting this route.
+     * @param seg - List<Route> : List containing all the segments constituting this route.
      * @throws IllegalArgumentException (checkArgument) : Throws an exception is the list of segment given is empty.
      */
-    public MultiRoute(List<Route> segments) {
-        Preconditions.checkArgument(!segments.isEmpty());
-        this.segments = List.copyOf(segments);
+    public MultiRoute(List<Route> seg) {
+        Preconditions.checkArgument(!seg.isEmpty());
+        segments = List.copyOf(seg);
         positions = createPositions(segments);
     }
 
@@ -43,17 +43,16 @@ public final class MultiRoute implements Route {
      */
     @Override
     public int indexOfSegmentAt(double position) {
-        position = Math2.clamp(0, position, length());
+        double boundedPosition = bounds(position);
         int index = 0;
-        double length = 0;
 
         for (Route route : segments) {
-            length = route.length();
-            if (length < position) {
+            double length = route.length();
+            if (length < boundedPosition) {
                 index += route.indexOfSegmentAt(route.length()) + 1;
-                position -= length;
+                boundedPosition -= length;
             } else {
-                index += route.indexOfSegmentAt(position);
+                index += route.indexOfSegmentAt(boundedPosition);
                 break;
             }
         }
@@ -92,12 +91,10 @@ public final class MultiRoute implements Route {
     @Override
     public List<PointCh> points() {
         List<PointCh> points = new ArrayList<>();
-
         for (Route route : segments) {
             points.addAll(route.points());
             points.remove(points.size() - 1);
         }
-
         List<PointCh> list = segments.get(segments.size() - 1).points();
         points.add(list.get(list.size() - 1));
         return points;
@@ -111,9 +108,9 @@ public final class MultiRoute implements Route {
      */
     @Override
     public PointCh pointAt(double position) {
-        position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentOnRoute(position);
-        return segments.get(index).pointAt(position - positions[index]);
+        double boundedPosition = bounds(position);
+        int index = indexOfSegmentOnRoute(boundedPosition);
+        return segments.get(index).pointAt(boundedPosition - positions[index]);
     }
 
     /**
@@ -124,9 +121,9 @@ public final class MultiRoute implements Route {
      */
     @Override
     public double elevationAt(double position) {
-        position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentOnRoute(position);
-        return segments.get(index).elevationAt(position - positions[index]);
+        double boundedPosition = bounds(position);
+        int index = indexOfSegmentOnRoute(boundedPosition);
+        return segments.get(index).elevationAt(boundedPosition - positions[index]);
 
     }
 
@@ -138,9 +135,9 @@ public final class MultiRoute implements Route {
      */
     @Override
     public int nodeClosestTo(double position) {
-        position = Math2.clamp(0, position, length());
-        int index = indexOfSegmentOnRoute(position);
-        return segments.get(index).nodeClosestTo(position - positions[index]);
+        double boundedPosition = bounds(position);
+        int index = indexOfSegmentOnRoute(boundedPosition);
+        return segments.get(index).nodeClosestTo(boundedPosition - positions[index]);
     }
 
     /**
@@ -185,11 +182,15 @@ public final class MultiRoute implements Route {
      * @return - int : the index link to the position.
      */
     private int indexOfSegmentOnRoute(double position) {
-        position = Math2.clamp(0, position, length());
-        int resultSearch = Arrays.binarySearch(positions, position);
+        double boundedPosition = bounds(position);
+        int resultSearch = Arrays.binarySearch(positions, boundedPosition);
         int segmentIndex;
         segmentIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
         return Math2.clamp(0, segmentIndex, segments.size() - 1);
+    }
+
+    private double bounds(double position){
+        return Math2.clamp(0, position, length());
     }
 
 }

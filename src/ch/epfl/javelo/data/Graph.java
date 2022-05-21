@@ -19,6 +19,13 @@ import java.util.function.DoubleUnaryOperator;
  */
 public final class Graph {
 
+    private static final String NODES_PATH = "nodes.bin";
+    private static final String SECTORS_PATH = "sectors.bin";
+    private static final String EDGES_PATH = "edges.bin";
+    private static final String PROFILES_PATH = "profile_ids.bin";
+    private static final String ELEVATIONS_PATH = "elevations.bin";
+    private static final String ATTRIBUTES_PATH = "attributes.bin";
+
     private final GraphNodes nodes;
     private final GraphSectors sectors;
     private final GraphEdges edges;
@@ -48,20 +55,19 @@ public final class Graph {
      * @throws IOException : Throws an exception if it was unable to open the given file.
      */
     public static Graph loadFrom(Path basePath) throws IOException {
-        IntBuffer nodes = tryAndOpen(basePath.resolve("nodes.bin")).asIntBuffer();
-        ByteBuffer sectors = tryAndOpen(basePath.resolve("sectors.bin"));
-        ByteBuffer edges = tryAndOpen(basePath.resolve("edges.bin"));
-        IntBuffer profileIds = tryAndOpen(basePath.resolve("profile_ids.bin")).asIntBuffer();
-        ShortBuffer elevations = tryAndOpen(basePath.resolve("elevations.bin")).asShortBuffer();
-        LongBuffer attributes = tryAndOpen(basePath.resolve("attributes.bin")).asLongBuffer();
+        IntBuffer nodes = tryAndOpen(basePath.resolve(NODES_PATH)).asIntBuffer();
+        ByteBuffer sectors = tryAndOpen(basePath.resolve(SECTORS_PATH));
+        ByteBuffer edges = tryAndOpen(basePath.resolve(EDGES_PATH));
+        IntBuffer profileIds = tryAndOpen(basePath.resolve(PROFILES_PATH)).asIntBuffer();
+        ShortBuffer elevations = tryAndOpen(basePath.resolve(ELEVATIONS_PATH)).asShortBuffer();
+        LongBuffer attributes = tryAndOpen(basePath.resolve(ATTRIBUTES_PATH)).asLongBuffer();
         List<AttributeSet> attributeSets = new ArrayList<>(attributes.capacity());
         for (int i = 0; i < attributes.capacity(); i++) {
             attributeSets.add(new AttributeSet(attributes.get(i)));
         }
         return new Graph(new GraphNodes(nodes),
                 new GraphSectors(sectors),
-                new GraphEdges(edges, profileIds, elevations),
-                attributeSets);
+                new GraphEdges(edges, profileIds, elevations), attributeSets);
     }
 
 

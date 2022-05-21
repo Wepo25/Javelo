@@ -41,21 +41,18 @@ public final class ElevationProfileComputer {
             float[] samples = new float[nbSamples];
             List<Integer> indexes = new ArrayList<>();
 
-
             for (int i = 0; i < nbSamples; i++) {
                 samples[i] = ((float) route.elevationAt(i * spaceBetween));
             }
             int firstValidIndex = firstValid(samples);
             int lastValidIndex = lastValid(samples);
-            if (firstValidIndex == -1) {
-                return new ElevationProfile(length, new float[nbSamples]);
-            }
+            if (firstValidIndex == -1) return new ElevationProfile(length, new float[nbSamples]);
+
             Arrays.fill(samples, 0, firstValidIndex, samples[firstValidIndex]);
             Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
 
-            if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) {
-                indexes.add(0);
-            }
+            if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) indexes.add(0);
+
 
             //Taking the indexes of values surrounding NaNs to facilitate interpolation.
             for (int i = 1; i < samples.length - 1; i++) {
@@ -82,7 +79,6 @@ public final class ElevationProfileComputer {
                         samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
                     }
                 }
-
             }
             return new ElevationProfile(length, samples);
         }
@@ -97,9 +93,7 @@ public final class ElevationProfileComputer {
      */
     private static int firstValid(float[] floatArray) {
         for (int i = 0; i < floatArray.length; i++) {
-            if (!Float.isNaN(floatArray[i])) {
-                return i;
-            }
+            if (!Float.isNaN(floatArray[i])) return i;
         }
         return -1;
     }
@@ -112,9 +106,7 @@ public final class ElevationProfileComputer {
      */
     private static int lastValid(float[] floatArray) {
         for (int i = floatArray.length - 1; i >= 0; i--) {
-            if (!Float.isNaN(floatArray[i])) {
-                return i;
-            }
+            if (!Float.isNaN(floatArray[i])) return i;
         }
         return -1;
     }

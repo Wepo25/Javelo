@@ -20,7 +20,7 @@ public final class RouteBean{
 
     public ObservableList<Waypoint> waypoints;
 
-    private final RouteComputer rc;
+    private final RouteComputer routeComputer;
     private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
     private final ObjectProperty<ElevationProfile> elevationProfile;
@@ -32,19 +32,18 @@ public final class RouteBean{
 
     public RouteBean(RouteComputer rc) {
 
-        highlightedPosition = new SimpleDoubleProperty();
+        this.highlightedPosition = new SimpleDoubleProperty();
+        this.route = new SimpleObjectProperty<>();
+        this.elevationProfile = new SimpleObjectProperty<>();
+        this.waypoints = FXCollections.observableArrayList();
 
-        waypoints = FXCollections.observableArrayList();
+        this.routeComputer = rc;
 
         waypoints.addListener( (Observable o) -> computeRoute());
-
-        route = new SimpleObjectProperty<>();
-        elevationProfile = new SimpleObjectProperty<>();
 
         route.addListener((p, oldS, newS) -> elevationProfile.set(route.get() == null ?
                 null : ElevationProfileComputer.elevationProfile(route.get(), MAX_STEP_LENGTH))
         );
-        this.rc = rc;
     }
 
     public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {
@@ -76,14 +75,14 @@ public final class RouteBean{
                 Waypoint endWaypoint = waypoints.get(i);
                 if (!(startWaypoint.closestNodeId()==endWaypoint.closestNodeId())) {
                 if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
-                    Route r = rc.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
-                    if (r == null) {
+                    Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
+                    if (tempRoute == null) {
                         route.set(null);
                         elevationProfile.set(null);
                         return;
                     }
-                    computedRoute.put(new Pair(startWaypoint, endWaypoint), r);
-                    listRoute.add(r);
+                    computedRoute.put(new Pair(startWaypoint, endWaypoint), tempRoute);
+                    listRoute.add(tempRoute);
                 } else {
                     listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
                 }

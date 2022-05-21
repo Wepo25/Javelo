@@ -18,6 +18,12 @@ import java.util.List;
 
 public class GpxGenerator {
 
+    private static final String LATITUDE_ABBREVIATION = "lat";
+    private static final String LONGITUDE_ABBREVIATION = "lon";
+    private static final String ELEVATION_ABBREVIATION = "ele";
+
+    private static final String HEAD_NAME = "Route JaVelo";
+
     private GpxGenerator(){
     }
 
@@ -38,18 +44,21 @@ public class GpxGenerator {
 
         Element metadata = doc.createElement("metadata");
         root.appendChild(metadata);
+
         Element name = doc.createElement("name");
         metadata.appendChild(name);
-        name.setTextContent("Route JaVelo");
+        name.setTextContent(HEAD_NAME);
+
         Element rte = doc.createElement("rte");
         root.appendChild(rte);
+
         double position = 0;
         List<PointCh> points = route.points();
         for (int i = 0; i < points.size(); i++) {
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute("lat", String.valueOf((float)Math.toDegrees(points.get(i).lat())));
-            rtept.setAttribute("lon", String.valueOf((float)Math.toDegrees(points.get(i).lon())));
-            Element ele = doc.createElement("ele");
+            rtept.setAttribute(LATITUDE_ABBREVIATION, String.valueOf((float)Math.toDegrees(points.get(i).lat())));
+            rtept.setAttribute(LONGITUDE_ABBREVIATION, String.valueOf((float)Math.toDegrees(points.get(i).lon())));
+            Element ele = doc.createElement(ELEVATION_ABBREVIATION);
             if(i!= 0){
                 position += points.get(i).distanceTo(points.get(i-1));
             }

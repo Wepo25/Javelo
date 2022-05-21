@@ -17,6 +17,8 @@ import java.util.List;
  */
 public final class SingleRoute implements Route {
 
+    private static final int CONSTANT_INDEX_OF_SEGMENT = 0;
+
     private final List<Edge> edges;
     private final double[] positions;
 
@@ -47,7 +49,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public int indexOfSegmentAt(double position) {
-        return 0;
+        return CONSTANT_INDEX_OF_SEGMENT;
     }
 
     /**
@@ -88,9 +90,9 @@ public final class SingleRoute implements Route {
      */
     @Override
     public PointCh pointAt(double position) {
-        position = bounds(position);
-        int edgeIndex = edgeIndex(position);
-        double newPos = position - positions[edgeIndex];
+        double boundedPosition = bounds(position);
+        int edgeIndex = edgeIndex(boundedPosition);
+        double newPos = boundedPosition - positions[edgeIndex];
         return edges.get(edgeIndex).pointAt(newPos);
     }
 
@@ -102,9 +104,9 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double elevationAt(double position) {
-        position = bounds(position);
-        int edgeIndex = edgeIndex(position);
-        double newPos = position - positions[edgeIndex];
+        double boundedPosition = bounds(position);
+        int edgeIndex = edgeIndex(boundedPosition);
+        double newPos = boundedPosition - positions[edgeIndex];
         return edges.get(edgeIndex).elevationAt(newPos);
     }
 
@@ -116,10 +118,10 @@ public final class SingleRoute implements Route {
      */
     @Override
     public int nodeClosestTo(double position) {
-        position = bounds(position);
-        int edgeIndex = edgeIndex(position);
-        double diff1 = position - positions[edgeIndex];
-        double diff2 = positions[edgeIndex + 1] - position;
+        double boundedPosition = bounds(position);
+        int edgeIndex = edgeIndex(boundedPosition);
+        double diff1 = boundedPosition - positions[edgeIndex];
+        double diff2 = positions[edgeIndex + 1] - boundedPosition;
         return (diff1 <= diff2) ? edges.get(edgeIndex).fromNodeId() : edges.get(edgeIndex).toNodeId();
     }
 
@@ -167,8 +169,8 @@ public final class SingleRoute implements Route {
      * @return - int : the index of the edge.
      */
     private int edgeIndex(double position) {
-        position = Math2.clamp(0, position, length());
-        int resultSearch = Arrays.binarySearch(positions, position);
+        double boundedPosition = bounds(position);
+        int resultSearch = Arrays.binarySearch(positions, boundedPosition);
         int edgeIndex;
         edgeIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
         return Math2.clamp(0, edgeIndex, edges.size() - 1);

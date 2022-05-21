@@ -1,6 +1,7 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.data.Graph;
+import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -20,29 +21,43 @@ import java.util.function.Consumer;
 public final class WaypointsManager {
 
     private final Graph routeNetwork;
-    private final ReadOnlyObjectProperty<MapViewParameters> mvp;
-    private final ObservableList<Waypoint> wp;
+    private final ReadOnlyObjectProperty<MapViewParameters> mapViewParam;
+    private final ObservableList<Waypoint> waypoints;
     private final Consumer<String> errorConsumer;
     private final Pane pane;
-    private final ErrorManager errorManager;
 
     private static final int SEARCH_DISTANCE = 500;
+
+    private static final String FIRST_GROUP_STYLE_CLASS = "first";
+    private static final String MIDDLE_GROUP_STYLE_CLASS = "middle";
+    private static final String LAST_GROUP_STYLE_CLASS = "last";
+    private static final String GROUP_PIN_STYLE_CLASS = "pin";
+    private static final String GROUP_PIN_IN_STYLE_CLASS = "pin_inside";
+    private static final String GROUP_PIN_OUT_STYLE_CLASS = "pin_outside";
+
+    private static final String SVG_CONTENT_1 = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
+    private static final String SVG_CONTENT_2 = "M0-23A1 1 0 000-29 1 1 0 000-23";
+
+    private static final String WAYPOINT_ADDER_ERROR_MESSAGE_1 = "Aucune route à proximité !";
+
+
+
+
 
 
     public WaypointsManager(Graph routeNetwork, ReadOnlyObjectProperty<MapViewParameters> mvp,
                             ObservableList<Waypoint> wp, Consumer<String> errorConsumer) {
         this.routeNetwork = routeNetwork;
-        this.mvp = mvp;
-        this.wp = wp;
+        this.mapViewParam = mvp;
+        this.waypoints = wp;
         this.errorConsumer = errorConsumer;
-        this.errorManager = new ErrorManager();
 
         pane = new Pane(new Canvas());
         paneActualisation();
         pane.setPickOnBounds(false);
 
-        mvp.addListener((Observable o) -> paneActualisation());
-        wp.addListener((Observable o) -> paneActualisation());
+        mapViewParam.addListener((Observable o) -> paneActualisation());
+        waypoints.addListener((Observable o) -> paneActualisation());
 
     }
 
@@ -53,102 +68,97 @@ public final class WaypointsManager {
     private void paneActualisation() {
 
         List<Group> listOfGroup = new ArrayList<>();
-        for (int i = 0; i < wp.size(); i++) {
-
-            Group g = pointScheme();
-            setGroupPosition(g, wp.get(i));
-
-            handlerCreation(i, g);
-
+        for (int i = 0; i < waypoints.size(); i++) {
+            Group group = pointScheme();
+            setGroupPosition(group, waypoints.get(i));
+            handlerCreation(i, group);
 
             if (i == 0) {
-                g.getStyleClass().add("first");
+                group.getStyleClass().add(FIRST_GROUP_STYLE_CLASS);
             } else {
-                if (i == wp.size() - 1) {
-                    g.getStyleClass().add("last");
-                } else g.getStyleClass().add("middle");
+                if (i == waypoints.size() - 1) {
+                    group.getStyleClass().add(LAST_GROUP_STYLE_CLASS);
+                } else group.getStyleClass().add(MIDDLE_GROUP_STYLE_CLASS);
             }
-            listOfGroup.add(g);
+            listOfGroup.add(group);
         }
         pane.getChildren().setAll(listOfGroup);
     }
 
     // Todo finir bien
-    private void handlerCreation(int i, Group g) {
+    private void handlerCreation(int index, Group group) {
 
         ObjectProperty<Point2D> initialPoint = new SimpleObjectProperty<>();
         ObjectProperty<Point2D> initialCoord = new SimpleObjectProperty<>();
 
-        g.setOnMousePressed(event -> {
+        group.setOnMousePressed(event -> {
             initialPoint.set(new Point2D(event.getX(), event.getY()));
-            initialCoord.set(new Point2D(g.getLayoutX(), g.getLayoutY()));
+            initialCoord.set(new Point2D(group.getLayoutX(), group.getLayoutY()));
 
         });
 
-        g.setOnMouseDragged(event -> {
-            Point2D point2D = new Point2D(g.getLayoutX(),g.getLayoutY()).add(event.getX(),
+        group.setOnMouseDragged(event -> {
+            Point2D point2D = new Point2D(group.getLayoutX(),group.getLayoutY()).add(event.getX(),
                     event.getY()).subtract(initialPoint.get());
-            g.setLayoutX(point2D.getX());
-            g.setLayoutY(point2D.getY());
+            group.setLayoutX(point2D.getX());
+            group.setLayoutY(point2D.getY());
         });
 
 
-        g.setOnMouseReleased(event -> {
-
+        group.setOnMouseReleased(event -> {
             if (event.isStillSincePress()) {
-                wp.remove(i);
-                pane.getChildren().remove(g);
-            } else {
-                Point2D point2D = new Point2D(g.getLayoutX(),g.getLayoutY()).add(event.getX(),
+                waypoints.remove(index);
+                pane.getChildren().remove(group);
+            } else{
+                Point2D point2D = new Point2D(group.getLayoutX(),group.getLayoutY()).add(event.getX(),
                         event.getY()).subtract(initialPoint.get());
-                Waypoint waypoint = findClosestNode(point2D.getX(),
-                        point2D.getY());
-                if (waypoint != null) {
-                    setGroupPosition(g, waypoint);
-                    wp.set(i, waypoint);
-                } else {
-                    g.setLayoutX(initialCoord.get().getX() );
-                    g.setLayoutY(initialCoord.get().getY());
-
-
+                Waypoint waypoint = findClosestNode(point2D.getX(), point2D.getY());
+                if (waypoint != null){
+                    setGroupPosition(group, waypoint);
+                    waypoints.set(index, waypoint);
+                } else{
+                    group.setLayoutX(initialCoord.get().getX());
+                    group.setLayoutY(initialCoord.get().getY());
                 }
             }
         });
     }
 
 
-    private void setGroupPosition(Group g, Waypoint waypoint) {
-        PointWebMercator w = PointWebMercator.ofPointCh(waypoint.point());
-        g.setLayoutX(mvp.get().viewX(w));
-        g.setLayoutY(mvp.get().viewY(w));
+    private void setGroupPosition(Group group, Waypoint waypoint) {
+        PointWebMercator point = PointWebMercator.ofPointCh(waypoint.point());
+        group.setLayoutX(mapViewParam.get().viewX(point));
+        group.setLayoutY(mapViewParam.get().viewY(point));
     }
 
     private Group pointScheme() {
         SVGPath svgPath1 = new SVGPath();
-        svgPath1.setContent("M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20");
-        svgPath1.getStyleClass().add("pin_outside");
+        svgPath1.setContent(SVG_CONTENT_1);
+        svgPath1.getStyleClass().add(GROUP_PIN_OUT_STYLE_CLASS);
         SVGPath svgPath2 = new SVGPath();
-        svgPath2.setContent("M0-23A1 1 0 000-29 1 1 0 000-23");
-        svgPath2.getStyleClass().add("pin_inside");
-        Group group1 = new Group(svgPath1, svgPath2);
-        group1.getStyleClass().add("pin");
-        return group1;
+        svgPath2.setContent(SVG_CONTENT_2);
+        svgPath2.getStyleClass().add(GROUP_PIN_IN_STYLE_CLASS);
+        Group group = new Group(svgPath1, svgPath2);
+        group.getStyleClass().add(GROUP_PIN_STYLE_CLASS);
+        return group;
     }
 
 
     public void addWaypoint(double x, double y) {
         if (findClosestNode(x, y) != null) {
-            wp.add(findClosestNode(x, y));
+            waypoints.add(findClosestNode(x, y));
+        }
+        else{
+            errorConsumer.accept(WAYPOINT_ADDER_ERROR_MESSAGE_1);
         }
     }
 
     private Waypoint findClosestNode(double x, double y) {
-        int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), SEARCH_DISTANCE);
-        if (nodeId == -1) {
-            errorConsumer.accept("Aucune route à proximité !");
-        } else {
-            return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.
-                    nodeId);
+        PointCh point = mapViewParam.get().pointAt(x, y).toPointCh();
+        if (point != null) {
+            int nodeId = routeNetwork.nodeClosestTo(point, SEARCH_DISTANCE);
+            if (nodeId == -1) errorConsumer.accept(WAYPOINT_ADDER_ERROR_MESSAGE_1);
+            else return new Waypoint(point, nodeId);
         }
         return null;
 

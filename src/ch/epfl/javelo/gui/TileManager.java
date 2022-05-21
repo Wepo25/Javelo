@@ -22,10 +22,13 @@ import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
  */
 public final class TileManager {
     private static final int MAX_CAP_MEMORY = 100;
+
+    private static final String FILE_EXTENSION = ".png";
     private final Path path;
     private final String serv;
     private final LinkedHashMap<TileId, Image> cacheMemory =
             new LinkedHashMap<>(MAX_CAP_MEMORY, 0.75f, true);
+
 
     /**
      * Constructor of TileManager with the disk cache's path and the server hosting the Tiles online.
@@ -65,7 +68,7 @@ public final class TileManager {
         Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
         Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
-                resolve(String.valueOf(tileId.xTile)).resolve(tileId.yTile + ".png");
+                resolve(String.valueOf(tileId.xTile)).resolve(tileId.yTile + FILE_EXTENSION);
 
         if (!cacheMemory.containsKey(tileId)) {
             if (!Files.exists(fullPath)) {
@@ -99,11 +102,11 @@ public final class TileManager {
                 serv + "/" +
                 tileId.zoomLevel + "/" +
                 tileId.xTile + "/" +
-                tileId.yTile + ".png");
-        URLConnection c = u.openConnection();
-        c.setRequestProperty("User-Agent", "JaVelo");
+                tileId.yTile + FILE_EXTENSION);
+        URLConnection urlConnection = u.openConnection();
+        urlConnection.setRequestProperty("User-Agent", "JaVelo");
 
-        try (InputStream i = c.getInputStream();
+        try (InputStream i = urlConnection.getInputStream();
              OutputStream t = new FileOutputStream(fullPath.toString())) {
             i.transferTo(t);
         }

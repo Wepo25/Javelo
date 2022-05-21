@@ -18,15 +18,16 @@ import java.util.function.Consumer;
 
 public final class AnnotatedMapManager {
 
-    private final Graph graph;
-    private final TileManager tiles;
-    private final RouteBean bean;
-    private final Consumer<String> cons;
+    private final static int INITIAL_ZOOM_LEVEL = 12;
+    private final static int INITIAL_X_VALUE = 543200;
+    private final static int INITIAL_Y_VALUE = 370650;
 
-    private final ObjectProperty<MapViewParameters> mvp;
-    private final BaseMapManager bmm;
-    private final WaypointsManager wm;
-    private final RouteManager rm;
+    private final static int MIN_PIXEL_DISTANCE = 15;
+
+
+    private final ObjectProperty<MapViewParameters> mapViewParam =
+            new SimpleObjectProperty<>(new MapViewParameters(INITIAL_ZOOM_LEVEL,INITIAL_X_VALUE,INITIAL_Y_VALUE));
+
     private final DoubleProperty mousePositionOnRouteProperty = new SimpleDoubleProperty();
     private final ObjectProperty<Point2D> mousePositionPoint2D = new SimpleObjectProperty<>();
 
@@ -35,40 +36,31 @@ public final class AnnotatedMapManager {
     private final Pane pane;
 
     public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons){
-        this.graph = graph;
-        this.tiles = tiles;
-        this.bean = bean;
-        this.cons = cons;
-        this.mvp = new SimpleObjectProperty<>(new MapViewParameters(12,543200,370650));
-        this.rm = new RouteManager(this.bean, this.mvp,this.cons);
-        this.wm = new WaypointsManager(this.graph, this.mvp,this.bean.waypoints, this.cons);
-        this.bmm = new BaseMapManager(this.tiles,this.wm, this.mvp);
-        this.pane = new StackPane(bmm.pane(), rm.pane(), wm.pane());
+
+        RouteManager routeManager = new RouteManager(bean, mapViewParam, cons);
+        WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParam, bean.waypoints, cons);
+        BaseMapManager baseMapManager = new BaseMapManager(tiles, waypointsManager, mapViewParam);
+        pane = new StackPane(baseMapManager.pane(), routeManager.pane(), waypointsManager.pane());
 
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
-        () -> {
-            if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
+                () -> {
+                        if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
+                            PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
+                                    mousePositionPoint2D.get().getY()).toPointCh();
+                            RoutePoint closestPoint = bean.getRoute().get().
+                                    pointClosestTo(pointActual);
+                            PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
+                            double tempNorm = Math2.norm(mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
+                                    mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
 
-            PointCh pointActual = mvp.get().pointAt(mousePositionPoint2D.get().getX(),
-                    mousePositionPoint2D.get().getY()).toPointCh();
-            RoutePoint closestPoint = bean.getRoute().get().
-                    pointClosestTo(pointActual);
+                            if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
+                            else return Double.NaN;
 
-            PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
+                        } else return Double.NaN;
+                      },
+                mapViewParam,bean.getRoute(), mousePositionPoint2D));
 
-            if (Math2.norm(mousePositionPoint2D.get().getX() - mvp.get().viewX(p),
-                    mousePositionPoint2D.get().getY() - mvp.get().viewY(p)) <= 15) {
-
-                return closestPoint.position();
-
-            } else return Double.NaN;
-
-        }else return Double.NaN;
-
-        }, mvp,bean.getRoute(),mousePositionPoint2D));
-        pane.setOnMouseMoved(event -> {
-                mousePositionPoint2D.set(new Point2D(event.getX(), event.getY()));
-        });
+        pane.setOnMouseMoved(event -> mousePositionPoint2D.set(new Point2D(event.getX(), event.getY())));
         pane.setOnMouseExited(event -> mousePositionPoint2D.set(null));
     }
 
@@ -77,7 +69,6 @@ public final class AnnotatedMapManager {
     }
 
     public DoubleProperty mousePositionOnRouteProperty(){
-
         return mousePositionOnRouteProperty;
     }
 }

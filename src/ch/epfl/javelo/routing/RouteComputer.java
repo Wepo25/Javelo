@@ -46,75 +46,67 @@ public final class RouteComputer {
 
         Preconditions.checkArgument(startNodeId != endNodeId);
 
-        record WeightedNode(int nodeId, float distance)
-                implements Comparable<WeightedNode> {
+        record WeightedNode(int nodeId, float distance) implements Comparable<WeightedNode> {
             @Override
             public int compareTo(WeightedNode that) {
                 return Float.compare(this.distance, that.distance);
             }
-
         }
 
         float[] distance = new float[graph.nodeCount()];
         int[] predecessor = new int[graph.nodeCount()];
+
         Arrays.fill(distance, POSITIVE_INFINITY);
         distance[startNodeId] = 0;
 
-        PriorityQueue<WeightedNode> p = new PriorityQueue<>();
+        PriorityQueue<WeightedNode> nodesPriorityQueue = new PriorityQueue<>();
 
-        p.add(new WeightedNode(startNodeId, distance[startNodeId]));
+        nodesPriorityQueue.add(new WeightedNode(startNodeId, distance[startNodeId]));
 
         do {
-            int id = p.remove().nodeId;
-            if (id == endNodeId) {
-                break;
-            }
+            int id = nodesPriorityQueue.remove().nodeId;
+            if (id == endNodeId) break;
             int quantity = graph.nodeOutDegree(id);
             for (int i = 0; i < quantity; i++) {
                 int nextNodeId = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
-                if (COMPUTED_DISTANCE != distance[nextNodeId] &&
-                        COMPUTED_DISTANCE != distance[id]) {
-                    float d = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
+                if (COMPUTED_DISTANCE != distance[nextNodeId] && COMPUTED_DISTANCE != distance[id]) {
+                    float first_distance = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
                             * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float dd = (float) (d + graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
-                    if (d < distance[nextNodeId]) {
-                        distance[nextNodeId] = d;
+                    float second_distance = (float) (first_distance + graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
+                    if (first_distance < distance[nextNodeId]) {
+                        distance[nextNodeId] = first_distance;
                         predecessor[nextNodeId] = id;
-                        p.add(new WeightedNode(nextNodeId, dd));
+                        nodesPriorityQueue.add(new WeightedNode(nextNodeId, second_distance));
                     }
                 }
             }
             distance[id] = COMPUTED_DISTANCE;
-        } while (!p.isEmpty());
+        } while (!nodesPriorityQueue.isEmpty());
 
         List<Edge> edges = edges(predecessor, endNodeId);
         Collections.reverse(edges);
 
+        if(edges.isEmpty()) return null;
 
-        if(edges.isEmpty()){
-            return null;
-        }
         return new SingleRoute(edges);
     }
     
     private List<Edge> edges(int[] predecessor, int endNodeId){
 
         List<Edge> edges = new ArrayList<>();
-        int i = endNodeId;
+        int id = endNodeId;
 
-        while (predecessor[i] != 0) {
+        while (predecessor[id] != 0) {
             boolean found = false;
             int edgeID = 0;
             while (!found) {
-                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(predecessor[i], edgeID)) == i) {
-                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(predecessor[i], edgeID), predecessor[i],
-                            i));
+                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(predecessor[id], edgeID)) == id) {
+                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(predecessor[id], edgeID), predecessor[id], id));
                     found = true;
                 }
                 edgeID++;
             }
-            i = predecessor[i];
-
+            id = predecessor[id];
         }
         return edges;
     }

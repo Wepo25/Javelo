@@ -137,21 +137,21 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return - float[] : An array of floats consisting of the different heights of a given edge.
      */
     public float[] profileSamples(int edgeId) {
-        int pf = extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH);
+        int profileType = extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH);
         int sampleId = extractUnsigned(profileIds.get(edgeId), SAMPLE_INDEX, SAMPLE_LENGTH);
         int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
         float[] samples = new float[quantity];
-        if (pf == 0) {
+        if (profileType == 0) {
             return new float[0];
-        } else if (pf == 1) {
+        } else if (profileType == 1) {
             for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
                 samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -ELEVATION_SHIFT);
             }
         } else {
             samples[0] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));
             int index = 1;
-            int profile_size = (pf == 2)? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
-            int profile_length = (pf == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
+            int profile_size = (profileType == 2)? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
+            int profile_length = (profileType == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
             for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
                 for (int j = 0; j < profile_size; j++) {
                     samples[index] = samples[index - 1] + Q28_4.asFloat(extractSigned(elevations.get(i),
@@ -180,17 +180,15 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to easily reverse a float array which is useful when using the profileSamples method.
      *
-     * @param a - float[] : An array of floats.
+     * @param l - float[] : An array of floats.
      * @return - float[] : The given float array but reversed.
      */
-    private float[] reverse(float[] a) {
-
-        for (int i = 0; i < a.length / 2; i++) {
-            float temp1 = a[i];
-            a[i] = a[a.length-i-1];
-            a[a.length-i-1] = temp1;
+    private float[] reverse(float[] l) {
+        for (int i = 0; i < l.length / 2; i++) {
+            float temp1 = l[i];
+            l[i] = l[l.length-i-1];
+            l[l.length-i-1] = temp1;
         }
-
-        return a;
+        return l;
     }
 }
