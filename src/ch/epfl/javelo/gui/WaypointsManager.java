@@ -73,6 +73,7 @@ public final class WaypointsManager {
         pane.getChildren().setAll(listOfGroup);
     }
 
+    // Todo finir bien
     private void handlerCreation(int i, Group g) {
 
         ObjectProperty<Point2D> initialPoint = new SimpleObjectProperty<>();
@@ -85,8 +86,10 @@ public final class WaypointsManager {
         });
 
         g.setOnMouseDragged(event -> {
-            g.setLayoutX(event.getSceneX() - initialPoint.get().getX());
-            g.setLayoutY(event.getSceneY() - initialPoint.get().getY());
+            Point2D point2D = new Point2D(g.getLayoutX(),g.getLayoutY()).add(event.getX(),
+                    event.getY()).subtract(initialPoint.get());
+            g.setLayoutX(point2D.getX());
+            g.setLayoutY(point2D.getY());
         });
 
 
@@ -96,19 +99,23 @@ public final class WaypointsManager {
                 wp.remove(i);
                 pane.getChildren().remove(g);
             } else {
-                Waypoint waypoint = findClosestNode(event.getSceneX() - initialPoint.get().getX(),
-                        event.getSceneY() - initialPoint.get().getY());
+                Point2D point2D = new Point2D(g.getLayoutX(),g.getLayoutY()).add(event.getX(),
+                        event.getY()).subtract(initialPoint.get());
+                Waypoint waypoint = findClosestNode(point2D.getX(),
+                        point2D.getY());
                 if (waypoint != null) {
                     setGroupPosition(g, waypoint);
                     wp.set(i, waypoint);
                 } else {
-                    g.setLayoutX(initialCoord.get().getX());
+                    g.setLayoutX(initialCoord.get().getX() );
                     g.setLayoutY(initialCoord.get().getY());
+
 
                 }
             }
         });
     }
+
 
     private void setGroupPosition(Group g, Waypoint waypoint) {
         PointWebMercator w = PointWebMercator.ofPointCh(waypoint.point());
@@ -138,7 +145,6 @@ public final class WaypointsManager {
     private Waypoint findClosestNode(double x, double y) {
         int nodeId = routeNetwork.nodeClosestTo(mvp.get().pointAt(x, y).toPointCh(), SEARCH_DISTANCE);
         if (nodeId == -1) {
-            errorManager.displayError("Aucune route à proximité !");
             errorConsumer.accept("Aucune route à proximité !");
         } else {
             return new Waypoint(mvp.get().pointAt(x, y).toPointCh(), // the scale is good or not.

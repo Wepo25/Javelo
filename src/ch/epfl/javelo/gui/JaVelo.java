@@ -35,7 +35,7 @@ public final class JaVelo extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Graph graph = Graph.loadFrom(Path.of("lausanne"));
+        Graph graph = Graph.loadFrom(Path.of("javelo-data"));
 
         Path cacheBasePath = Path.of("osm-cache");
         String tileServerHost = "tile.openstreetmap.org";
@@ -48,8 +48,6 @@ public final class JaVelo extends Application {
                 new RouteComputer(graph, costFunction);
 
         RouteBean rb = new RouteBean(routeComputer);
-
-        Consumer<String> errorConsumer = new ErrorConsumer();
 
         ErrorManager errorManager = new ErrorManager();
 
