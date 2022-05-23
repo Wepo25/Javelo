@@ -4,6 +4,7 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
+import ch.epfl.javelo.projection.SwissBounds;
 import ch.epfl.javelo.routing.RoutePoint;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -47,7 +48,9 @@ public final class AnnotatedMapManager {
                         if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
                             PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
                                     mousePositionPoint2D.get().getY()).toPointCh();
-                            if(pointActual != null) {
+                            if(pointActual == null || !SwissBounds.containsEN(pointActual.e(),pointActual.n())){
+                                return Double.NaN;
+                            }
                                 RoutePoint closestPoint = bean.getRoute().get().
                                         pointClosestTo(pointActual);
                                 PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
@@ -56,8 +59,6 @@ public final class AnnotatedMapManager {
 
                                 if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
                                 else return Double.NaN;
-                            }else return Double.NaN;
-
                         } else return Double.NaN;
                       },
                 mapViewParam,bean.getRoute(), mousePositionPoint2D));
