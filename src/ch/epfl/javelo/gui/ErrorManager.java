@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -17,6 +18,7 @@ public final class ErrorManager {
     private static final double TO_FROM_OPACITY = 0.8;
 
     public ErrorManager(){
+
         this.pane = new VBox();
         this.pane.getStylesheets().add("error.css");
         this.pane.setMouseTransparent(true);

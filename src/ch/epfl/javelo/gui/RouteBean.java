@@ -66,7 +66,6 @@ public final class RouteBean{
         highlightedPosition.set(value);
     }
 
-
     private void computeRoute() {
         if (waypoints.size() >= 2) {
             List<Route> listRoute = new ArrayList<>();
@@ -74,27 +73,19 @@ public final class RouteBean{
                 Waypoint startWaypoint = waypoints.get(i - 1);
                 Waypoint endWaypoint = waypoints.get(i);
                 if (!(startWaypoint.closestNodeId()==endWaypoint.closestNodeId())) {
-                if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
-                    Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
-                    if (tempRoute == null) {
-                        route.set(null);
-                        elevationProfile.set(null);
-                        return;
-                    }
-                    computedRoute.put(new Pair(startWaypoint, endWaypoint), tempRoute);
-                    listRoute.add(tempRoute);
-                } else {
-                    listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
+                    if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
+                        Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
+                        if (tempRoute == null) {
+                            route.set(null);
+                            return;
+                        }
+                        computedRoute.put(new Pair(startWaypoint, endWaypoint), tempRoute);
+                        listRoute.add(tempRoute);
+                    } else listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
                 }
-            }}
-
-            MultiRoute multiRoute = new MultiRoute(listRoute);
-            route.set(multiRoute);
-            elevationProfile.set(ElevationProfileComputer.elevationProfile(multiRoute, 5));
-        } else {
-            route.set(null);
-            elevationProfile.set(null);
-        }
+            }
+            route.set((!listRoute.isEmpty())? new MultiRoute(listRoute) : null);
+        } else route.set(null);
     }
 
     public int indexOfNonEmptySegmentAt(double position) {
