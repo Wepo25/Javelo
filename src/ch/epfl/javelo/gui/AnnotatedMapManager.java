@@ -43,18 +43,20 @@ public final class AnnotatedMapManager {
         pane = new StackPane(baseMapManager.pane(), routeManager.pane(), waypointsManager.pane());
 
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
-                () -> {
+                () -> {// on appel meme si en dehors de suisse pointclosest to
                         if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
                             PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
                                     mousePositionPoint2D.get().getY()).toPointCh();
-                            RoutePoint closestPoint = bean.getRoute().get().
-                                    pointClosestTo(pointActual);
-                            PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
-                            double tempNorm = Math2.norm(mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
-                                    mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
+                            if(pointActual != null) {
+                                RoutePoint closestPoint = bean.getRoute().get().
+                                        pointClosestTo(pointActual);
+                                PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
+                                double tempNorm = Math2.norm(mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
+                                        mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
 
-                            if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
-                            else return Double.NaN;
+                                if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
+                                else return Double.NaN;
+                            }else return Double.NaN;
 
                         } else return Double.NaN;
                       },
