@@ -69,7 +69,7 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
         double n = Math2.interpolate(fromPoint.n(), toPoint.n(), position / length);
         return new PointCh(e, n);
     }else {
-        return toPoint;}
+        return fromPoint;}
 
 
     }
