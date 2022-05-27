@@ -80,6 +80,8 @@ public final class ElevationProfileManager {
 
     private static final int MIN_VALUE_RECTANGLE = 0;
 
+    private static final int HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT = -7;
+
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
     private final ReadOnlyDoubleProperty highlightedPosition;
@@ -240,8 +242,9 @@ public final class ElevationProfileManager {
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
         label.setX(x);
         label.setY(y);
-        label.setLayoutX(- ((Objects.equals(type, HORIZONTAL_DIRECTION)) ?
-                (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0)));
+        label.setLayoutX(Objects.equals(type, HORIZONTAL_DIRECTION) ?
+                -(label.prefWidth(0) + 2) : -0.5 * label.prefWidth(0));
+        label.setLayoutY(Objects.equals(type,HORIZONTAL_DIRECTION)? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
         textGroup.getChildren().add(label);
     }
 
