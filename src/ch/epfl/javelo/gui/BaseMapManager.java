@@ -88,6 +88,9 @@ public final class BaseMapManager {
         }
     }
 
+    /**
+     * This method allows us to set handlers over the pane.
+     */
     private void paneEvent() {
 
         ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();

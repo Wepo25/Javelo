@@ -121,13 +121,27 @@ public final class RouteManager {
      * This method creates the Polyline representing the route.
      */
     private void buildRoute() {
+/*
         List<Double> list = new ArrayList<>();
         for (PointCh point : routeBean.getRoute().get().points()) {
             list.add(PointWebMercator.ofPointCh(point).xAtZoomLevel(mapViewParam.get().zoomLevel()));
             list.add(PointWebMercator.ofPointCh(point).yAtZoomLevel(mapViewParam.get().zoomLevel()));
         }
+
         polyline.getPoints().addAll(list);
         setPolylineLayout();
+*/
+        List<PointCh> toBeStreamed = new ArrayList<>(routeBean.getRoute().get().points());
+
+        List<Double> list1 =  toBeStreamed.stream().map(PointWebMercator :: ofPointCh)
+               .mapMultiToDouble((elem,consumer) -> {
+                   consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
+                   consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));})
+                .boxed().toList();
+
+        polyline.getPoints().setAll(list1);
+        setPolylineLayout();
+
     }
 
     /**

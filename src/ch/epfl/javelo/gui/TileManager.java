@@ -23,7 +23,8 @@ import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 public final class TileManager {
 
     private static final int MAX_CAP_MEMORY = 100;
-
+    private static final float LOAD_FACTOR = 0.75f;
+    private static final int MIN_VALUE_TILE_COORDINATE = 0;
     /**
      * Spe
      */
@@ -41,7 +42,7 @@ public final class TileManager {
      * @param serv - String : string representing the server name.
      */
     public TileManager(Path path, String serv) {
-        this.cacheMemory = new LinkedHashMap<>(MAX_CAP_MEMORY, 0.75f, true);
+        this.cacheMemory = new LinkedHashMap<>(MAX_CAP_MEMORY, LOAD_FACTOR, true);
         this.path = path;
         this.serv = serv;
 
@@ -113,13 +114,13 @@ public final class TileManager {
      */
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
-        // todo laisser ou pas
         public TileId {
             Preconditions.checkArgument(isValid(zoomLevel, xTile, yTile));
         }
 
         public static boolean isValid(int zoom, int x, int y) {
-            return !((x > (1 << zoom)) || y > (1 << zoom)) && (x > 0) && (y > 0);
+            return !((x > (1 << zoom)) || y > (1 << zoom))
+                    && (x > MIN_VALUE_TILE_COORDINATE) && (y > MIN_VALUE_TILE_COORDINATE);
         }
     }
 }

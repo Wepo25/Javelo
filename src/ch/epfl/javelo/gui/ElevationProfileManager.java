@@ -19,9 +19,11 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -75,6 +77,8 @@ public final class ElevationProfileManager {
     private static final String LINE_STEP_MAX_Y_PROPERTY = "maxY";
 
     private static final int KILOMETER_IN_METERS = 1000;
+
+    private static final int MIN_VALUE_RECTANGLE = 0;
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
@@ -132,8 +136,8 @@ public final class ElevationProfileManager {
                 new Rectangle2D(
                         LEFT_INSET,
                         TOP_INSET,
-                        Math.max(0, pane.getWidth() - WIDTH_INSET),
-                        Math.max(0, pane.getHeight() - HEIGHT_INSET)
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
                 ),
                 pane.widthProperty(),
                 pane.heightProperty()
@@ -262,13 +266,32 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * This method create the polygon representing the profile graph.
+     * This method create the polygon representing the profile graph. It adds all points simultaneously
+     * to prevent partial display.
      */
     private void createProfileGraph() {
 
-        profileGraph.getPoints().clear();
-        List<Double> toAdd = new ArrayList<>();
+        List<Double> list = IntStream.range((int)rectangle.get().getMinX(),(int)rectangle.get().getMaxX())
+                .mapToDouble(e-> e)
+                .mapMulti((elem, consumer) -> {
 
+                    Point2D pointWorld = screenToWorld.get().transform(elem, 0);
+                    double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
+                    Point2D pointScreen = worldToScreen.get().transform(0, elevation);
+
+                    consumer.accept(elem);
+                    consumer.accept(pointScreen.getY());})
+
+                .boxed()
+                .collect(Collectors.toList());
+
+        Collections.addAll(list,rectangle.get().getMaxX(), rectangle.get().getMaxY(),
+                rectangle.get().getMinX(), rectangle.get().getMaxY());
+
+        profileGraph.getPoints().setAll(list);
+
+        /*
+        List<Double> toAdd = new ArrayList<>();
         for (double i = rectangle.get().getMinX(); i <= rectangle.get().getMaxX(); i++) {
             Point2D pointWorld = screenToWorld.get().transform(i, 0);
             double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
@@ -279,6 +302,8 @@ public final class ElevationProfileManager {
         profileGraph.getPoints().addAll(toAdd);
         profileGraph.getPoints().addAll(rectangle.get().getMaxX(), rectangle.get().getMaxY(),
                 rectangle.get().getMinX(), rectangle.get().getMaxY());
+*/
+
     }
 
     /**
