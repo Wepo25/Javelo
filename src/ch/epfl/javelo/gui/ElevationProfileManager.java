@@ -42,6 +42,9 @@ public final class ElevationProfileManager {
      */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
+    /**
+     * Insets representing
+     */
     private final static Insets insets = new Insets(10, 10, 20, 40);
 
     private static final double TOP_INSET = insets.getTop();
@@ -76,7 +79,7 @@ public final class ElevationProfileManager {
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
 
-    //MODIFICATION MADE -> TO CHECK
+
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
     private final ReadOnlyDoubleProperty highlightedPosition;
 

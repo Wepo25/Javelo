@@ -37,13 +37,13 @@ public final class AnnotatedMapManager {
 
     public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons) {
 
-        RouteManager routeManager = new RouteManager(bean, mapViewParam, cons);
+        RouteManager routeManager = new RouteManager(bean, mapViewParam);
         WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParam, bean.waypoints, cons);
         BaseMapManager baseMapManager = new BaseMapManager(tiles, waypointsManager, mapViewParam);
         pane = new StackPane(baseMapManager.pane(), routeManager.pane(), waypointsManager.pane());
 
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
-                () -> {// on appel meme si en dehors de suisse pointclosest to
+                () -> {
                     if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null) {
                         PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
                                 mousePositionPoint2D.get().getY()).toPointCh();
@@ -64,6 +64,7 @@ public final class AnnotatedMapManager {
 
         pane.setOnMouseMoved(event -> mousePositionPoint2D.set(new Point2D(event.getX(), event.getY())));
         pane.setOnMouseExited(event -> mousePositionPoint2D.set(null));
+        pane.setOnMouseDragged(event -> mousePositionPoint2D.set(null));
     }
 
     public Pane pane() {
