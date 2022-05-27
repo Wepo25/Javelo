@@ -8,7 +8,10 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileWriter;
@@ -24,10 +27,10 @@ public class GpxGenerator {
 
     private static final String HEAD_NAME = "Route JaVelo";
 
-    private GpxGenerator(){
+    private GpxGenerator() {
     }
 
-    public static Document createGpx(Route route, ElevationProfile profile){
+    public static Document createGpx(Route route, ElevationProfile profile) {
         Document doc = newDocument();
         Element root = doc
                 .createElementNS("http://www.topografix.com/GPX/1/1",
@@ -56,11 +59,11 @@ public class GpxGenerator {
         List<PointCh> points = route.points();
         for (int i = 0; i < points.size(); i++) {
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute(LATITUDE_ABBREVIATION, String.valueOf((float)Math.toDegrees(points.get(i).lat())));
-            rtept.setAttribute(LONGITUDE_ABBREVIATION, String.valueOf((float)Math.toDegrees(points.get(i).lon())));
+            rtept.setAttribute(LATITUDE_ABBREVIATION, String.valueOf((float) Math.toDegrees(points.get(i).lat())));
+            rtept.setAttribute(LONGITUDE_ABBREVIATION, String.valueOf((float) Math.toDegrees(points.get(i).lon())));
             Element ele = doc.createElement(ELEVATION_ABBREVIATION);
-            if(i!= 0){
-                position += points.get(i).distanceTo(points.get(i-1));
+            if (i != 0) {
+                position += points.get(i).distanceTo(points.get(i - 1));
             }
             ele.setTextContent(String.valueOf(profile.elevationAt(position)));
             rtept.appendChild(ele);

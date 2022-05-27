@@ -8,10 +8,9 @@ import java.nio.IntBuffer;
 /**
  * A Buffer containing specific data of a Graph. Here nodes.
  *
+ * @param buffer - IntBuffer : Buffer containing nodes attributes.
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
- *
- * @param buffer - IntBuffer : Buffer containing nodes attributes.
  */
 public record GraphNodes(IntBuffer buffer) {
 
@@ -87,7 +86,7 @@ public record GraphNodes(IntBuffer buffer) {
      * This method allows us to get the global index of a leaving edges with the id of its node and
      * its index in the list of edges leaving this specific node.
      *
-     * @param nodeId - int : The identity of the node.
+     * @param nodeId    - int : The identity of the node.
      * @param edgeIndex - int : The index of the edges in a list consisting only of edges leaving this specific node.
      * @return - int : The global index of the given edge.
      */

@@ -19,7 +19,7 @@ public record AttributeSet(long bits) {
      *
      * @param bits - long : A long containing the indexes of different Attributes.
      * @throws IllegalArgumentException (checkArgument) : Throws an exception if one of the
-     * indexes is greater than the number of Attributes.
+     *                                  indexes is greater than the number of Attributes.
      */
     public AttributeSet {
 
@@ -71,9 +71,9 @@ public record AttributeSet(long bits) {
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
         for (Attribute attribute : Attribute.ALL) {
-           if (this.contains(attribute)){
-               j.add(attribute.toString());
-           }
+            if (this.contains(attribute)) {
+                j.add(attribute.toString());
+            }
         }
         return j.toString();
     }

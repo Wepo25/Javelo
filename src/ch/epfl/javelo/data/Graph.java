@@ -4,7 +4,10 @@ import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.projection.PointCh;
 
 import java.io.IOException;
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,9 +37,9 @@ public final class Graph {
     /**
      * This method is the constructor of the class Graph.
      *
-     * @param nodes - GraphNodes : A buffer of nodes contained in an area.
-     * @param sectors - GraphSectors : A buffer of sectors contained in an area.
-     * @param edges - GraphEdges : A buffer of edges contained in an area.
+     * @param nodes         - GraphNodes : A buffer of nodes contained in an area.
+     * @param sectors       - GraphSectors : A buffer of sectors contained in an area.
+     * @param edges         - GraphEdges : A buffer of edges contained in an area.
      * @param attributeSets - List<AttributeSet> : A list of AttributeSets.
      */
     public Graph(GraphNodes nodes, GraphSectors sectors, GraphEdges edges, List<AttributeSet> attributeSets) {
@@ -70,9 +73,22 @@ public final class Graph {
                 new GraphEdges(edges, profileIds, elevations), attributeSets);
     }
 
+    /**
+     * This private method allows us to open a given file while checking if it can access it.
+     *
+     * @param path - Path : The file's path.
+     * @return - MappedByteBuffer : A mapped ByteBuffer containing the file's data.
+     * @throws IOException . Throws an exception if it was unable to open the given file.
+     */
+    private static ByteBuffer tryAndOpen(Path path) throws IOException {
+        try (FileChannel channel = FileChannel.open(path)) {
+            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        }
+    }
 
     /**
      * This method allows us to know the number of nodes in this graph.
+     *
      * @return - int : The number of nodes in this graph.
      */
     public int nodeCount() {
@@ -103,7 +119,7 @@ public final class Graph {
      * This method allows us to get the global index of a leaving edges with the id of its node and
      * its index in the list of edges leaving this specific node.
      *
-     * @param nodeId - int : The identity of the node.
+     * @param nodeId    - int : The identity of the node.
      * @param edgeIndex - int : The index of the edges in a list consisting only of edges leaving this specific node.
      * @return - int : The global index of the given edge.
      */
@@ -114,7 +130,7 @@ public final class Graph {
     /**
      * This method allows us to determine the closest node to a given point at a given distance.
      *
-     * @param point - PointCh : The point from which we're trying to determine the closest node.
+     * @param point          - PointCh : The point from which we're trying to determine the closest node.
      * @param searchDistance - double : The search distance.
      * @return - int : The identity of the closest node to the given point, or -1 if no nodes satisfy criteria.
      */
@@ -191,21 +207,8 @@ public final class Graph {
      * @return - DoubleUnaryOperator : The profile of an edge represented as a function.
      */
     public DoubleUnaryOperator edgeProfile(int edgeId) {
-        return (!edges.hasProfile(edgeId))?
+        return (!edges.hasProfile(edgeId)) ?
                 Functions.constant(Double.NaN) :
                 Functions.sampled(edges.profileSamples(edgeId), this.edges.length(edgeId));
-    }
-
-    /**
-     * This private method allows us to open a given file while checking if it can access it.
-     *
-     * @param path - Path : The file's path.
-     * @return - MappedByteBuffer : A mapped ByteBuffer containing the file's data.
-     * @throws IOException . Throws an exception if it was unable to open the given file.
-     */
-    private static ByteBuffer tryAndOpen(Path path) throws IOException {
-        try (FileChannel channel = FileChannel.open(path)) {
-            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-        }
     }
 }

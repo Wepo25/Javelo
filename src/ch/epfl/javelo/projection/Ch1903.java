@@ -9,23 +9,19 @@ package ch.epfl.javelo.projection;
  */
 public final class Ch1903 {
 
+    private static final int HOUR_IN_SECONDS = 3600;
+    private static final double LON_SUBTRACTION = 26782.5;
+    private static final double LAT_SUBTRACTION = 169028.66;
+    private static final int EAST_SUBTRACTION = 2600000;
+    private static final int NORTH_SUBTRACTION = 1200000;
+    private static final double EAST_NORTH_FACTOR = Math.pow(10, -4);
+    private static final double LAT_LON_FACTOR = Math.pow(10, -6);
+
     /**
      * Private constructor.
      */
     private Ch1903() {
     }
-
-    private static final int HOUR_IN_SECONDS = 3600;
-
-    private static final double LON_SUBTRACTION = 26782.5;
-    private static final double LAT_SUBTRACTION = 169028.66;
-
-    private static final int EAST_SUBTRACTION = 2600000;
-    private static final int NORTH_SUBTRACTION = 1200000;
-
-    private static final double EAST_NORTH_FACTOR = Math.pow(10, -4);
-
-    private static final double LAT_LON_FACTOR = Math.pow(10, -6);
 
     /**
      * This method allows is to switch between WGS84 coordinates to the Swiss coordinates by giving us the point's East coordinate.

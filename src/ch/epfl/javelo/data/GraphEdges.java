@@ -14,16 +14,15 @@ import static java.lang.Short.toUnsignedInt;
 /**
  * A Buffer containing specific data of a Graph. Here edges.
  *
- * @author Gaspard Thoral (345230)
- * @author Alexandre Mourot (346365)
- *
  * @param edgesBuffer - ByteBuffer : Buffer containing the orientations of the edges,
  *                    the identity of the destination node, the length,
  *                    the positive height difference and the identity of OSM attributes.
- * @param profileIds - IntBuffer : Buffer containing the type of profile of the edge and
- *                   the identity of the first profile's sample
- * @param elevations - ShortBuffer : Buffer containing different profile's type :not existent,
- *                  none compressed, compressed Q4.4, compressed Q0.4.
+ * @param profileIds  - IntBuffer : Buffer containing the type of profile of the edge and
+ *                    the identity of the first profile's sample
+ * @param elevations  - ShortBuffer : Buffer containing different profile's type :not existent,
+ *                    none compressed, compressed Q4.4, compressed Q0.4.
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
  */
 public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuffer elevations) {
 
@@ -150,13 +149,13 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         } else {
             samples[0] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));
             int index = 1;
-            int profile_size = (profileType == 2)? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
-            int profile_length = (profileType == 2)? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
+            int profile_size = (profileType == 2) ? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
+            int profile_length = (profileType == 2) ? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
             for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
                 for (int j = 0; j < profile_size; j++) {
                     samples[index] = samples[index - 1] + Q28_4.asFloat(extractSigned(elevations.get(i),
-                            profile_length * (profile_size-j-1), profile_length));
-                    if (index == samples.length-1) {
+                            profile_length * (profile_size - j - 1), profile_length));
+                    if (index == samples.length - 1) {
                         break;
                     }
                     index++;
@@ -186,8 +185,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     private float[] reverse(float[] l) {
         for (int i = 0; i < l.length / 2; i++) {
             float temp1 = l[i];
-            l[i] = l[l.length-i-1];
-            l[l.length-i-1] = temp1;
+            l[i] = l[l.length - i - 1];
+            l[l.length - i - 1] = temp1;
         }
         return l;
     }

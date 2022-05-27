@@ -3,17 +3,15 @@ package ch.epfl.javelo.projection;
 import ch.epfl.javelo.Math2;
 
 import static ch.epfl.javelo.Preconditions.checkArgument;
-import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 /**
  * This class is used to create a point represented in swiss coordinate system.
  *
- * @author Gaspard Thoral (345230)
- * @author Alexandre Mourot (346365)
- *
  * @param e - double : East coordinate of the pointCh.
  * @param n - double : North coordinate of the pointCh.
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
  */
 public record PointCh(double e, double n) {
 
@@ -23,7 +21,7 @@ public record PointCh(double e, double n) {
      * @param e - double : The point's East coordinate in the Swiss system.
      * @param n - double : The point's North coordinate in the Swiss system.
      * @throws IllegalArgumentException (checkArgument) : Throws an exception
-     * if the point is not located in Switzerland.
+     *                                  if the point is not located in Switzerland.
      */
     public PointCh {
         checkArgument(SwissBounds.containsEN(e, n));
@@ -36,7 +34,7 @@ public record PointCh(double e, double n) {
      * @return - double : The squared distance between this point and a given point.
      */
     public double squaredDistanceTo(PointCh that) {
-        return Math2.squaredNorm(that.e - e(),that.n - n());
+        return Math2.squaredNorm(that.e - e(), that.n - n());
     }
 
     /**

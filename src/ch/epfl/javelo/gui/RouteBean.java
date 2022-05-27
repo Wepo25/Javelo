@@ -12,23 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 
-
-public final class RouteBean{
+public final class RouteBean {
 
     private static final int MAX_STEP_LENGTH = 5;
-
-
-    public ObservableList<Waypoint> waypoints;
-
     private final RouteComputer routeComputer;
     private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
+    public ObservableList<Waypoint> waypoints;
 
-
-    record Pair(Waypoint a, Waypoint b) {
-    }
 
     public RouteBean(RouteComputer rc) {
 
@@ -39,7 +32,7 @@ public final class RouteBean{
 
         this.routeComputer = rc;
 
-        waypoints.addListener( (Observable o) -> computeRoute());
+        waypoints.addListener((Observable o) -> computeRoute());
 
         route.addListener((p, oldS, newS) -> elevationProfile.set(route.get() == null ?
                 null : ElevationProfileComputer.elevationProfile(route.get(), MAX_STEP_LENGTH))
@@ -72,7 +65,7 @@ public final class RouteBean{
             for (int i = 1; i < waypoints.size(); i++) {
                 Waypoint startWaypoint = waypoints.get(i - 1);
                 Waypoint endWaypoint = waypoints.get(i);
-                if (!(startWaypoint.closestNodeId()==endWaypoint.closestNodeId())) {
+                if (!(startWaypoint.closestNodeId() == endWaypoint.closestNodeId())) {
                     if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
                         Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
                         if (tempRoute == null) {
@@ -84,7 +77,7 @@ public final class RouteBean{
                     } else listRoute.add(computedRoute.get(new Pair(startWaypoint, endWaypoint)));
                 }
             }
-            route.set((!listRoute.isEmpty())? new MultiRoute(listRoute) : null);
+            route.set((!listRoute.isEmpty()) ? new MultiRoute(listRoute) : null);
         } else route.set(null);
     }
 
@@ -96,6 +89,9 @@ public final class RouteBean{
             if (n1 == n2) index += 1;
         }
         return index;
+    }
+
+    record Pair(Waypoint a, Waypoint b) {
     }
 
 

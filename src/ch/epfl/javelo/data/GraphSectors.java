@@ -12,10 +12,9 @@ import static ch.epfl.javelo.Math2.clamp;
 /**
  * A Buffer containing specific data of a Graph. Here sectors.
  *
+ * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes.
  * @author Gaspard Thoral (345230)
  * @author Alexandre Mourot (346365)
- *
- * @param buffer - ByteBuffer : Buffer containing the identity of the sector's first node and the number of nodes.
  */
 public record GraphSectors(ByteBuffer buffer) {
 
@@ -52,7 +51,7 @@ public record GraphSectors(ByteBuffer buffer) {
     /**
      * This method allows us to find all Sectors contained in a squared Area.
      *
-     * @param center - PointCh : The center of the square.
+     * @param center   - PointCh : The center of the square.
      * @param distance - double : The distance from the center to the side of a square.
      * @return - List<Sector> : A list containing all sectors includes into the square ( dimensions distance*2 and centered on center).
      */
@@ -86,7 +85,7 @@ public record GraphSectors(ByteBuffer buffer) {
      * Record of a sector with the first node and the one after the last node in attributes.
      *
      * @param startNodeId - int : The first node's identity of the sector.
-     * @param endNodeId - int : The identity of the node after the last of the sector.
+     * @param endNodeId   - int : The identity of the node after the last of the sector.
      */
     public record Sector(int startNodeId, int endNodeId) {
     }

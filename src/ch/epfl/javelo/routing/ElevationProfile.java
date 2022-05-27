@@ -91,7 +91,6 @@ public final class ElevationProfile {
      * This method allows us to compute the sum of each altitude loss we face being on this path.
      *
      * @return - double : The total descent of the path corresponding to this sequence of elevations.
-     *
      */
     public double totalDescent() {
         return totalDescent;
@@ -104,7 +103,7 @@ public final class ElevationProfile {
      * @return - double : The elevation at the given position.
      */
     public double elevationAt(double position) {
-            return Functions.sampled(samples, length).applyAsDouble(position);
+        return Functions.sampled(samples, length).applyAsDouble(position);
     }
 
 

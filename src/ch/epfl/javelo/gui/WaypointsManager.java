@@ -20,29 +20,21 @@ import java.util.function.Consumer;
 
 public final class WaypointsManager {
 
-    private final Graph routeNetwork;
-    private final ReadOnlyObjectProperty<MapViewParameters> mapViewParam;
-    private final ObservableList<Waypoint> waypoints;
-    private final Consumer<String> errorConsumer;
-    private final Pane pane;
-
     private static final int SEARCH_DISTANCE = 500;
-
     private static final String FIRST_GROUP_STYLE_CLASS = "first";
     private static final String MIDDLE_GROUP_STYLE_CLASS = "middle";
     private static final String LAST_GROUP_STYLE_CLASS = "last";
     private static final String GROUP_PIN_STYLE_CLASS = "pin";
     private static final String GROUP_PIN_IN_STYLE_CLASS = "pin_inside";
     private static final String GROUP_PIN_OUT_STYLE_CLASS = "pin_outside";
-
     private static final String SVG_CONTENT_1 = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
     private static final String SVG_CONTENT_2 = "M0-23A1 1 0 000-29 1 1 0 000-23";
-
     private static final String WAYPOINT_ADDER_ERROR_MESSAGE_1 = "Aucune route à proximité !";
-
-
-
-
+    private final Graph routeNetwork;
+    private final ReadOnlyObjectProperty<MapViewParameters> mapViewParam;
+    private final ObservableList<Waypoint> waypoints;
+    private final Consumer<String> errorConsumer;
+    private final Pane pane;
 
 
     public WaypointsManager(Graph routeNetwork, ReadOnlyObjectProperty<MapViewParameters> mvp,
@@ -98,7 +90,7 @@ public final class WaypointsManager {
         });
 
         group.setOnMouseDragged(event -> {
-            Point2D point2D = new Point2D(group.getLayoutX(),group.getLayoutY()).add(event.getX(),
+            Point2D point2D = new Point2D(group.getLayoutX(), group.getLayoutY()).add(event.getX(),
                     event.getY()).subtract(initialPoint.get());
             group.setLayoutX(point2D.getX());
             group.setLayoutY(point2D.getY());
@@ -109,14 +101,14 @@ public final class WaypointsManager {
             if (event.isStillSincePress()) {
                 waypoints.remove(index);
                 pane.getChildren().remove(group);
-            } else{
-                Point2D point2D = new Point2D(group.getLayoutX(),group.getLayoutY()).add(event.getX(),
+            } else {
+                Point2D point2D = new Point2D(group.getLayoutX(), group.getLayoutY()).add(event.getX(),
                         event.getY()).subtract(initialPoint.get());
                 Waypoint waypoint = findClosestNode(point2D.getX(), point2D.getY());
-                if (waypoint != null){
+                if (waypoint != null) {
                     setGroupPosition(group, waypoint);
                     waypoints.set(index, waypoint);
-                } else{
+                } else {
                     group.setLayoutX(initialCoord.get().getX());
                     group.setLayoutY(initialCoord.get().getY());
                 }
@@ -147,8 +139,7 @@ public final class WaypointsManager {
     public void addWaypoint(double x, double y) {
         if (findClosestNode(x, y) != null) {
             waypoints.add(findClosestNode(x, y));
-        }
-        else{
+        } else {
             errorConsumer.accept(WAYPOINT_ADDER_ERROR_MESSAGE_1);
         }
     }

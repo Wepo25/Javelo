@@ -33,7 +33,7 @@ public final class ElevationProfileComputer {
      *                                  the gap between two edges is negative or null.
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
-        if(route != null) {
+        if (route != null) {
             Preconditions.checkArgument(maxStepLength > 0);
             int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
             double length = route.length();

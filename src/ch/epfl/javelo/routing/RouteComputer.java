@@ -2,8 +2,6 @@ package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.*;
 
@@ -15,18 +13,16 @@ import java.util.*;
  */
 public final class RouteComputer {
 
+    private final static float POSITIVE_INFINITY = Float.POSITIVE_INFINITY;
+    private final static float COMPUTED_DISTANCE = Float.NEGATIVE_INFINITY;
     private final Graph graph;
     private final CostFunction costFunction;
-
-    private final static float POSITIVE_INFINITY = Float.POSITIVE_INFINITY;
-
-    private final static float COMPUTED_DISTANCE = Float.NEGATIVE_INFINITY;
 
 
     /**
      * The constructor of the RouteComputer class.
      *
-     * @param graph - Graph : The buffer containing the data we need to go from point A to point B.
+     * @param graph        - Graph : The buffer containing the data we need to go from point A to point B.
      * @param costFunction - CostFunction : A function used to pick the best path out of several ones
      *                     while not using length as the unique criteria.
      */
@@ -39,7 +35,7 @@ public final class RouteComputer {
      * This method allows us to compute the best route between two given points.
      *
      * @param startNodeId - int : The index of the node at which we start our bike session.
-     * @param endNodeId - int : The index of the node at which we end our bike session.
+     * @param endNodeId   - int : The index of the node at which we end our bike session.
      * @return - Route : The best route to go from startNodeId to endNodeId.
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
@@ -86,12 +82,12 @@ public final class RouteComputer {
         List<Edge> edges = edges(predecessor, endNodeId);
         Collections.reverse(edges);
 
-        if(edges.isEmpty()) return null;
+        if (edges.isEmpty()) return null;
 
         return new SingleRoute(edges);
     }
-    
-    private List<Edge> edges(int[] predecessor, int endNodeId){
+
+    private List<Edge> edges(int[] predecessor, int endNodeId) {
 
         List<Edge> edges = new ArrayList<>();
         int id = endNodeId;

@@ -19,15 +19,15 @@ import java.util.function.DoubleUnaryOperator;
  * @author Alexandre Mourot (346365)
  */
 public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPoint, double length,
-                         DoubleUnaryOperator profile) {
+                   DoubleUnaryOperator profile) {
 
     /**
      * This method allows us to create an Edge with fewer parameters since it uses directly the data contained in graph.
      *
-     * @param graph - Graph : The graph containing all the map-related elements.
-     * @param edgeId - int : The identity of the edge.
+     * @param graph      - Graph : The graph containing all the map-related elements.
+     * @param edgeId     - int : The identity of the edge.
      * @param fromNodeId - int : The identity of the node the edge is leaving.
-     * @param toNodeId - int : The identity of the node the edge is targeting.
+     * @param toNodeId   - int : The identity of the node the edge is targeting.
      * @return - Edge : A record of Edge.
      */
     public static Edge of(Graph graph, int edgeId, int fromNodeId, int toNodeId) {
@@ -64,12 +64,13 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
      * @return - PointCh : The point on the Edge at the given position.
      */
     public PointCh pointAt(double position) {
-        if (length != 0){
+        if (length != 0) {
             double e = Math2.interpolate(fromPoint.e(), toPoint.e(), position / length);
-        double n = Math2.interpolate(fromPoint.n(), toPoint.n(), position / length);
-        return new PointCh(e, n);
-    }else {
-        return fromPoint;}
+            double n = Math2.interpolate(fromPoint.n(), toPoint.n(), position / length);
+            return new PointCh(e, n);
+        } else {
+            return fromPoint;
+        }
 
 
     }
