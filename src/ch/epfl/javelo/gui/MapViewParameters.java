@@ -5,6 +5,7 @@ import javafx.geometry.Point2D;
 
 public record MapViewParameters(int zoomLevel, double x, double y) {
 
+
     public Point2D topLeft() {
         return new Point2D(x, y);
     }

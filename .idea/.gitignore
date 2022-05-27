@@ -7,10 +7,10 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 #Ignored files
-osm-cached/
+/osm-cached/
 *.png
 #OUT IGNORED
-out/
+/out/
 
 ##############################
 ## OS X
