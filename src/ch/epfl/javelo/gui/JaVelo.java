@@ -85,7 +85,6 @@ public final class JaVelo extends Application {
         });
         Menu menu = new Menu(MENU_LABEL_1, null, menuItem);
         MenuBar menuBar = new MenuBar(menu);
-        menuBar.setUseSystemMenuBar(true);
 
         Pane errorManagerPane = errorManager.pane();
         StackPane stackPane = new StackPane(splitPane, errorManagerPane);

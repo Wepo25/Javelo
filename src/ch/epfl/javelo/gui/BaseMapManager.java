@@ -22,14 +22,13 @@ public final class BaseMapManager {
     private final static int ZOOM_MAX = 19;
 
     private static final int TILE_PIXEL_SIZE = 256;
+
     private final TileManager tileManager;
     private final WaypointsManager waypointsManager;
     private final ObjectProperty<MapViewParameters> mapViewParam;
 
     private final Pane pane;
-    private final Canvas canvas;
     private final GraphicsContext graphContext;
-
     private boolean redrawNeeded;
 
 
@@ -39,7 +38,7 @@ public final class BaseMapManager {
         this.waypointsManager = wm;
         this.mapViewParam = mvp;
 
-        canvas = new Canvas();
+        Canvas canvas = new Canvas();
         pane = new Pane(canvas);
 
         paneEvent();
@@ -65,6 +64,7 @@ public final class BaseMapManager {
     }
 
     private void draw() {
+
         double x = mapViewParam.get().topLeft().getX();
         double y = mapViewParam.get().topLeft().getY();
         int z = mapViewParam.get().zoomLevel();
@@ -72,15 +72,17 @@ public final class BaseMapManager {
         for (int i = 0; i < pane.getWidth() + TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
             for (int j = 0; j < pane.getHeight() + TILE_PIXEL_SIZE; j += TILE_PIXEL_SIZE) {
                 try {
-                    TileManager.TileId ti = new TileManager.TileId(z,
-                            (int) Math.floor((i + x) / TILE_PIXEL_SIZE),
-                            (int) Math.floor((y + j) / TILE_PIXEL_SIZE));
-                    graphContext.drawImage(tileManager.imageForTileAt(ti),
-                            i - x % TILE_PIXEL_SIZE, j - y % TILE_PIXEL_SIZE);
-
-                } catch (IOException | IllegalArgumentException ignored) {
-
-                }
+                    TileManager.TileId ti = new TileManager.TileId(
+                            z,
+                            Math.floorDiv ((int) (i + x), TILE_PIXEL_SIZE),
+                            Math.floorDiv((int) (y + j), TILE_PIXEL_SIZE)
+                    );
+                    graphContext.drawImage(
+                            tileManager.imageForTileAt(ti),
+                            i - x % TILE_PIXEL_SIZE,
+                            j - y % TILE_PIXEL_SIZE
+                    );
+                } catch (IOException | IllegalArgumentException ignored) {}
 
             }
         }
@@ -102,35 +104,40 @@ public final class BaseMapManager {
             int oldZ = mapViewParam.get().zoomLevel();
             int newZ = Math2.clamp(ZOOM_MIN, oldZ + zoomDelta, ZOOM_MAX);
 
-            PointWebMercator temp = mapViewParam.get().pointAt((int) e.getX(), (int) e.getY());
+            PointWebMercator temp = mapViewParam.get().pointAt(e.getX(), e.getY());
 
-            int newX = (int) (temp.xAtZoomLevel(newZ) - e.getX());
-            int newY = (int) (temp.yAtZoomLevel(newZ) - e.getY());
+            double newX = temp.xAtZoomLevel(newZ) - e.getX();
+            double newY = temp.yAtZoomLevel(newZ) - e.getY();
+
             mapViewParam.set(new MapViewParameters(newZ, newX, newY));
-
             redrawOnNextPulse();
         });
 
-        pane.setOnMousePressed(event -> dragged.set(new Point2D(event.getX(), event.getY())));
+        pane.setOnMousePressed(e -> dragged.set(new Point2D(e.getX(), e.getY())));
 
-        pane.setOnMouseDragged(event -> {
-            int diffX = (int) (event.getX() - dragged.get().getX());
-            int diffY = (int) (event.getY() - dragged.get().getY());
-            mapViewParam.set(mapViewParam.get().withMinXY(mapViewParam.get().topLeft().getX() - diffX,
-                    mapViewParam.get().topLeft().getY() - diffY));
-            dragged.set(new Point2D(event.getX(), event.getY()));
+        pane.setOnMouseDragged(e -> {
+
+            Point2D tempPoint = mapViewParam.get().topLeft();
+            tempPoint.subtract(e.getX(), e.getY());
+            tempPoint.add(dragged.get());
+
+            mapViewParam.set(
+                    mapViewParam.get().withMinXY(
+                            tempPoint.getX(),
+                            tempPoint.getY()
+                    ));
+
+            dragged.set(new Point2D(e.getX(), e.getY()));
             redrawOnNextPulse();
 
         });
 
-        pane.setOnMouseReleased(event -> {
-            if (event.isStillSincePress()) {
-                waypointsManager.addWaypoint((int) event.getX(), (int) event.getY());
+        pane.setOnMouseReleased(e -> {
+            if (e.isStillSincePress()) {
+                waypointsManager.addWaypoint(e.getX(), e.getY());
                 redrawOnNextPulse();
             }
-
         });
-
         pane.setPickOnBounds(false);
 
     }
@@ -140,7 +147,6 @@ public final class BaseMapManager {
         redrawNeeded = false;
         draw();
     }
-
 
     private void redrawOnNextPulse() {
         redrawNeeded = true;
