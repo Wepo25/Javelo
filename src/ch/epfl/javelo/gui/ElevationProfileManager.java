@@ -46,11 +46,10 @@ public final class ElevationProfileManager {
 
     private static final double TOP_INSET = insets.getTop();
     private static final double BOTTOM_INSET = insets.getBottom();
+    private static final double HEIGHT_INSET = TOP_INSET + BOTTOM_INSET;
     private static final double LEFT_INSET = insets.getLeft();
     private static final double RIGHT_INSET = insets.getRight();
     private static final double WIDTH_INSET = LEFT_INSET + RIGHT_INSET;
-    private static final double HEIGHT_INSET = TOP_INSET + BOTTOM_INSET;
-
     private static final int MIN_VERTICAL_SPACE = 50;
     private static final int MIN_HORIZONTAL_SPACE = 25;
 
@@ -99,7 +98,8 @@ public final class ElevationProfileManager {
 
     /**
      * The constructor. Initialization of the arguments and pane. Attaches events handler and listener too.
-     * @param elevationProfile elevation Profile corresponding to the route.
+     *
+     * @param elevationProfile    elevation Profile corresponding to the route.
      * @param highlightedPosition the position to highlight along the profile.
      */
     public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile,
@@ -131,17 +131,17 @@ public final class ElevationProfileManager {
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
 
         rectangle.bind(Bindings.createObjectBinding(() -> new Rectangle2D(LEFT_INSET, TOP_INSET,
-                Math.max(0,pane.getWidth()-WIDTH_INSET),
-                Math.max(0, pane.getHeight()-HEIGHT_INSET)),pane.widthProperty(), pane.heightProperty()
+                Math.max(0, pane.getWidth() - WIDTH_INSET),
+                Math.max(0, pane.getHeight() - HEIGHT_INSET)), pane.widthProperty(), pane.heightProperty()
         ));
 
 
         borderPane.setOnMouseMoved(e -> {
-            if(rectangle.get().contains(new Point2D(e.getX(),e.getY()))) {
+            if (rectangle.get().contains(new Point2D(e.getX(), e.getY()))) {
                 Point2D position = screenToWorld.get().transform(e.getX(), e.getY());
                 mousePositionOnProfileProperty.set(Math.round(position.getX()));
 
-            } else{
+            } else {
                 mousePositionOnProfileProperty.set(Double.NaN);
             }
         });
@@ -158,6 +158,7 @@ public final class ElevationProfileManager {
 
     /**
      * This method return the BorderPane representing the elevation on screen.
+     *
      * @return the BorderPane.
      */
     public BorderPane pane() {
@@ -166,16 +167,16 @@ public final class ElevationProfileManager {
 
     /**
      * This method is used to actualise the profile.
-
      */
     private void operationsSequence() {
-        if(elevationProfile.get() != null){
-        createTransformation();
-        line();
-        createGrid();
-        createProfile();
-        createStats();
-    }}
+        if (elevationProfile.get() != null) {
+            createTransformation();
+            line();
+            createGrid();
+            createProfile();
+            createStats();
+        }
+    }
 
 
     private void createGrid() {
@@ -194,53 +195,53 @@ public final class ElevationProfileManager {
         int horizontalIndex = 0;
         int verticalIndex = 0;
 
-        while(horizontalIndex * horizontalSpace + firstStep < maxElevation){
+        while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
 
-            Point2D startHorizontal = worldToScreen.get().transform(0, horizontalIndex*horizontalSpace+firstStep);
-            Point2D endHorizontal = worldToScreen.get().transform(length, horizontalIndex*horizontalSpace+firstStep);
+            Point2D startHorizontal = worldToScreen.get().transform(0, horizontalIndex * horizontalSpace + firstStep);
+            Point2D endHorizontal = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
 
             path.getElements().addAll(new MoveTo(startHorizontal.getX(), startHorizontal.getY()),
                     new LineTo(endHorizontal.getX(), endHorizontal.getY()));
 
-            createLabel(startHorizontal.getX(),startHorizontal.getY(),String.valueOf(horizontalIndex*horizontalSpace+firstStep), HORIZONTAL_DIRECTION);
+            createLabel(startHorizontal.getX(), startHorizontal.getY(), String.valueOf(horizontalIndex * horizontalSpace + firstStep), HORIZONTAL_DIRECTION);
             horizontalIndex++;
         }
 
-        while(verticalIndex * verticalSpace < length){
+        while (verticalIndex * verticalSpace < length) {
 
-            Point2D startVertical = worldToScreen.get().transform(verticalIndex*verticalSpace, minElevation);
-            Point2D endVertical = worldToScreen.get().transform(verticalIndex*verticalSpace, maxElevation);
+            Point2D startVertical = worldToScreen.get().transform(verticalIndex * verticalSpace, minElevation);
+            Point2D endVertical = worldToScreen.get().transform(verticalIndex * verticalSpace, maxElevation);
 
             path.getElements().addAll(new MoveTo(startVertical.getX(), startVertical.getY()),
                     new LineTo(endVertical.getX(), endVertical.getY()));
 
-            createLabel(startVertical.getX(),startVertical.getY(),String.valueOf(verticalIndex*verticalSpace/KILOMETER_IN_METERS), VERTICAL_DIRECTION);
+            createLabel(startVertical.getX(), startVertical.getY(), String.valueOf(verticalIndex * verticalSpace / KILOMETER_IN_METERS), VERTICAL_DIRECTION);
             verticalIndex++;
         }
     }
 
-    private int createHorizontalSpace(){
+    private int createHorizontalSpace() {
         for (int eleStep : ELE_STEPS) {
             if (worldToScreen.get().deltaTransform(0, -eleStep).getY() >= MIN_HORIZONTAL_SPACE) {
                 return eleStep;
             }
         }
-        return ELE_STEPS[ELE_STEPS.length-1];
+        return ELE_STEPS[ELE_STEPS.length - 1];
     }
 
-    private int createVerticalSpace(){
+    private int createVerticalSpace() {
         for (int posStep : POS_STEPS) {
             if (worldToScreen.get().deltaTransform(posStep, 0).getX() >= MIN_VERTICAL_SPACE) {
                 return posStep;
             }
         }
-        return  POS_STEPS[POS_STEPS.length-1];
+        return POS_STEPS[POS_STEPS.length - 1];
     }
 
-    private void createLabel(double x, double y, String name, String type){
+    private void createLabel(double x, double y, String name, String type) {
         Text label = new Text(name);
-        label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION))? VPos.CENTER : VPos.TOP );
-        double xAdjustment = x - ((Objects.equals(type, HORIZONTAL_DIRECTION))? (label.prefWidth(0)+2) : 0.5 * label.prefWidth(0));
+        label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
+        double xAdjustment = x - ((Objects.equals(type, HORIZONTAL_DIRECTION)) ? (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0));
         double yAdjustment = y;
         label.setX(xAdjustment);
         label.setY(yAdjustment);
@@ -257,7 +258,7 @@ public final class ElevationProfileManager {
         line.endYProperty().bind(Bindings.select(rectangle, "maxY"));
         line.visibleProperty().bind(highlightedPosition.greaterThanOrEqualTo(0));
         line.layoutXProperty().bind(Bindings.createObjectBinding(() -> worldToScreen.get().transform(
-                                highlightedPosition.get(),0).getX(),highlightedPosition, worldToScreen));
+                highlightedPosition.get(), 0).getX(), highlightedPosition, worldToScreen));
     }
 
     /**
@@ -268,15 +269,15 @@ public final class ElevationProfileManager {
         List<Double> toAdd = new ArrayList<>();
 
         for (double i = rectangle.get().getMinX(); i <= rectangle.get().getMaxX(); i++) {
-            Point2D pointWorld= screenToWorld.get().transform(i, 0);
+            Point2D pointWorld = screenToWorld.get().transform(i, 0);
             double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
-            Point2D pointScreen = worldToScreen.get().transform(0,elevation);
+            Point2D pointScreen = worldToScreen.get().transform(0, elevation);
             toAdd.add(i);
-            toAdd.add( pointScreen.getY());
+            toAdd.add(pointScreen.getY());
         }
         profileGraph.getPoints().setAll(toAdd);
-        profileGraph.getPoints().addAll(rectangle.get().getMaxX(),rectangle.get().getMaxY(),
-                rectangle.get().getMinX(),rectangle.get().getMaxY());
+        profileGraph.getPoints().addAll(rectangle.get().getMaxX(), rectangle.get().getMaxY(),
+                rectangle.get().getMinX(), rectangle.get().getMaxY());
 
 
     }
@@ -304,22 +305,22 @@ public final class ElevationProfileManager {
      * This method allows us to create the label indicating the statistics of the profile.
      */
     private void createStats() {
-    ElevationProfile ele= elevationProfile.get();
+        ElevationProfile ele = elevationProfile.get();
         vboxText.setText(String.format(STATISTICS_LENGTH_MESSAGE +
-                STATISTICS_ASCENT_MESSAGE +
-                STATISTICS_DESCENT_MESSAGE +
-                STATISTICS_ELEVATION_MESSAGE, ele.length() / 1000,ele.totalAscent(), ele.totalDescent(),
-                ele.minElevation(),ele.maxElevation()));
+                        STATISTICS_ASCENT_MESSAGE +
+                        STATISTICS_DESCENT_MESSAGE +
+                        STATISTICS_ELEVATION_MESSAGE, ele.length() / 1000, ele.totalAscent(), ele.totalDescent(),
+                ele.minElevation(), ele.maxElevation()));
 
     }
 
 
-
     /**
      * This method returns us the mouse position on the profile.
+     *
      * @return a property containing the mouse position.
      */
-    public ReadOnlyDoubleProperty mousePositionOnProfileProperty(){
+    public ReadOnlyDoubleProperty mousePositionOnProfileProperty() {
         return mousePositionOnProfileProperty;
     }
 

@@ -28,7 +28,7 @@ public final class Bits {
     public static int extractSigned(int value, int start, int length) {
         checkArgument((start + length) <= Integer.SIZE && start < Integer.SIZE && start >= 0 &&
                 length >= 0 && length <= Integer.SIZE);
-        return (value << (Integer.SIZE - (start + length)) ) >> Integer.SIZE - length;
+        return (value << (Integer.SIZE - (start + length))) >> Integer.SIZE - length;
     }
 
     /**

@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -10,14 +9,12 @@ import javafx.util.Duration;
 
 public final class ErrorManager {
 
+    private static final double FROM_TO_OPACITY = 0;
+    private static final double TO_FROM_OPACITY = 0.8;
     private final VBox pane;
     private final SequentialTransition transition;
 
-    private static final double FROM_TO_OPACITY = 0;
-
-    private static final double TO_FROM_OPACITY = 0.8;
-
-    public ErrorManager(){
+    public ErrorManager() {
 
         this.pane = new VBox();
         this.pane.getStylesheets().add("error.css");
@@ -39,11 +36,11 @@ public final class ErrorManager {
 
     }
 
-    public VBox pane(){
+    public VBox pane() {
         return pane;
     }
 
-    public void displayError(String errorMessage){
+    public void displayError(String errorMessage) {
         transition.stop();
         pane.getChildren().clear();
         pane.getChildren().add(new Text(errorMessage));

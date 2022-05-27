@@ -21,13 +21,15 @@ import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
  * @author Alexandre Mourot (346365)
  */
 public final class TileManager {
+
     private static final int MAX_CAP_MEMORY = 100;
 
+    //Todo
     private static final String FILE_EXTENSION = ".png";
+
     private final Path path;
     private final String serv;
-    private final LinkedHashMap<TileId, Image> cacheMemory =
-            new LinkedHashMap<>(MAX_CAP_MEMORY, 0.75f, true);
+    private final LinkedHashMap<TileId, Image> cacheMemory;
 
 
     /**
@@ -37,23 +39,10 @@ public final class TileManager {
      * @param serv - String : string representing the server name.
      */
     public TileManager(Path path, String serv) {
+        this.cacheMemory = new LinkedHashMap<>(MAX_CAP_MEMORY, 0.75f, true);
         this.path = path;
         this.serv = serv;
 
-    }
-
-    /**
-     * This record represent a TileId useful to identify a Tile thanks to zoomLevel, x and y coordinate.
-     *
-     * @param zoomLevel - int : the zoomLevel.
-     * @param xTile     - int : the x coordinate of the Tile.
-     * @param yTile     - int : the y coordinate of the Tile.
-     */
-    public record TileId(int zoomLevel, int xTile, int yTile) {
-
-        public static boolean isValid(int zoom, int x, int y) {
-            return !((x > (1 << zoom)) || y > (1 << zoom)) && (x > 0) && (y > 0);
-        }
     }
 
     /**
@@ -67,8 +56,10 @@ public final class TileManager {
 
         Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
-        Path fullPath = path.resolve(String.valueOf(tileId.zoomLevel)).
-                resolve(String.valueOf(tileId.xTile)).resolve(tileId.yTile + FILE_EXTENSION);
+        Path fullPath = path.
+                resolve(String.valueOf(tileId.zoomLevel)).
+                resolve(String.valueOf(tileId.xTile)).
+                resolve(tileId.yTile + FILE_EXTENSION);
 
         if (!cacheMemory.containsKey(tileId)) {
             if (!Files.exists(fullPath)) {
@@ -86,8 +77,7 @@ public final class TileManager {
         try (InputStream i = new FileInputStream(fullPath.toString())) {
             Image newImage = new Image(i);
             if (cacheMemory.size() == MAX_CAP_MEMORY) {
-                TileId toRemove = cacheMemory.keySet().iterator().next();
-                cacheMemory.remove(toRemove);
+                cacheMemory.remove(cacheMemory.keySet().iterator().next());
             }
             cacheMemory.put(tileId, newImage);
         }
@@ -109,6 +99,25 @@ public final class TileManager {
         try (InputStream i = urlConnection.getInputStream();
              OutputStream t = new FileOutputStream(fullPath.toString())) {
             i.transferTo(t);
+        }
+    }
+
+    /**
+     * This record represent a TileId useful to identify a Tile thanks to zoomLevel, x and y coordinate.
+     *
+     * @param zoomLevel - int : the zoomLevel.
+     * @param xTile     - int : the x coordinate of the Tile.
+     * @param yTile     - int : the y coordinate of the Tile.
+     */
+    public record TileId(int zoomLevel, int xTile, int yTile) {
+
+        // todo laisser ou pas
+        public TileId {
+            Preconditions.checkArgument(isValid(zoomLevel, xTile, yTile));
+        }
+
+        public static boolean isValid(int zoom, int x, int y) {
+            return !((x > (1 << zoom)) || y > (1 << zoom)) && (x > 0) && (y > 0);
         }
     }
 }

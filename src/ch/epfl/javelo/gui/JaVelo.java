@@ -35,7 +35,8 @@ public final class JaVelo extends Application {
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 600;
 
-    public static void main(String[] args) { launch(args);
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override
@@ -56,34 +57,33 @@ public final class JaVelo extends Application {
 
         ErrorManager errorManager = new ErrorManager();
 
-        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager,routeBean,errorManager::displayError);
-
+        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorManager::displayError);
 
 
         ElevationProfileManager profileBorderPane =
                 new ElevationProfileManager((ObjectProperty<ElevationProfile>) routeBean.getElevationProfile(),
-                routeBean.highlightedPositionProperty());
+                        routeBean.highlightedPositionProperty());
 
 
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
-        SplitPane.setResizableWithParent(profileBorderPane.pane(),false);
+        SplitPane.setResizableWithParent(profileBorderPane.pane(), false);
         splitPane.setOrientation(Orientation.VERTICAL);
 
-        routeBean.getElevationProfile().addListener((p, oldS, newS)-> {
-            if(oldS == null && newS != null) splitPane.getItems().add(1, profileBorderPane.pane());
-            else if(oldS != null && newS == null) splitPane.getItems().remove(1);
+        routeBean.getElevationProfile().addListener((p, oldS, newS) -> {
+            if (oldS == null && newS != null) splitPane.getItems().add(1, profileBorderPane.pane());
+            else if (oldS != null && newS == null) splitPane.getItems().remove(1);
         });
 
         MenuItem menuItem = new MenuItem(MENU_ITEM_LABEL_1);
         menuItem.disableProperty().bind(routeBean.getRoute().isNull());
         menuItem.setOnAction(a -> {
             try {
-                GpxGenerator.writeGpx(GPX_FILE_NAME,routeBean.getRoute().get(),routeBean.getElevationProfile().getValue());
+                GpxGenerator.writeGpx(GPX_FILE_NAME, routeBean.getRoute().get(), routeBean.getElevationProfile().getValue());
             } catch (Exception e) {
                 throw new UncheckedIOException(new IOException());
             }
         });
-        Menu menu = new Menu(MENU_LABEL_1,null,menuItem);
+        Menu menu = new Menu(MENU_LABEL_1, null, menuItem);
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setUseSystemMenuBar(true);
 
@@ -96,9 +96,9 @@ public final class JaVelo extends Application {
         mainPane.getStylesheets().add(MAIN_PANE_STYLESHEET);
 
         routeBean.highlightedPositionProperty().bind(Bindings.when(annotatedMapManager.mousePositionOnRouteProperty()
-                .greaterThanOrEqualTo(0)).
-                        then(annotatedMapManager.mousePositionOnRouteProperty()).
-                        otherwise(profileBorderPane.mousePositionOnProfileProperty()));
+                        .greaterThanOrEqualTo(0)).
+                then(annotatedMapManager.mousePositionOnRouteProperty()).
+                otherwise(profileBorderPane.mousePositionOnProfileProperty()));
 
 
         primaryStage.setMinWidth(WINDOW_WIDTH);

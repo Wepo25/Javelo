@@ -11,13 +11,14 @@ import static ch.epfl.javelo.Preconditions.checkArgument;
 public record PointWebMercator(double x, double y) {
 
     private static final int MIN_ZOOM = 8;
+
     /**
      * Constructor checking the validity of its arguments.
      *
      * @param x - double : X coordinate of a point.
      * @param y - double : Y coordinate of a point.
      * @throws IllegalArgumentException (checkArgument) : Throws an exception if the
-     * given coordinates are smaller than 0 or greater than 1.
+     *                                  given coordinates are smaller than 0 or greater than 1.
      */
     public PointWebMercator {
         checkArgument(x >= 0 && x <= 1 && y >= 0 && y <= 1);
@@ -92,6 +93,6 @@ public record PointWebMercator(double x, double y) {
     public PointCh toPointCh() {
         double e = Ch1903.e(lon(), lat());
         double n = Ch1903.n(lon(), lat());
-        return SwissBounds.containsEN(e, n)? new PointCh(e, n) : null;
+        return SwissBounds.containsEN(e, n) ? new PointCh(e, n) : null;
     }
 }

@@ -52,7 +52,7 @@ public final class Math2 {
      */
     public static int clamp(int min, int v, int max) {
         checkArgument((min <= max));
-        return (v < min)? min : Math.min(v, max);
+        return (v < min) ? min : Math.min(v, max);
     }
 
     /**
@@ -66,7 +66,7 @@ public final class Math2 {
      */
     public static double clamp(double min, double v, double max) {
         checkArgument((min <= max));
-        return (v < min)? min : Math.min(v, max);
+        return (v < min) ? min : Math.min(v, max);
 
     }
 
@@ -101,7 +101,7 @@ public final class Math2 {
      * @return - double : The squared norm of the given vector.
      */
     public static double squaredNorm(double uX, double uY) {
-        return dotProduct(uX,uY,uX,uY);
+        return dotProduct(uX, uY, uX, uY);
     }
 
     /**
@@ -112,7 +112,7 @@ public final class Math2 {
      * @return - double : The norm of the given vector.
      */
     public static double norm(double uX, double uY) {
-        return Math.sqrt(dotProduct(uX,uY,uX,uY));
+        return Math.sqrt(dotProduct(uX, uY, uX, uY));
     }
 
     /**

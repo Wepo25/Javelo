@@ -27,16 +27,15 @@ public final class AnnotatedMapManager {
 
 
     private final ObjectProperty<MapViewParameters> mapViewParam =
-            new SimpleObjectProperty<>(new MapViewParameters(INITIAL_ZOOM_LEVEL,INITIAL_X_VALUE,INITIAL_Y_VALUE));
+            new SimpleObjectProperty<>(new MapViewParameters(INITIAL_ZOOM_LEVEL, INITIAL_X_VALUE, INITIAL_Y_VALUE));
 
     private final DoubleProperty mousePositionOnRouteProperty = new SimpleDoubleProperty();
     private final ObjectProperty<Point2D> mousePositionPoint2D = new SimpleObjectProperty<>();
 
 
-
     private final Pane pane;
 
-    public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons){
+    public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons) {
 
         RouteManager routeManager = new RouteManager(bean, mapViewParam, cons);
         WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParam, bean.waypoints, cons);
@@ -45,33 +44,33 @@ public final class AnnotatedMapManager {
 
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
                 () -> {// on appel meme si en dehors de suisse pointclosest to
-                        if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null){
-                            PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
-                                    mousePositionPoint2D.get().getY()).toPointCh();
-                            if(pointActual == null || !SwissBounds.containsEN(pointActual.e(),pointActual.n())){
-                                return Double.NaN;
-                            }
-                                RoutePoint closestPoint = bean.getRoute().get().
-                                        pointClosestTo(pointActual);
-                                PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
-                                double tempNorm = Math2.norm(mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
-                                        mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
+                    if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null) {
+                        PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
+                                mousePositionPoint2D.get().getY()).toPointCh();
+                        if (pointActual == null || !SwissBounds.containsEN(pointActual.e(), pointActual.n())) {
+                            return Double.NaN;
+                        }
+                        RoutePoint closestPoint = bean.getRoute().get().
+                                pointClosestTo(pointActual);
+                        PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
+                        double tempNorm = Math2.norm(mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
+                                mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
 
-                                if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
-                                else return Double.NaN;
-                        } else return Double.NaN;
-                      },
-                mapViewParam,bean.getRoute(), mousePositionPoint2D));
+                        if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
+                        else return Double.NaN;
+                    } else return Double.NaN;
+                },
+                mapViewParam, bean.getRoute(), mousePositionPoint2D));
 
         pane.setOnMouseMoved(event -> mousePositionPoint2D.set(new Point2D(event.getX(), event.getY())));
         pane.setOnMouseExited(event -> mousePositionPoint2D.set(null));
     }
 
-    public Pane pane(){
+    public Pane pane() {
         return pane;
     }
 
-    public DoubleProperty mousePositionOnRouteProperty(){
+    public DoubleProperty mousePositionOnRouteProperty() {
         return mousePositionOnRouteProperty;
     }
 }

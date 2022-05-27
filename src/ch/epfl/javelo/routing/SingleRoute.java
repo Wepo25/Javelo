@@ -44,6 +44,7 @@ public final class SingleRoute implements Route {
 
     /**
      * This method is not usefull for this type of route which contain only one segment.
+     *
      * @param position - double : position given in meter.
      * @return -int : 0.
      */
@@ -59,7 +60,7 @@ public final class SingleRoute implements Route {
      */
     @Override
     public double length() {
-        return positions[positions.length -1];
+        return positions[positions.length - 1];
     }
 
     /**
@@ -147,6 +148,7 @@ public final class SingleRoute implements Route {
 
     /**
      * This method create an Array containing the length at a certain edge.
+     *
      * @param edges - List<Edge> : list of edge contained in this.
      * @return - double[] : the Array containing the lengths of at edge index.
      */
@@ -176,7 +178,7 @@ public final class SingleRoute implements Route {
         return Math2.clamp(0, edgeIndex, edges.size() - 1);
     }
 
-    private double bounds(double position){
+    private double bounds(double position) {
         return Math2.clamp(0, position, length());
     }
 }

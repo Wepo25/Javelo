@@ -160,6 +160,7 @@ public final class MultiRoute implements Route {
 
     /**
      * This method create an Array containing the length at a certain segment.
+     *
      * @param segments - List<Route> : list of route contained in this.
      * @return - double[] : the Array containing the lengths of at segment index.
      */
@@ -189,7 +190,7 @@ public final class MultiRoute implements Route {
         return Math2.clamp(0, segmentIndex, segments.size() - 1);
     }
 
-    private double bounds(double position){
+    private double bounds(double position) {
         return Math2.clamp(0, position, length());
     }
 

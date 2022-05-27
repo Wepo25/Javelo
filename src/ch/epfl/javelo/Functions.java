@@ -36,18 +36,18 @@ public final class Functions {
         Preconditions.checkArgument(xMax > 0 && samples.length >= 2);
         List<Float> temp = new ArrayList<>();
 
-        for(Float f : samples){
+        for (Float f : samples) {
             temp.add(f);
         }
 
         List<Float> immutableSamples = List.copyOf(temp);
         return (x) -> {
             if (x < 0) return immutableSamples.get(0);
-            if (x >= xMax) return immutableSamples.get(immutableSamples.size()-1);
+            if (x >= xMax) return immutableSamples.get(immutableSamples.size() - 1);
             double gap = xMax / (immutableSamples.size() - 1);
             int borneInf = (int) (x / gap);
             return Math2.interpolate(immutableSamples.get(borneInf),
-                    immutableSamples.get(Math2.clamp(0,borneInf + 1, immutableSamples.size()-1)),
+                    immutableSamples.get(Math2.clamp(0, borneInf + 1, immutableSamples.size() - 1)),
                     ((x - borneInf * gap) / gap));
         };
 
