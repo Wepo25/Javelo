@@ -76,6 +76,8 @@ public final class ElevationProfileManager {
 
     private static final int KILOMETER_IN_METERS = 1000;
 
+    private static final int HORIZONTAL_LABEL_Y_COORDINATE_PIXEL_ADJUSTMENT = -7;
+
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
     private final ReadOnlyDoubleProperty highlightedPosition;
@@ -122,8 +124,7 @@ public final class ElevationProfileManager {
         pane = new Pane(path, textGroup, profileGraph, line);
 
         borderPane = new BorderPane(pane, null, null, vbox, null);
-        borderPane.setBottom(vbox);
-        borderPane.getStylesheets().setAll(BORDERPANE_STYLESHEET_FILENAME);
+        borderPane.getStylesheets().addAll(BORDERPANE_STYLESHEET_FILENAME);
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
@@ -230,14 +231,15 @@ public final class ElevationProfileManager {
     }
 
     private void createLabel(double x, double y, String name, String type) {
-        Text label = new Text(name);
+        Text label = new Text(x,y,name);
         label.getStyleClass().setAll(GRID_LABEL, type);
         label.setFont(Font.font(LABEL_FONT, LABEL_FONT_SIZE));
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
-        label.setX(x);
-        label.setY(y);
         label.setLayoutX(- ((Objects.equals(type, HORIZONTAL_DIRECTION)) ?
                 (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0)));
+        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ?
+                HORIZONTAL_LABEL_Y_COORDINATE_PIXEL_ADJUSTMENT : 0);
+        //label.setLayoutY(- ((Objects.equals(type, HORIZONTAL_DIRECTION))? 5 : 0));
         textGroup.getChildren().add(label);
     }
 

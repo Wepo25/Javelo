@@ -65,8 +65,8 @@ public final class BaseMapManager {
 
     private void draw() {
 
-        double x = mapViewParam.get().topLeft().getX();
-        double y = mapViewParam.get().topLeft().getY();
+        double x = mapViewParam.get().x();
+        double y = mapViewParam.get().y();
         int z = mapViewParam.get().zoomLevel();
 
         for (int i = 0; i < pane.getWidth() + TILE_PIXEL_SIZE; i += TILE_PIXEL_SIZE) {
@@ -116,15 +116,15 @@ public final class BaseMapManager {
         pane.setOnMousePressed(e -> dragged.set(new Point2D(e.getX(), e.getY())));
 
         pane.setOnMouseDragged(e -> {
-            double diffX = e.getX()-dragged.get().getX();
-            double diffY = e.getY()-dragged.get().getY();
+            Point2D tempDragged = dragged.get().subtract(e.getX(),e.getY());
+            Point2D tempPoint = mapViewParam.get().topLeft().add(tempDragged);
             mapViewParam.set(mapViewParam.get().withMinXY(
-                    mapViewParam.get().topLeft().getX() - diffX,
-                    mapViewParam.get().topLeft().getY() - diffY)
+                    tempPoint.getX(),
+                    tempPoint.getY())
             );
             dragged.set(new Point2D(e.getX(), e.getY()));
-            redrawOnNextPulse();
 
+            redrawOnNextPulse();
         });
 
         pane.setOnMouseReleased(e -> {
