@@ -44,14 +44,10 @@ public final class ElevationProfileManager {
      */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
-    private final static Insets insets = new Insets(10, 10, 20, 40);
+    private final static Insets INSETS = new Insets(10, 10, 20, 40);
 
-    private static final double TOP_INSET = insets.getTop();
-    private static final double BOTTOM_INSET = insets.getBottom();
-    private static final double LEFT_INSET = insets.getLeft();
-    private static final double RIGHT_INSET = insets.getRight();
-    private static final double HEIGHT_INSET = TOP_INSET + BOTTOM_INSET;
-    private static final double WIDTH_INSET = LEFT_INSET + RIGHT_INSET;
+    private static final double HEIGHT_INSET = INSETS.getTop() + INSETS.getBottom();
+    private static final double WIDTH_INSET = INSETS.getLeft() + INSETS.getRight();
     private static final int MIN_VERTICAL_SPACE = 50;
     private static final int MIN_HORIZONTAL_SPACE = 25;
 
@@ -136,8 +132,8 @@ public final class ElevationProfileManager {
 
         rectangle.bind(Bindings.createObjectBinding(() ->
                 new Rectangle2D(
-                        LEFT_INSET,
-                        TOP_INSET,
+                        INSETS.getLeft(),
+                        INSETS.getTop(),
                         Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
                         Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
                 ),
@@ -185,6 +181,9 @@ public final class ElevationProfileManager {
         }
     }
 
+    /**
+     * This method create or re-create the grid when needed.
+     */
     private void createGrid() {
 
         textGroup.getChildren().clear();
@@ -221,6 +220,10 @@ public final class ElevationProfileManager {
         }
     }
 
+    /**
+     * This method compute the space between horizontal lines.
+     * @return the space.
+     */
     private int createHorizontalSpace() {
         for (int eleStep : ELE_STEPS) {
             if (worldToScreen.get().deltaTransform(0, -eleStep).getY() >= MIN_HORIZONTAL_SPACE) return eleStep;
@@ -228,6 +231,10 @@ public final class ElevationProfileManager {
         return ELE_STEPS[ELE_STEPS.length - 1];
     }
 
+    /**
+     * This method compute the vertical space between vertical lines.
+     * @return the space.
+     */
     private int createVerticalSpace() {
         for (int posStep : POS_STEPS) {
             if (worldToScreen.get().deltaTransform(posStep, 0).getX() >= MIN_VERTICAL_SPACE) return posStep;
@@ -235,6 +242,13 @@ public final class ElevationProfileManager {
         return POS_STEPS[POS_STEPS.length - 1];
     }
 
+    /**
+     * This method allows us to create the labels indicating the length and height.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param name the text to show.
+     * @param type either horizontal or vertical label.
+     */
     private void createLabel(double x, double y, String name, String type) {
         Text label = new Text(name);
         label.getStyleClass().setAll(GRID_LABEL, type);
@@ -248,6 +262,11 @@ public final class ElevationProfileManager {
         textGroup.getChildren().add(label);
     }
 
+    /**
+     * Add the rectangle's bounds which have to be displayed.
+     * @param p1 point to start.
+     * @param p2 point to end.
+     */
     private void addToPath(Point2D p1, Point2D p2){
         path.getElements().addAll(
                 new MoveTo(p1.getX(), p1.getY()),
