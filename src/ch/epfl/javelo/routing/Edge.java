@@ -64,9 +64,13 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
      * @return - PointCh : The point on the Edge at the given position.
      */
     public PointCh pointAt(double position) {
-        double e = Math2.interpolate(fromPoint.e(), toPoint.e(), position / length);
+        if (length != 0){
+            double e = Math2.interpolate(fromPoint.e(), toPoint.e(), position / length);
         double n = Math2.interpolate(fromPoint.n(), toPoint.n(), position / length);
         return new PointCh(e, n);
+    }else {
+        return fromPoint;}
+
 
     }
 
