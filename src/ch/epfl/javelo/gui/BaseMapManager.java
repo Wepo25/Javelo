@@ -74,7 +74,7 @@ public final class BaseMapManager {
                 try {
                     TileManager.TileId ti = new TileManager.TileId(
                             z,
-                            Math.floorDiv ((int) (i + x), TILE_PIXEL_SIZE),
+                            Math.floorDiv((int) (i + x), TILE_PIXEL_SIZE),
                             Math.floorDiv((int) (y + j), TILE_PIXEL_SIZE)
                     );
                     graphContext.drawImage(
@@ -82,7 +82,8 @@ public final class BaseMapManager {
                             i - x % TILE_PIXEL_SIZE,
                             j - y % TILE_PIXEL_SIZE
                     );
-                } catch (IOException | IllegalArgumentException ignored) {}
+                } catch (IOException | IllegalArgumentException ignored) {
+                }
 
             }
         }
@@ -119,7 +120,7 @@ public final class BaseMapManager {
         pane.setOnMousePressed(e -> dragged.set(new Point2D(e.getX(), e.getY())));
 
         pane.setOnMouseDragged(e -> {
-            Point2D tempDragged = dragged.get().subtract(e.getX(),e.getY());
+            Point2D tempDragged = dragged.get().subtract(e.getX(), e.getY());
             Point2D tempPoint = mapViewParam.get().topLeft().add(tempDragged);
             mapViewParam.set(mapViewParam.get().withMinXY(
                     tempPoint.getX(),

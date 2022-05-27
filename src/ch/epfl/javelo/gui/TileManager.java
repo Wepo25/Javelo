@@ -62,7 +62,7 @@ public final class TileManager {
      * This method allows us to get a Tile (format Image) from a TileId. And register it if it's not done yet.
      *
      * @param tileId tileId from the Tile to get.
-     * @return  Image representing the Tile.
+     * @return Image representing the Tile.
      * @throws IOException if the TileId is not valid.
      */
     public Image imageForTileAt(TileId tileId) throws IOException {
@@ -118,9 +118,9 @@ public final class TileManager {
     /**
      * This record represent a TileId useful to identify a Tile thanks to zoomLevel, x and y coordinate.
      *
-     * @param zoomLevel  the zoomLevel.
-     * @param xTile      the x coordinate of the Tile.
-     * @param yTile      the y coordinate of the Tile.
+     * @param zoomLevel the zoomLevel.
+     * @param xTile     the x coordinate of the Tile.
+     * @param yTile     the y coordinate of the Tile.
      */
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
@@ -130,9 +130,10 @@ public final class TileManager {
 
         /**
          * This static method allow us to check if whether the Tile coordinates are valid.
+         *
          * @param zoom of the TileId.
-         * @param x coordinate x of the TileId.
-         * @param y coordinate y of the TileId.
+         * @param x    coordinate x of the TileId.
+         * @param y    coordinate y of the TileId.
          * @return a boolean on the validity of the arguments.
          */
         public static boolean isValid(int zoom, int x, int y) {

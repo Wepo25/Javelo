@@ -46,8 +46,8 @@ public final class RouteManager {
      * The constructor. Initializing the argument and attaches them event handler.
      * Initializing the pane and giving it children to display the route.
      *
-     * @param rb        the RouteBean of the route.
-     * @param mvp       the property containing the parameters of the map displayed.
+     * @param rb  the RouteBean of the route.
+     * @param mvp the property containing the parameters of the map displayed.
      */
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp) {
 
@@ -72,6 +72,7 @@ public final class RouteManager {
 
     /**
      * This method returns the pane displaying the route.
+     *
      * @return the pane.
      */
     public Pane pane() {
@@ -129,7 +130,7 @@ public final class RouteManager {
                     .pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
 
             int tempIndex = routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition());
-                routeBean.waypoints.add(tempIndex + 1, pointToAdd);
+            routeBean.waypoints.add(tempIndex + 1, pointToAdd);
 
         });
     }
@@ -151,8 +152,6 @@ public final class RouteManager {
     }
 
 
-
-
     /**
      * This method creates the Polyline representing the route.
      * It prevents from partial display by adding all point at the same time.
@@ -170,10 +169,11 @@ public final class RouteManager {
 */
         List<PointCh> toBeStreamed = new ArrayList<>(routeBean.getRoute().get().points());
 
-        List<Double> list1 =  toBeStreamed.stream().map(PointWebMercator :: ofPointCh)
-               .mapMultiToDouble((elem,consumer) -> {
-                   consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
-                   consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));})
+        List<Double> list1 = toBeStreamed.stream().map(PointWebMercator::ofPointCh)
+                .mapMultiToDouble((elem, consumer) -> {
+                    consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
+                    consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));
+                })
                 .boxed().toList();
 
         polyline.getPoints().setAll(list1);

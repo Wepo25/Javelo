@@ -107,24 +107,54 @@ public final class ElevationProfileManager {
      */
     private static final String BORDERPANE_STYLESHEET_FILENAME = "elevation_profile.css";
 
+    /**
+     * Error Message if the transformation is not invertible.
+     */
     private static final String TRANSFORMATION_ERROR_MESSAGE_1 = "Transformation non invertible";
 
+    /**
+     * Message showing the length.
+     */
     private static final String STATISTICS_LENGTH_MESSAGE = "Longueur : %.1f km";
+    /**
+     * Message showing the ascent.
+     */
     private static final String STATISTICS_ASCENT_MESSAGE = "     Montée : %.0f m";
+    /**
+     * Message showing the descent.
+     */
     private static final String STATISTICS_DESCENT_MESSAGE = "     Descente : %.0f m";
+    /**
+     * Message showing the elevation.
+     */
     private static final String STATISTICS_ELEVATION_MESSAGE = "     Altitude : de %.0f m à %.0f m";
 
+    /**
+     * String leading to the minimum Y coordinate of the line showing the highlighted property on the profile.
+     */
     private static final String LINE_STEP_MIN_Y_PROPERTY = "minY";
+    /**
+     * String leading to the maximum Y coordinate of the line showing the highlighted property on the profile.
+     */
     private static final String LINE_STEP_MAX_Y_PROPERTY = "maxY";
 
+    /**
+     * One kilometers in meters.
+     */
     private static final int KILOMETER_IN_METERS = 1000;
 
+    /**
+     * Minimum value for the rectangle's coordinates.
+     */
     private static final int MIN_VALUE_RECTANGLE = 0;
 
+    /**
+     * Horizontal Label coordinate to adjust the lineament of it to lines.
+     */
     private static final int HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT = -7;
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
-    private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
+    private final DoubleProperty mousePositionOnProfileProperty;
     private final ReadOnlyDoubleProperty highlightedPosition;
 
     private final Path path;
@@ -137,9 +167,9 @@ public final class ElevationProfileManager {
 
     private final BorderPane borderPane;
 
-    private final ObjectProperty<Rectangle2D> rectangle = new SimpleObjectProperty<>();
-    private final ObjectProperty<Transform> screenToWorld = new SimpleObjectProperty<>();
-    private final ObjectProperty<Transform> worldToScreen = new SimpleObjectProperty<>();
+    private final ObjectProperty<Rectangle2D> rectangle;
+    private final ObjectProperty<Transform> screenToWorld;
+    private final ObjectProperty<Transform> worldToScreen;
 
 
     /**
@@ -153,6 +183,10 @@ public final class ElevationProfileManager {
 
         this.elevationProfile = elevationProfile;
         this.highlightedPosition = highlightedPosition;
+        this.mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
+        this.rectangle = new SimpleObjectProperty<>();
+        this.screenToWorld = new SimpleObjectProperty<>();
+        this.worldToScreen = new SimpleObjectProperty<>();
 
         VBox vbox = new VBox(vboxText);
         vbox.setId(VBOX_ID);
@@ -225,12 +259,12 @@ public final class ElevationProfileManager {
      */
     private void rectangleBindings() {
         rectangle.bind(Bindings.createObjectBinding(() ->
-                new Rectangle2D(
-                        INSETS.getLeft(),
-                        INSETS.getTop(),
-                        Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
-                        Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
-                ),
+                        new Rectangle2D(
+                                INSETS.getLeft(),
+                                INSETS.getTop(),
+                                Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
+                                Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
+                        ),
                 pane.widthProperty(),
                 pane.heightProperty()
         ));
@@ -275,7 +309,7 @@ public final class ElevationProfileManager {
             Point2D end = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
             addToPath(start, end);
             createLabel(start.getX(), start.getY(), String.valueOf(horizontalIndex++ * horizontalSpace + firstStep),
-                  HORIZONTAL_DIRECTION);
+                    HORIZONTAL_DIRECTION);
         }
 
         while (verticalIndex * verticalSpace < length) {
@@ -291,6 +325,7 @@ public final class ElevationProfileManager {
 
     /**
      * This method computes the space between horizontal lines.
+     *
      * @return the space.
      */
     private int createHorizontalSpace() {
@@ -302,6 +337,7 @@ public final class ElevationProfileManager {
 
     /**
      * This method computes the vertical space between vertical lines.
+     *
      * @return the space.
      */
     private int createVerticalSpace() {
@@ -313,8 +349,9 @@ public final class ElevationProfileManager {
 
     /**
      * This method allows us to create the labels indicating the length and height.
-     * @param x the x coordinate.
-     * @param y the y coordinate.
+     *
+     * @param x    the x coordinate.
+     * @param y    the y coordinate.
      * @param name the text to show.
      * @param type either horizontal or vertical label.
      */
@@ -327,16 +364,17 @@ public final class ElevationProfileManager {
         label.setY(y);
         label.setLayoutX(Objects.equals(type, HORIZONTAL_DIRECTION) ?
                 -(label.prefWidth(0) + 2) : -0.5 * label.prefWidth(0));
-        label.setLayoutY(Objects.equals(type,HORIZONTAL_DIRECTION)? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
+        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
         textGroup.getChildren().add(label);
     }
 
     /**
      * Add the rectangle's bounds which have to be displayed.
+     *
      * @param p1 point to start.
      * @param p2 point to end.
      */
-    private void addToPath(Point2D p1, Point2D p2){
+    private void addToPath(Point2D p1, Point2D p2) {
         path.getElements().addAll(
                 new MoveTo(p1.getX(), p1.getY()),
                 new LineTo(p2.getX(), p2.getY())
@@ -362,8 +400,8 @@ public final class ElevationProfileManager {
      */
     private void createProfileGraph() {
 
-        List<Double> list = IntStream.range((int)rectangle.get().getMinX(),(int)rectangle.get().getMaxX())
-                .mapToDouble(e-> e)
+        List<Double> list = IntStream.range((int) rectangle.get().getMinX(), (int) rectangle.get().getMaxX())
+                .mapToDouble(e -> e)
                 .mapMulti((elem, consumer) -> {
 
                     Point2D pointWorld = screenToWorld.get().transform(elem, 0);
@@ -371,12 +409,13 @@ public final class ElevationProfileManager {
                     Point2D pointScreen = worldToScreen.get().transform(0, elevation);
 
                     consumer.accept(elem);
-                    consumer.accept(pointScreen.getY());})
+                    consumer.accept(pointScreen.getY());
+                })
 
                 .boxed()
                 .collect(Collectors.toList());
 
-        Collections.addAll(list,rectangle.get().getMaxX(), rectangle.get().getMaxY(),
+        Collections.addAll(list, rectangle.get().getMaxX(), rectangle.get().getMaxY(),
                 rectangle.get().getMinX(), rectangle.get().getMaxY());
 
         profileGraph.getPoints().setAll(list);
@@ -437,7 +476,6 @@ public final class ElevationProfileManager {
                 ele.minElevation(), ele.maxElevation())
         );
     }
-
 
 
 }

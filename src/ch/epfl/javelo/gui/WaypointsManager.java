@@ -81,9 +81,10 @@ public final class WaypointsManager {
 
     /**
      * The constructor. Adds listeners to actualise the pane when needed.
-     * @param routeNetwork graph representing the network of the route.
-     * @param mvp a property containing the parameter of the displayed map.
-     * @param wp a list containing every WayPoints.
+     *
+     * @param routeNetwork  graph representing the network of the route.
+     * @param mvp           a property containing the parameter of the displayed map.
+     * @param wp            a list containing every WayPoints.
      * @param errorConsumer an object allowing to signal errors.
      */
     public WaypointsManager(Graph routeNetwork, ReadOnlyObjectProperty<MapViewParameters> mvp,
@@ -106,6 +107,7 @@ public final class WaypointsManager {
 
     /**
      * This method returns the pane containing all WayPoints.
+     *
      * @return the pane.
      */
     public Pane pane() {
@@ -140,7 +142,7 @@ public final class WaypointsManager {
      * Allowing the re-localisation, removing and dragging of the Waypoints.
      *
      * @param index the index used to identify the WayPoint among the list of WayPoints.
-     * @param group  the Group representing the WayPoint.
+     * @param group the Group representing the WayPoint.
      */
     private void handlerCreation(int index, Group group) {
 
@@ -182,7 +184,8 @@ public final class WaypointsManager {
 
     /**
      * This method allows us to set the position of the Group representing (on screen) the waypoint.
-     * @param group the group.
+     *
+     * @param group    the group.
      * @param waypoint the WayPoint giving the coordinate to place the Group.
      */
     private void setGroupPosition(Group group, Waypoint waypoint) {
@@ -193,6 +196,7 @@ public final class WaypointsManager {
 
     /**
      * This method is used to create the form to display for a WayPoint.
+     *
      * @return The group representing a waypoint displayed.
      */
     private Group pointScheme() {
@@ -210,6 +214,7 @@ public final class WaypointsManager {
     /**
      * This method add a new WayPoint on the closest node of the graph.
      * Give the error consumer a message if no closest Node.
+     *
      * @param x coordinate of the WayPoint.
      * @param y coordinate of the WayPoint.
      */
@@ -223,6 +228,7 @@ public final class WaypointsManager {
 
     /**
      * This method is used to create a WayPoint by finding the closest node to it.
+     *
      * @param x coordinate of the waypoint.
      * @param y coordinate of the waypoint.
      * @return the Waypoint construct with coordinate and closest nodeId. Null if the point is too.
