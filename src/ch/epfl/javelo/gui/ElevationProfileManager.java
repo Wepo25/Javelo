@@ -19,9 +19,11 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -76,7 +78,7 @@ public final class ElevationProfileManager {
 
     private static final int KILOMETER_IN_METERS = 1000;
 
-    private static final int HORIZONTAL_LABEL_Y_COORDINATE_PIXEL_ADJUSTMENT = -7;
+    private static final int MIN_VALUE_RECTANGLE = 0;
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
@@ -124,7 +126,8 @@ public final class ElevationProfileManager {
         pane = new Pane(path, textGroup, profileGraph, line);
 
         borderPane = new BorderPane(pane, null, null, vbox, null);
-        borderPane.getStylesheets().addAll(BORDERPANE_STYLESHEET_FILENAME);
+        borderPane.setBottom(vbox);
+        borderPane.getStylesheets().setAll(BORDERPANE_STYLESHEET_FILENAME);
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
@@ -133,8 +136,8 @@ public final class ElevationProfileManager {
                 new Rectangle2D(
                         LEFT_INSET,
                         TOP_INSET,
-                        Math.max(0, pane.getWidth() - WIDTH_INSET),
-                        Math.max(0, pane.getHeight() - HEIGHT_INSET)
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
                 ),
                 pane.widthProperty(),
                 pane.heightProperty()
@@ -231,15 +234,14 @@ public final class ElevationProfileManager {
     }
 
     private void createLabel(double x, double y, String name, String type) {
-        Text label = new Text(x,y,name);
+        Text label = new Text(name);
         label.getStyleClass().setAll(GRID_LABEL, type);
         label.setFont(Font.font(LABEL_FONT, LABEL_FONT_SIZE));
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
+        label.setX(x);
+        label.setY(y);
         label.setLayoutX(- ((Objects.equals(type, HORIZONTAL_DIRECTION)) ?
                 (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0)));
-        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ?
-                HORIZONTAL_LABEL_Y_COORDINATE_PIXEL_ADJUSTMENT : 0);
-        //label.setLayoutY(- ((Objects.equals(type, HORIZONTAL_DIRECTION))? 5 : 0));
         textGroup.getChildren().add(label);
     }
 
@@ -264,13 +266,32 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * This method create the polygon representing the profile graph.
+     * This method create the polygon representing the profile graph. It adds all points simultaneously
+     * to prevent partial display.
      */
     private void createProfileGraph() {
 
-        profileGraph.getPoints().clear();
-        List<Double> toAdd = new ArrayList<>();
+        List<Double> list = IntStream.range((int)rectangle.get().getMinX(),(int)rectangle.get().getMaxX())
+                .mapToDouble(e-> e)
+                .mapMulti((elem, consumer) -> {
 
+                    Point2D pointWorld = screenToWorld.get().transform(elem, 0);
+                    double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
+                    Point2D pointScreen = worldToScreen.get().transform(0, elevation);
+
+                    consumer.accept(elem);
+                    consumer.accept(pointScreen.getY());})
+
+                .boxed()
+                .collect(Collectors.toList());
+
+        Collections.addAll(list,rectangle.get().getMaxX(), rectangle.get().getMaxY(),
+                rectangle.get().getMinX(), rectangle.get().getMaxY());
+
+        profileGraph.getPoints().setAll(list);
+
+        /*
+        List<Double> toAdd = new ArrayList<>();
         for (double i = rectangle.get().getMinX(); i <= rectangle.get().getMaxX(); i++) {
             Point2D pointWorld = screenToWorld.get().transform(i, 0);
             double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
@@ -281,6 +302,8 @@ public final class ElevationProfileManager {
         profileGraph.getPoints().addAll(toAdd);
         profileGraph.getPoints().addAll(rectangle.get().getMaxX(), rectangle.get().getMaxY(),
                 rectangle.get().getMinX(), rectangle.get().getMaxY());
+*/
+
     }
 
     /**
