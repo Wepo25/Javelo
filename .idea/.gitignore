@@ -16,6 +16,7 @@ JaVelo/
 ch/
 epfl/
 javelo/
+*.class
 
 ##############################
 ## OS X

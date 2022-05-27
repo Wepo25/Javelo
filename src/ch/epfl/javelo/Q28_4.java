@@ -10,6 +10,7 @@ public final class Q28_4 {
 
     private static final int BIT_SHIFT = 4;
 
+
     /**
      * Private constructor. Uninstanciable class.
      */
