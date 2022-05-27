@@ -275,7 +275,8 @@ public final class ElevationProfileManager {
             toAdd.add( pointScreen.getY());
         }
         profileGraph.getPoints().setAll(toAdd);
-        profileGraph.getPoints().addAll(rectangle.get().getMaxX(),rectangle.get().getMaxY(),rectangle.get().getMinX(),rectangle.get().getMaxY());
+        profileGraph.getPoints().addAll(rectangle.get().getMaxX(),rectangle.get().getMaxY(),
+                rectangle.get().getMinX(),rectangle.get().getMaxY());
 
 
     }
