@@ -42,6 +42,9 @@ public final class ElevationProfileManager {
      */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
+    /**
+     * Insets representing
+     */
     private final static Insets insets = new Insets(10, 10, 20, 40);
 
     private static final double TOP_INSET = insets.getTop();
@@ -76,7 +79,7 @@ public final class ElevationProfileManager {
 
     private final ObjectProperty<ElevationProfile> elevationProfile;
 
-    //MODIFICATION MADE -> TO CHECK
+
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
     private final ReadOnlyDoubleProperty highlightedPosition;
 
@@ -107,23 +110,23 @@ public final class ElevationProfileManager {
 
         this.elevationProfile = elevationProfile;
         this.highlightedPosition = highlightedPosition;
-        textGroup = new Group();
+        this.textGroup = new Group();
 
-        line = new Line();
+        this.line = new Line();
 
-        path = new Path();
+        this.path = new Path();
         path.setId(PATH_ID);
 
-        profileGraph = new Polygon();
+        this.profileGraph = new Polygon();
         profileGraph.setId(POLYGON_ID);
 
-        pane = new Pane(path, textGroup, profileGraph, line);
+        this.pane = new Pane(path, textGroup, profileGraph, line);
 
 
         VBox vbox = new VBox(vboxText);
         vbox.setId(VBOX_ID);
 
-        borderPane = new BorderPane(pane, null, null, vbox, null);
+        this.borderPane = new BorderPane(pane, null, null, vbox, null);
         borderPane.setBottom(vbox);
         borderPane.getStylesheets().setAll(BORDERPANE_STYLESHEET_FILENAME);
 
@@ -197,13 +200,16 @@ public final class ElevationProfileManager {
 
         while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
 
-            Point2D startHorizontal = worldToScreen.get().transform(0, horizontalIndex * horizontalSpace + firstStep);
-            Point2D endHorizontal = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
+            Point2D startHorizontal = worldToScreen.get()
+                    .transform(0, horizontalIndex * horizontalSpace + firstStep);
+            Point2D endHorizontal = worldToScreen.get()
+                    .transform(length, horizontalIndex * horizontalSpace + firstStep);
 
             path.getElements().addAll(new MoveTo(startHorizontal.getX(), startHorizontal.getY()),
                     new LineTo(endHorizontal.getX(), endHorizontal.getY()));
 
-            createLabel(startHorizontal.getX(), startHorizontal.getY(), String.valueOf(horizontalIndex * horizontalSpace + firstStep), HORIZONTAL_DIRECTION);
+            createLabel(startHorizontal.getX(), startHorizontal.getY(),
+                    String.valueOf(horizontalIndex * horizontalSpace + firstStep), HORIZONTAL_DIRECTION);
             horizontalIndex++;
         }
 
@@ -215,7 +221,8 @@ public final class ElevationProfileManager {
             path.getElements().addAll(new MoveTo(startVertical.getX(), startVertical.getY()),
                     new LineTo(endVertical.getX(), endVertical.getY()));
 
-            createLabel(startVertical.getX(), startVertical.getY(), String.valueOf(verticalIndex * verticalSpace / KILOMETER_IN_METERS), VERTICAL_DIRECTION);
+            createLabel(startVertical.getX(), startVertical.getY(),
+                    String.valueOf(verticalIndex * verticalSpace / KILOMETER_IN_METERS), VERTICAL_DIRECTION);
             verticalIndex++;
         }
     }
@@ -241,7 +248,8 @@ public final class ElevationProfileManager {
     private void createLabel(double x, double y, String name, String type) {
         Text label = new Text(name);
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
-        double xAdjustment = x - ((Objects.equals(type, HORIZONTAL_DIRECTION)) ? (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0));
+        double xAdjustment = x - ((Objects.equals(type, HORIZONTAL_DIRECTION)) ?
+                (label.prefWidth(0) + 2) : 0.5 * label.prefWidth(0));
         double yAdjustment = y;
         label.setX(xAdjustment);
         label.setY(yAdjustment);

@@ -10,7 +10,6 @@ import javafx.scene.shape.Polyline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * This method is managing the display of the route and the interaction with it.
@@ -29,7 +28,6 @@ public final class RouteManager {
 
     private final RouteBean routeBean;
     private final ReadOnlyObjectProperty<MapViewParameters> mapViewParam;
-    private final Consumer<String> errorConsumer;
 
     private final Pane pane;
 
@@ -44,13 +42,11 @@ public final class RouteManager {
      *
      * @param rb        the RouteBean of the route.
      * @param mvp       the property containing the parameters of the map displayed.
-     * @param errorCons allowing to signal errors.
      */
-    public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp, Consumer<String> errorCons) {
+    public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp) {
 
         this.routeBean = rb;
         this.mapViewParam = mvp;
-        this.errorConsumer = errorCons;
 
         polyline = new Polyline();
         circle = new Circle();
@@ -62,6 +58,7 @@ public final class RouteManager {
             int nodeId = routeBean.getRoute().get().nodeClosestTo(routeBean.highlightedPosition());
             Waypoint pointToAdd = new Waypoint(mapViewParam.get()
                     .pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
+
             int tempIndex = routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition());
                 routeBean.waypoints.add(tempIndex + 1, pointToAdd);
 
@@ -73,6 +70,7 @@ public final class RouteManager {
                 updateAll();
             } else {
                 if (!oldS.topLeft().equals(newS.topLeft())) {
+
                     updateCircle();
                     setPolylineLayout();
                 }
@@ -93,6 +91,7 @@ public final class RouteManager {
                         updateAll();
                     } else {
                         pane.setVisible(false);
+
                     }
                 }
         );
@@ -149,10 +148,11 @@ public final class RouteManager {
             return;
         }
         if (routeBean.getRoute().get() != null) {
+            circle.setVisible(true);
             circle.setCenterX(mapViewParam.get().viewX(buildCircleCenter()));
             circle.setCenterY(mapViewParam.get().viewY(buildCircleCenter()));
             circle.setRadius(CIRCLE_RADIUS);
-            circle.setVisible(true);
+
         }
     }
 
