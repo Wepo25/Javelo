@@ -44,22 +44,67 @@ public final class ElevationProfileManager {
      */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
+    /**
+     * Insets to delimiting the rectangle where we show profile.
+     */
     private final static Insets INSETS = new Insets(10, 10, 20, 40);
 
+    /**
+     * Height of the rectangle showing profile.
+     */
     private static final double HEIGHT_INSET = INSETS.getTop() + INSETS.getBottom();
+    /**
+     * Width of the rectangle showing profile.
+     */
     private static final double WIDTH_INSET = INSETS.getLeft() + INSETS.getRight();
+    /**
+     * Minimum distance between two vertical lines.
+     */
     private static final int MIN_VERTICAL_SPACE = 50;
+
+    /**
+     * Minimum distance between two horizontal lines.
+     */
     private static final int MIN_HORIZONTAL_SPACE = 25;
 
+    /**
+     * String leading to the graphics of the grid's labels.
+     */
     private static final String GRID_LABEL = "grid_label";
+    /**
+     * String leading to the horizontal line label's graphics.
+     */
     private static final String HORIZONTAL_DIRECTION = "horizontal";
+    /**
+     * String leading to the vertical line label's graphics.
+     */
     private static final String VERTICAL_DIRECTION = "vertical";
+    /**
+     * String leading to the Label graphics.
+     */
     private static final String LABEL_FONT = "Avenir";
+    /**
+     * The label size.
+     */
     private static final int LABEL_FONT_SIZE = 10;
 
+    /**
+     * String leading to the grid graphics.
+     */
     private static final String PATH_ID = "grid";
+    /**
+     * String leading to the profile graphics.
+     */
     private static final String POLYGON_ID = "profile";
+
+    /**
+     * String leading to the statistics graphics.
+     */
     private static final String VBOX_ID = "profile_data";
+
+    /**
+     * String leading to the BorderPane graphics.
+     */
     private static final String BORDERPANE_STYLESHEET_FILENAME = "elevation_profile.css";
 
     private static final String TRANSFORMATION_ERROR_MESSAGE_1 = "Transformation non invertible";
@@ -130,17 +175,36 @@ public final class ElevationProfileManager {
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
 
-        rectangle.bind(Bindings.createObjectBinding(() ->
-                new Rectangle2D(
-                        INSETS.getLeft(),
-                        INSETS.getTop(),
-                        Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
-                        Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
-                ),
-                pane.widthProperty(),
-                pane.heightProperty()
-        ));
+        rectangleBindings();
 
+        handlerBorderPane();
+
+        elevationProfile.addListener((p, oldS, newS) -> operationsSequence());
+
+    }
+
+    /**
+     * This method returns the BorderPane representing the elevation on screen.
+     *
+     * @return the BorderPane.
+     */
+    public BorderPane pane() {
+        return borderPane;
+    }
+
+    /**
+     * This method returns us the mouse position on the profile.
+     *
+     * @return a property containing the mouse position.
+     */
+    public ReadOnlyDoubleProperty mousePositionOnProfileProperty() {
+        return mousePositionOnProfileProperty;
+    }
+
+    /**
+     * This method adds handlers to the BorderPane.
+     */
+    private void handlerBorderPane() {
         borderPane.setOnMouseMoved(e -> {
             if (rectangle.get().contains(new Point2D(e.getX(), e.getY()))) {
                 Point2D position = screenToWorld.get()
@@ -154,19 +218,24 @@ public final class ElevationProfileManager {
                 mousePositionOnProfileProperty.set(Double.NaN);
             }
         });
-
-        elevationProfile.addListener((p, oldS, newS) -> operationsSequence());
-
     }
 
     /**
-     * This method return the BorderPane representing the elevation on screen.
-     *
-     * @return the BorderPane.
+     * This method creates the rectangle's binding.
      */
-    public BorderPane pane() {
-        return borderPane;
+    private void rectangleBindings() {
+        rectangle.bind(Bindings.createObjectBinding(() ->
+                new Rectangle2D(
+                        INSETS.getLeft(),
+                        INSETS.getTop(),
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getWidth() - WIDTH_INSET),
+                        Math.max(MIN_VALUE_RECTANGLE, pane.getHeight() - HEIGHT_INSET)
+                ),
+                pane.widthProperty(),
+                pane.heightProperty()
+        ));
     }
+
 
     /**
      * This method is used to actualise the profile.
@@ -182,7 +251,7 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * This method create or re-create the grid when needed.
+     * This method creates or re-creates the grid when needed.
      */
     private void createGrid() {
 
@@ -221,7 +290,7 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * This method compute the space between horizontal lines.
+     * This method computes the space between horizontal lines.
      * @return the space.
      */
     private int createHorizontalSpace() {
@@ -232,7 +301,7 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * This method compute the vertical space between vertical lines.
+     * This method computes the vertical space between vertical lines.
      * @return the space.
      */
     private int createVerticalSpace() {
@@ -369,13 +438,6 @@ public final class ElevationProfileManager {
         );
     }
 
-    /**
-     * This method returns us the mouse position on the profile.
-     *
-     * @return a property containing the mouse position.
-     */
-    public ReadOnlyDoubleProperty mousePositionOnProfileProperty() {
-        return mousePositionOnProfileProperty;
-    }
+
 
 }

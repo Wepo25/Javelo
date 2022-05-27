@@ -26,15 +26,51 @@ import java.util.function.Consumer;
  */
 public final class WaypointsManager {
 
+    /**
+     * The search distance to find a closest nodeId.
+     */
     private static final int SEARCH_DISTANCE = 500;
+
+    /**
+     * String, leading to a Style class (color) given to the first Point.
+     */
     private static final String FIRST_GROUP_STYLE_CLASS = "first";
+
+    /**
+     * String, leading to a Style class (color) given to middle's Points.
+     */
     private static final String MIDDLE_GROUP_STYLE_CLASS = "middle";
+
+    /**
+     * String, leading to a Style class (color) given to the last Point.
+     */
     private static final String LAST_GROUP_STYLE_CLASS = "last";
+
+    /**
+     * String, leading to a Style class (graphics) given to the group representing a Point.
+     */
     private static final String GROUP_PIN_STYLE_CLASS = "pin";
+    /**
+     * String, leading to a Style class (graphics) given to a svg_path representing the inner form of a Point.
+     */
     private static final String GROUP_PIN_IN_STYLE_CLASS = "pin_inside";
+    /**
+     * String, leading to a Style class (graphics) given to a svg_path representing the outside of a Point.
+     */
     private static final String GROUP_PIN_OUT_STYLE_CLASS = "pin_outside";
+
+    /**
+     * String to give to a svg path to represent the inner form of a point.
+     */
     private static final String SVG_CONTENT_1 = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
+
+    /**
+     * String to give to a svg path to represent the outside form of a point.
+     */
     private static final String SVG_CONTENT_2 = "M0-23A1 1 0 000-29 1 1 0 000-23";
+    /**
+     * Error Message for "no road nearby".
+     */
     private static final String WAYPOINT_ADDER_ERROR_MESSAGE_1 = "Aucune route à proximité !";
 
     private final Graph routeNetwork;
@@ -44,7 +80,7 @@ public final class WaypointsManager {
     private final Pane pane;
 
     /**
-     * The constructor. Adds listener to actualise the pane when needed.
+     * The constructor. Adds listeners to actualise the pane when needed.
      * @param routeNetwork graph representing the network of the route.
      * @param mvp a property containing the parameter of the displayed map.
      * @param wp a list containing every WayPoints.

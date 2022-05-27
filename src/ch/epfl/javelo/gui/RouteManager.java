@@ -43,7 +43,7 @@ public final class RouteManager {
 
 
     /**
-     * The constructor. Initializing the argument and attach them event handler.
+     * The constructor. Initializing the argument and attaches them event handler.
      * Initializing the pane and giving it children to display the route.
      *
      * @param rb        the RouteBean of the route.
@@ -66,7 +66,16 @@ public final class RouteManager {
 
         polyline.setId(POLYLINE_ID);
         circle.setId(CIRCLE_ID);
+
         pane.setPickOnBounds(false);
+    }
+
+    /**
+     * This method returns the pane displaying the route.
+     * @return the pane.
+     */
+    public Pane pane() {
+        return pane;
     }
 
     /**
@@ -126,6 +135,14 @@ public final class RouteManager {
     }
 
     /**
+     * This method calls methods to update the circle and the route display.
+     */
+    private void updateAll() {
+        updatePolyline();
+        updateCircle();
+    }
+
+    /**
      * Method setting the layout (positioning) of the polyline representing the route .
      */
     private void setPolylineLayout() {
@@ -133,13 +150,7 @@ public final class RouteManager {
         polyline.setLayoutY(-mapViewParam.get().topLeft().getY());
     }
 
-    /**
-     * This method return the pane displaying the route.
-     * @return the pane.
-     */
-    public Pane pane() {
-        return pane;
-    }
+
 
 
     /**
@@ -183,7 +194,7 @@ public final class RouteManager {
     }
 
     /**
-     * This method update the highlighted position on the screen.
+     * This method updates the highlighted position on the screen.
      */
     private void updateCircle() {
         if (Double.isNaN(routeBean.highlightedPosition())) {
@@ -200,7 +211,7 @@ public final class RouteManager {
     }
 
     /**
-     * This method update the route on screen.
+     * This method updates the route on screen.
      */
     private void updatePolyline() {
         if (routeBean.getRoute().get() != null) {
@@ -209,11 +220,5 @@ public final class RouteManager {
         }
     }
 
-    /**
-     * This method call methods to update the circle and the route display.
-     */
-    private void updateAll() {
-        updatePolyline();
-        updateCircle();
-    }
+
 }

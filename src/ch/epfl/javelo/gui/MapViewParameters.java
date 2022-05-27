@@ -26,7 +26,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
 
 
     /**
-     * This methode return a MapViewParameters similar to this expect with different top Left
+     * This methode returns a MapViewParameters similar to this expect with different top Left
      * coordinates.
      * @param newX new topLeft X coordinate.
      * @param newY new topLeft Y coordinate.
@@ -37,7 +37,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
     }
 
     /**
-     * This method return a point in function of the map's topLeft corner coordinate given two coordinate.
+     * This method returns a point in function of the map's topLeft corner coordinate given two coordinate.
      * @param x the x coordinate.
      * @param y the y coordinate.
      * @return the point under an instance of PointWebMercator.
@@ -47,7 +47,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
     }
 
     /**
-     * This method return the x position of a PointWebMercator depending on the topLeft point of the map displayed.
+     * This method returns the x position of a PointWebMercator depending on the topLeft point of the map displayed.
      * @param point the point to express the coordinate from.
      * @return return the x coordinate in type double.
      */
@@ -56,7 +56,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
     }
 
     /**
-     * This method return the y position of a PointWebMercator depending on the topLeft point of the map displayed.
+     * This method returns the y position of a PointWebMercator depending on the topLeft point of the map displayed.
      * @param point the point to express the coordinate from.
      * @return return the y coordinate in type double.
      */
