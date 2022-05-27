@@ -24,7 +24,9 @@ public final class TileManager {
 
     private static final int MAX_CAP_MEMORY = 100;
 
-    //Todo
+    /**
+     * Spe
+     */
     private static final String FILE_EXTENSION = ".png";
 
     private final Path path;
