@@ -209,7 +209,8 @@ public final class ElevationProfileManager {
             Point2D start = worldToScreen.get().transform(verticalIndex * verticalSpace, minElevation);
             Point2D end = worldToScreen.get().transform(verticalIndex * verticalSpace, maxElevation);
             addToPath(start, end);
-            createLabel(start.getX(), start.getY(), String.valueOf(verticalIndex++ * verticalSpace / KILOMETER_IN_METERS),
+            createLabel(start.getX(), start.getY(),
+                    String.valueOf(verticalIndex++ * verticalSpace / KILOMETER_IN_METERS),
                     VERTICAL_DIRECTION);
         }
     }
@@ -254,8 +255,10 @@ public final class ElevationProfileManager {
         line.startYProperty().bind(Bindings.select(rectangle, LINE_STEP_MIN_Y_PROPERTY));
         line.endYProperty().bind(Bindings.select(rectangle, LINE_STEP_MAX_Y_PROPERTY));
         line.visibleProperty().bind(highlightedPosition.greaterThanOrEqualTo(0));
-        line.layoutXProperty().bind(Bindings.createObjectBinding(() ->
-                        worldToScreen.get().transform(highlightedPosition.get(), 0).getX(), highlightedPosition, worldToScreen));
+        line.layoutXProperty().bind(Bindings.createObjectBinding(
+                () -> worldToScreen.get().transform(highlightedPosition.get(), 0).getX(),
+                highlightedPosition,
+                worldToScreen));
     }
 
     /**
@@ -290,7 +293,8 @@ public final class ElevationProfileManager {
         );
         transformation.prependScale(
                 elevationProfile.get().length() / rectangle.get().getWidth(),
-                -(elevationProfile.get().maxElevation() - elevationProfile.get().minElevation()) / rectangle.get().getHeight()
+                -(elevationProfile.get().maxElevation() - elevationProfile.get().minElevation()) /
+                        rectangle.get().getHeight()
         );
         transformation.prependTranslation(
                 0,
@@ -312,8 +316,10 @@ public final class ElevationProfileManager {
         vboxText.setText(String.format(STATISTICS_LENGTH_MESSAGE +
                         STATISTICS_ASCENT_MESSAGE +
                         STATISTICS_DESCENT_MESSAGE +
-                        STATISTICS_ELEVATION_MESSAGE, ele.length() / KILOMETER_IN_METERS, ele.totalAscent(), ele.totalDescent(),
-                ele.minElevation(), ele.maxElevation()));
+                        STATISTICS_ELEVATION_MESSAGE, ele.length() / KILOMETER_IN_METERS,
+                ele.totalAscent(), ele.totalDescent(),
+                ele.minElevation(), ele.maxElevation())
+        );
     }
 
     /**

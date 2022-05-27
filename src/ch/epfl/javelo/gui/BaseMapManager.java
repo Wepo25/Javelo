@@ -117,16 +117,12 @@ public final class BaseMapManager {
 
         pane.setOnMouseDragged(e -> {
 
-            Point2D tempPoint = mapViewParam.get().topLeft();
-            tempPoint.subtract(e.getX(), e.getY());
-            tempPoint.add(dragged.get());
-
-            mapViewParam.set(
-                    mapViewParam.get().withMinXY(
-                            tempPoint.getX(),
-                            tempPoint.getY()
-                    ));
-
+            int diffX = (int) (e.getX()-dragged.get().getX());
+            int diffY = (int) (e.getY()-dragged.get().getY());
+            mapViewParam.set(mapViewParam.get().withMinXY(
+                    mapViewParam.get().topLeft().getX() - diffX,
+                    mapViewParam.get().topLeft().getY() - diffY)
+            );
             dragged.set(new Point2D(e.getX(), e.getY()));
             redrawOnNextPulse();
 
