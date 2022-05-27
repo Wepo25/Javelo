@@ -116,9 +116,8 @@ public final class BaseMapManager {
         pane.setOnMousePressed(e -> dragged.set(new Point2D(e.getX(), e.getY())));
 
         pane.setOnMouseDragged(e -> {
-
-            int diffX = (int) (e.getX()-dragged.get().getX());
-            int diffY = (int) (e.getY()-dragged.get().getY());
+            double diffX = e.getX()-dragged.get().getX();
+            double diffY = e.getY()-dragged.get().getY();
             mapViewParam.set(mapViewParam.get().withMinXY(
                     mapViewParam.get().topLeft().getX() - diffX,
                     mapViewParam.get().topLeft().getY() - diffY)
@@ -135,7 +134,6 @@ public final class BaseMapManager {
             }
         });
         pane.setPickOnBounds(false);
-
     }
 
     private void redrawIfNeeded() {
