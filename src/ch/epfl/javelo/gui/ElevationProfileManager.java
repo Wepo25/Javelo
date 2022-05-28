@@ -44,12 +44,12 @@ public final class ElevationProfileManager {
      */
     private static final int[] ELE_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
-    private final static Insets insets = new Insets(10, 10, 20, 40);
+    private final static Insets INSETS = new Insets(10, 10, 20, 40);
 
-    private static final double TOP_INSET = insets.getTop();
-    private static final double BOTTOM_INSET = insets.getBottom();
-    private static final double LEFT_INSET = insets.getLeft();
-    private static final double RIGHT_INSET = insets.getRight();
+    private static final double TOP_INSET = INSETS.getTop();
+    private static final double BOTTOM_INSET = INSETS.getBottom();
+    private static final double LEFT_INSET = INSETS.getLeft();
+    private static final double RIGHT_INSET = INSETS.getRight();
     private static final double HEIGHT_INSET = TOP_INSET + BOTTOM_INSET;
     private static final double WIDTH_INSET = LEFT_INSET + RIGHT_INSET;
     private static final int MIN_VERTICAL_SPACE = 50;
@@ -82,7 +82,7 @@ public final class ElevationProfileManager {
 
     private static final int HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT = -7;
 
-    private final ObjectProperty<ElevationProfile> elevationProfile;
+    private final ReadOnlyObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty = new SimpleDoubleProperty(Double.NaN);
     private final ReadOnlyDoubleProperty highlightedPosition;
 
@@ -107,7 +107,7 @@ public final class ElevationProfileManager {
      * @param elevationProfile    elevation Profile corresponding to the route.
      * @param highlightedPosition the position to highlight along the profile.
      */
-    public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile,
+    public ElevationProfileManager(ReadOnlyObjectProperty<ElevationProfile> elevationProfile,
                                    ReadOnlyDoubleProperty highlightedPosition) {
 
         this.elevationProfile = elevationProfile;

@@ -15,6 +15,7 @@ import java.util.Map;
 public final class RouteBean {
 
     private static final int MAX_STEP_LENGTH = 5;
+    private static final int MIN_SIZE = 2;
     private final RouteComputer routeComputer;
     private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
@@ -39,11 +40,9 @@ public final class RouteBean {
         );
     }
 
-    public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {
-        return elevationProfile;
-    }
+    public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {return elevationProfile;}
 
-    public ReadOnlyObjectProperty<Route> getRoute() {
+    public ObjectProperty<Route> getRoute() {
         return route;
     }
 
@@ -60,7 +59,7 @@ public final class RouteBean {
     }
 
     private void computeRoute() {
-        if (waypoints.size() >= 2) {
+        if (waypoints.size() >= MIN_SIZE) {
             List<Route> listRoute = new ArrayList<>();
             for (int i = 1; i < waypoints.size(); i++) {
                 Waypoint startWaypoint = waypoints.get(i - 1);

@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -32,6 +33,7 @@ public final class JaVelo extends Application {
     private static final String MENU_ITEM_LABEL_1 = "Exporter GPX";
     private static final String MENU_LABEL_1 = "Fichier";
     private static final String WINDOW_TITLE = "JaVelo";
+
     private static final int WINDOW_WIDTH = 800;
     private static final int WINDOW_HEIGHT = 600;
 
@@ -50,6 +52,7 @@ public final class JaVelo extends Application {
                 new TileManager(cacheBasePath, TILE_SERVER_HOST_ADDRESS);
 
         CityBikeCF costFunction = new CityBikeCF(graph);
+
         RouteComputer routeComputer =
                 new RouteComputer(graph, costFunction);
 
@@ -57,13 +60,12 @@ public final class JaVelo extends Application {
 
         ErrorManager errorManager = new ErrorManager();
 
-        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorManager::displayError);
-
+        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean,
+                errorManager::displayError);
 
         ElevationProfileManager profileBorderPane =
-                new ElevationProfileManager((ObjectProperty<ElevationProfile>) routeBean.getElevationProfile(),
+                new ElevationProfileManager(routeBean.getElevationProfile(),
                         routeBean.highlightedPositionProperty());
-
 
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
         SplitPane.setResizableWithParent(profileBorderPane.pane(), false);
@@ -79,10 +81,11 @@ public final class JaVelo extends Application {
         menuItem.setOnAction(a -> {
             try {
                 GpxGenerator.writeGpx(GPX_FILE_NAME, routeBean.getRoute().get(), routeBean.getElevationProfile().getValue());
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new UncheckedIOException(new IOException());
             }
         });
+
         Menu menu = new Menu(MENU_LABEL_1, null, menuItem);
         MenuBar menuBar = new MenuBar(menu);
 
@@ -94,11 +97,11 @@ public final class JaVelo extends Application {
 
         mainPane.getStylesheets().add(MAIN_PANE_STYLESHEET);
 
-        routeBean.highlightedPositionProperty().bind(Bindings.when(annotatedMapManager.mousePositionOnRouteProperty()
+        routeBean.highlightedPositionProperty().bind(
+                Bindings.when(annotatedMapManager.mousePositionOnRouteProperty()
                         .greaterThanOrEqualTo(0)).
                 then(annotatedMapManager.mousePositionOnRouteProperty()).
                 otherwise(profileBorderPane.mousePositionOnProfileProperty()));
-
 
         primaryStage.setMinWidth(WINDOW_WIDTH);
         primaryStage.setMinHeight(WINDOW_HEIGHT);

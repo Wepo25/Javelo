@@ -8,10 +8,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileWriter;
@@ -20,10 +17,6 @@ import java.io.Writer;
 import java.util.List;
 
 public class GpxGenerator {
-
-    private static final String LATITUDE_ABBREVIATION = "lat";
-    private static final String LONGITUDE_ABBREVIATION = "lon";
-    private static final String ELEVATION_ABBREVIATION = "ele";
 
     private static final String HEAD_NAME = "Route JaVelo";
 
@@ -59,12 +52,10 @@ public class GpxGenerator {
         List<PointCh> points = route.points();
         for (int i = 0; i < points.size(); i++) {
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute(LATITUDE_ABBREVIATION, String.valueOf((float) Math.toDegrees(points.get(i).lat())));
-            rtept.setAttribute(LONGITUDE_ABBREVIATION, String.valueOf((float) Math.toDegrees(points.get(i).lon())));
-            Element ele = doc.createElement(ELEVATION_ABBREVIATION);
-            if (i != 0) {
-                position += points.get(i).distanceTo(points.get(i - 1));
-            }
+            rtept.setAttribute("lat", String.valueOf(Math.toDegrees(points.get(i).lat())));
+            rtept.setAttribute("lon", String.valueOf(Math.toDegrees(points.get(i).lon())));
+            Element ele = doc.createElement("ele");
+            if (i != 0) position += points.get(i).distanceTo(points.get(i - 1));
             ele.setTextContent(String.valueOf(profile.elevationAt(position)));
             rtept.appendChild(ele);
             rte.appendChild(rtept);
@@ -72,17 +63,24 @@ public class GpxGenerator {
         return doc;
     }
 
-    public static void writeGpx(String fileName, Route route, ElevationProfile profile) throws IOException, TransformerException {
+    public static void writeGpx(String fileName, Route route, ElevationProfile profile)
+            throws IOException{
         Document doc = createGpx(route, profile);
         Writer w = new FileWriter(fileName);
+        try {
+            Transformer transformer = null;
+            transformer = TransformerFactory
+                    .newDefaultInstance()
+                    .newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(doc),
+                    new StreamResult(w));
+        }
+        catch(TransformerException e){
+            throw new Error(e);
+        }
 
-        Transformer transformer = TransformerFactory
-                .newDefaultInstance()
-                .newTransformer();
 
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(new DOMSource(doc),
-                new StreamResult(w));
     }
 
     private static Document newDocument() {
@@ -95,5 +93,4 @@ public class GpxGenerator {
             throw new Error(e); // Should never happen
         }
     }
-
 }
