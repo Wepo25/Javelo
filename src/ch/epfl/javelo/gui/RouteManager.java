@@ -23,7 +23,13 @@ public final class RouteManager {
      * Circle radius.
      */
     private final static int CIRCLE_RADIUS = 5;
+    /**
+     * Gives the reference to get the graphics properties of the route displayed.
+     */
     private final static String POLYLINE_ID = "route";
+    /**
+     * Gives the reference to get the graphics properties of the circle.
+     */
     private final static String CIRCLE_ID = "highlight";
 
     private final RouteBean routeBean;
@@ -37,11 +43,11 @@ public final class RouteManager {
 
 
     /**
-     * The constructor. Initializing the argument and attach them event handler.
+     * The constructor. Initializing the argument and attaches them event handler.
      * Initializing the pane and giving it children to display the route.
      *
-     * @param rb        the RouteBean of the route.
-     * @param mvp       the property containing the parameters of the map displayed.
+     * @param rb  the RouteBean of the route.
+     * @param mvp the property containing the parameters of the map displayed.
      */
     public RouteManager(RouteBean rb, ReadOnlyObjectProperty<MapViewParameters> mvp) {
 
@@ -52,18 +58,52 @@ public final class RouteManager {
         circle = new Circle();
         pane = new Pane(polyline, circle);
 
-        circle.setOnMouseClicked(e -> {
-            Point2D position = circle.localToParent(e.getX(), e.getY());
+        handlerCircle();
 
-            int nodeId = routeBean.getRoute().get().nodeClosestTo(routeBean.highlightedPosition());
-            Waypoint pointToAdd = new Waypoint(mapViewParam.get()
-                    .pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
+        handlerMapViewParameter();
 
-            int tempIndex = routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition());
-                routeBean.waypoints.add(tempIndex + 1, pointToAdd);
+        handlerRouteBean();
 
+        polyline.setId(POLYLINE_ID);
+        circle.setId(CIRCLE_ID);
+
+        pane.setPickOnBounds(false);
+    }
+
+    /**
+     * This method returns the pane displaying the route.
+     *
+     * @return the pane.
+     */
+    public Pane pane() {
+        return pane;
+    }
+
+    /**
+     * Add handlers to the RouteBean.
+     */
+    private void handlerRouteBean() {
+        routeBean.highlightedPositionProperty().addListener((p, oldS, newS) -> {
+            updateCircle();
         });
 
+
+        routeBean.getRoute().addListener((p, oldS, newS) -> {
+                    if (routeBean.getRoute().get() != null) {
+                        pane.setVisible(true);
+                        updateAll();
+                    } else {
+                        pane.setVisible(false);
+
+                    }
+                }
+        );
+    }
+
+    /**
+     * Add handlers to the MapViewParameter.
+     */
+    private void handlerMapViewParameter() {
         mapViewParam.addListener((p, oldS, newS) -> {
 
             if ((!(oldS.zoomLevel() == newS.zoomLevel()))) {
@@ -76,27 +116,31 @@ public final class RouteManager {
                 }
             }
         });
+    }
 
-        routeBean.highlightedPositionProperty().addListener((p, oldS, newS) -> {
-            updateCircle();
+    /**
+     * Add handlers to the Circle.
+     */
+    private void handlerCircle() {
+        circle.setOnMouseClicked(e -> {
+            Point2D position = circle.localToParent(e.getX(), e.getY());
+
+            int nodeId = routeBean.getRoute().get().nodeClosestTo(routeBean.highlightedPosition());
+            Waypoint pointToAdd = new Waypoint(mapViewParam.get()
+                    .pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
+
+            int tempIndex = routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition());
+            routeBean.waypoints.add(tempIndex + 1, pointToAdd);
+
         });
+    }
 
-        updateAll();
-        polyline.setId(POLYLINE_ID);
-        circle.setId(CIRCLE_ID);
-
-        routeBean.getRoute().addListener((p, oldS, newS) -> {
-                    if (routeBean.getRoute().get() != null) {
-                        pane.setVisible(true);
-                        updateAll();
-                    } else {
-                        pane.setVisible(false);
-
-                    }
-                }
-        );
-
-        pane.setPickOnBounds(false);
+    /**
+     * This method calls methods to update the circle and the route display.
+     */
+    private void updateAll() {
+        updatePolyline();
+        updateCircle();
     }
 
     /**
@@ -107,18 +151,10 @@ public final class RouteManager {
         polyline.setLayoutY(-mapViewParam.get().topLeft().getY());
     }
 
-    /**
-     * This method return the pane displaying the route.
-     *
-     * @return the pane.
-     */
-    public Pane pane() {
-        return pane;
-    }
-
 
     /**
      * This method creates the Polyline representing the route.
+     * It prevents from partial display by adding all point at the same time.
      */
     private void buildRoute() {
 /*
@@ -133,10 +169,11 @@ public final class RouteManager {
 */
         List<PointCh> toBeStreamed = new ArrayList<>(routeBean.getRoute().get().points());
 
-        List<Double> list1 =  toBeStreamed.stream().map(PointWebMercator :: ofPointCh)
-               .mapMultiToDouble((elem,consumer) -> {
-                   consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
-                   consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));})
+        List<Double> list1 = toBeStreamed.stream().map(PointWebMercator::ofPointCh)
+                .mapMultiToDouble((elem, consumer) -> {
+                    consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
+                    consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));
+                })
                 .boxed().toList();
 
         polyline.getPoints().setAll(list1);
@@ -150,11 +187,14 @@ public final class RouteManager {
      * @return the PointWebMercator corresponding to the position.
      */
     private PointWebMercator buildCircleCenter() {
-        return PointWebMercator.ofPointCh(routeBean.getRoute().get().pointAt(routeBean.highlightedPosition()));
+        return PointWebMercator.ofPointCh(
+                routeBean.getRoute()
+                        .get()
+                        .pointAt(routeBean.highlightedPosition()));
     }
 
     /**
-     * This method update the highlighted position on the screen.
+     * This method updates the highlighted position on the screen.
      */
     private void updateCircle() {
         if (Double.isNaN(routeBean.highlightedPosition())) {
@@ -171,7 +211,7 @@ public final class RouteManager {
     }
 
     /**
-     * This method update the route on screen.
+     * This method updates the route on screen.
      */
     private void updatePolyline() {
         if (routeBean.getRoute().get() != null) {
@@ -180,8 +220,5 @@ public final class RouteManager {
         }
     }
 
-    private void updateAll() {
-        updatePolyline();
-        updateCircle();
-    }
+
 }

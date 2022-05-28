@@ -22,11 +22,21 @@ import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
  */
 public final class TileManager {
 
+    /**
+     * Maximum memory for the LinkedHashMap representing the cache-memory.
+     */
     private static final int MAX_CAP_MEMORY = 100;
+
+    /**
+     * Load Factor of the LinkedHashMap representing the cache-memory.
+     */
     private static final float LOAD_FACTOR = 0.75f;
+    /**
+     * Minimum value for a Tile coordinate.
+     */
     private static final int MIN_VALUE_TILE_COORDINATE = 0;
     /**
-     * Spe
+     * String specifying the file extension.
      */
     private static final String FILE_EXTENSION = ".png";
 
@@ -38,8 +48,8 @@ public final class TileManager {
     /**
      * Constructor of TileManager with the disk cache's path and the server hosting the Tiles online.
      *
-     * @param path - Path : path leading to the disk cache.
-     * @param serv - String : string representing the server name.
+     * @param path path leading to the disk cache.
+     * @param serv string representing the server name.
      */
     public TileManager(Path path, String serv) {
         this.cacheMemory = new LinkedHashMap<>(MAX_CAP_MEMORY, LOAD_FACTOR, true);
@@ -51,9 +61,9 @@ public final class TileManager {
     /**
      * This method allows us to get a Tile (format Image) from a TileId. And register it if it's not done yet.
      *
-     * @param tileId - TileId : tileId from the Tile to get.
-     * @return - Image : Image representing the Tile.
-     * @throws IOException : Throw an exception if the TileId is not valid.
+     * @param tileId tileId from the Tile to get.
+     * @return Image representing the Tile.
+     * @throws IOException if the TileId is not valid.
      */
     public Image imageForTileAt(TileId tileId) throws IOException {
 
@@ -108,9 +118,9 @@ public final class TileManager {
     /**
      * This record represent a TileId useful to identify a Tile thanks to zoomLevel, x and y coordinate.
      *
-     * @param zoomLevel - int : the zoomLevel.
-     * @param xTile     - int : the x coordinate of the Tile.
-     * @param yTile     - int : the y coordinate of the Tile.
+     * @param zoomLevel the zoomLevel.
+     * @param xTile     the x coordinate of the Tile.
+     * @param yTile     the y coordinate of the Tile.
      */
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
@@ -118,6 +128,14 @@ public final class TileManager {
             Preconditions.checkArgument(isValid(zoomLevel, xTile, yTile));
         }
 
+        /**
+         * This static method allow us to check if whether the Tile coordinates are valid.
+         *
+         * @param zoom of the TileId.
+         * @param x    coordinate x of the TileId.
+         * @param y    coordinate y of the TileId.
+         * @return a boolean on the validity of the arguments.
+         */
         public static boolean isValid(int zoom, int x, int y) {
             return !((x > (1 << zoom)) || y > (1 << zoom))
                     && (x > MIN_VALUE_TILE_COORDINATE) && (y > MIN_VALUE_TILE_COORDINATE);
