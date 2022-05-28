@@ -11,6 +11,7 @@ import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
@@ -68,6 +69,7 @@ public final class Graph {
         for (int i = 0; i < attributes.capacity(); i++) {
             attributeSets.add(new AttributeSet(attributes.get(i)));
         }
+
         return new Graph(new GraphNodes(nodes),
                 new GraphSectors(sectors),
                 new GraphEdges(edges, profileIds, elevations), attributeSets);

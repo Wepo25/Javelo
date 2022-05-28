@@ -1,6 +1,7 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -153,7 +154,7 @@ public final class ElevationProfileManager {
      */
     private static final int HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT = -7;
 
-    private final ObjectProperty<ElevationProfile> elevationProfile;
+    private final ReadOnlyObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty;
     private final ReadOnlyDoubleProperty highlightedPosition;
 
@@ -178,7 +179,7 @@ public final class ElevationProfileManager {
      * @param elevationProfile    elevation Profile corresponding to the route.
      * @param highlightedPosition the position to highlight along the profile.
      */
-    public ElevationProfileManager(ObjectProperty<ElevationProfile> elevationProfile,
+    public ElevationProfileManager(ReadOnlyObjectProperty<ElevationProfile> elevationProfile,
                                    ReadOnlyDoubleProperty highlightedPosition) {
 
         this.elevationProfile = elevationProfile;
@@ -208,13 +209,9 @@ public final class ElevationProfileManager {
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
-
         rectangleBindings();
-
         handlerBorderPane();
-
         elevationProfile.addListener((p, oldS, newS) -> operationsSequence());
-
     }
 
     /**
@@ -246,7 +243,6 @@ public final class ElevationProfileManager {
                 mousePositionOnProfileProperty.set(position.getX());
             } else mousePositionOnProfileProperty.set(Double.NaN);
         });
-
         borderPane.setOnMouseExited(event -> {
             if (!rectangle.get().contains(new Point2D(event.getX(), event.getY()))) {
                 mousePositionOnProfileProperty.set(Double.NaN);
@@ -356,15 +352,15 @@ public final class ElevationProfileManager {
      * @param type either horizontal or vertical label.
      */
     private void createLabel(double x, double y, String name, String type) {
-        Text label = new Text(name);
+        Preconditions.checkArgument(type.equals(HORIZONTAL_DIRECTION) || type.equals(VERTICAL_DIRECTION));
+        Text label = new Text(x, y, name);
         label.getStyleClass().setAll(GRID_LABEL, type);
         label.setFont(Font.font(LABEL_FONT, LABEL_FONT_SIZE));
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
-        label.setX(x);
-        label.setY(y);
         label.setLayoutX(Objects.equals(type, HORIZONTAL_DIRECTION) ?
                 -(label.prefWidth(0) + 2) : -0.5 * label.prefWidth(0));
-        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
+        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ?
+                HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
         textGroup.getChildren().add(label);
     }
 
@@ -419,21 +415,6 @@ public final class ElevationProfileManager {
                 rectangle.get().getMinX(), rectangle.get().getMaxY());
 
         profileGraph.getPoints().setAll(list);
-
-        /*
-        List<Double> toAdd = new ArrayList<>();
-        for (double i = rectangle.get().getMinX(); i <= rectangle.get().getMaxX(); i++) {
-            Point2D pointWorld = screenToWorld.get().transform(i, 0);
-            double elevation = elevationProfile.get().elevationAt(pointWorld.getX());
-            Point2D pointScreen = worldToScreen.get().transform(0, elevation);
-            toAdd.add(i);
-            toAdd.add(pointScreen.getY());
-        }
-        profileGraph.getPoints().addAll(toAdd);
-        profileGraph.getPoints().addAll(rectangle.get().getMaxX(), rectangle.get().getMaxY(),
-                rectangle.get().getMinX(), rectangle.get().getMaxY());
-*/
-
     }
 
     /**

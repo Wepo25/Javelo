@@ -52,29 +52,15 @@ public final class Stage6Test {
     }
     private static List<Integer> primes(int to){
         List<Integer> primeList = new ArrayList<>();
-        if(to<0){
-            throw new IndexOutOfBoundsException();
-        }
-        else if(to == 0 || to == 1){
-            return primeList;
-        }
-        else{
-            primeList.add(2);
-        }
+        if(to<0) throw new IndexOutOfBoundsException();
+        else if(to == 0 || to == 1) return primeList;
+        else primeList.add(2);
 
         for(int i = 3; i<=to ; i+=2){
-            if(i != 3 && sumOfDigits(i)%3==0){
-                continue;
-            }
-            else if (String.valueOf(i).charAt(String.valueOf(i).length()-1) == '5'){
-                continue;
-            }
+            if(i != 3 && sumOfDigits(i)%3==0 || String.valueOf(i).charAt(String.valueOf(i).length()-1) == '5') continue;
             else{
-                if(isPrime(i)){
-                    primeList.add(i);
-                }
+                if(isPrime(i)) primeList.add(i);
             }
-
         }
 
         return primeList;
@@ -91,9 +77,7 @@ public final class Stage6Test {
 
     private static boolean isPrime(int num){
         for(int i = 3 ; i<=(int) Math.sqrt(num)+1 ; i+=2){
-            if(num%i == 0){
-                return false;
-            }
+            if(num%i == 0) return false;
         }
         return true;
     }

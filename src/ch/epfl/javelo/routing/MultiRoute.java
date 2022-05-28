@@ -152,8 +152,7 @@ public final class MultiRoute implements Route {
         int counter = 0;
         for (Route segment : segments) {
             points = points.min(segment.pointClosestTo(point)
-                    .withPositionShiftedBy(positions[counter]));
-            ++counter;
+                    .withPositionShiftedBy(positions[++counter]));
         }
         return points;
     }

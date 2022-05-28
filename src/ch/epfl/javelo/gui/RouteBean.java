@@ -14,9 +14,6 @@ import java.util.Map;
 
 public final class RouteBean {
 
-    /**
-     * The Maximum distance between each point of the
-     */
     private static final int MAX_STEP_LENGTH = 5;
     private static final int MIN_SIZE = 2;
     private final RouteComputer routeComputer;

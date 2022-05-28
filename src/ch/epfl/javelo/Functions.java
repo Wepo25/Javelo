@@ -36,9 +36,7 @@ public final class Functions {
         Preconditions.checkArgument(xMax > 0 && samples.length >= 2);
         List<Float> temp = new ArrayList<>();
 
-        for (Float f : samples) {
-            temp.add(f);
-        }
+        for (Float f : samples) temp.add(f);
 
         List<Float> immutableSamples = List.copyOf(temp);
         return (x) -> {
@@ -50,6 +48,5 @@ public final class Functions {
                     immutableSamples.get(Math2.clamp(0, borneInf + 1, immutableSamples.size() - 1)),
                     ((x - borneInf * gap) / gap));
         };
-
     }
 }

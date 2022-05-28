@@ -47,9 +47,12 @@ public final class AnnotatedMapManager {
     private final RouteBean bean;
 
     public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons) {
+
+
         RouteManager routeManager = new RouteManager(bean, mapViewParam);
         WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParam, bean.waypoints, cons);
         BaseMapManager baseMapManager = new BaseMapManager(tiles, waypointsManager, mapViewParam);
+
         this.pane = new StackPane(baseMapManager.pane(), routeManager.pane(), waypointsManager.pane());
         this.bean = bean;
         createHandler();
@@ -61,16 +64,13 @@ public final class AnnotatedMapManager {
                     if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null) {
                         PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
                                 mousePositionPoint2D.get().getY()).toPointCh();
-                        if (pointActual == null) {
-                            return Double.NaN;
-                        }
+                        if (pointActual == null) return Double.NaN;
                         RoutePoint closestPoint = bean.getRoute().get().
                                 pointClosestTo(pointActual);
-                        PointWebMercator tempPWM = PointWebMercator.ofPointCh(closestPoint.point());
+                        PointWebMercator p = PointWebMercator.ofPointCh(closestPoint.point());
                         double tempNorm = Math2.norm(
-                                mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(tempPWM),
-                                mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(tempPWM)
-                        );
+                                mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(p),
+                                mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(p));
 
                         if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
                         else return Double.NaN;

@@ -84,14 +84,10 @@ public final class BaseMapManager {
                     );
                 } catch (IOException | IllegalArgumentException ignored) {
                 }
-
             }
         }
     }
 
-    /**
-     * This method allows us to set handlers over the pane.
-     */
     private void paneEvent() {
 
         ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();
