@@ -41,9 +41,8 @@ public final class ElevationProfileComputer {
             float[] samples = new float[nbSamples];
             List<Integer> indexes = new ArrayList<>();
 
-            for (int i = 0; i < nbSamples; i++) {
-                samples[i] = ((float) route.elevationAt(i * spaceBetween));
-            }
+            for (int i = 0; i < nbSamples; i++) samples[i] = ((float) route.elevationAt(i * spaceBetween));
+
             int firstValidIndex = firstValid(samples);
             int lastValidIndex = lastValid(samples);
             if (firstValidIndex == -1) return new ElevationProfile(length, new float[nbSamples]);
@@ -52,7 +51,6 @@ public final class ElevationProfileComputer {
             Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
 
             if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) indexes.add(0);
-
 
             //Taking the indexes of values surrounding NaNs to facilitate interpolation.
             for (int i = 1; i < samples.length - 1; i++) {

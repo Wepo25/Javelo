@@ -66,14 +66,29 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     private static final int EXTRACT_PROFILE_3 = 4;
 
+    /**
+     * The OFFSET needed to access the profile.
+     */
     private static final int PROFILE_INDEX = 30;
 
+    /**
+     * The length of a profile.
+     */
     private static final int PROFILE_LENGTH = 2;
 
+    /**
+     * The OFFSET needed to access the sample.
+     */
     private static final int SAMPLE_INDEX = 0;
 
+    /**
+     * The length of a sample.
+     */
     private static final int SAMPLE_LENGTH = 29;
 
+    /**
+     * The shifting applied to the elevation.
+     */
     private static final int ELEVATION_SHIFT = 4;
 
 
@@ -140,25 +155,24 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         int sampleId = extractUnsigned(profileIds.get(edgeId), SAMPLE_INDEX, SAMPLE_LENGTH);
         int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
         float[] samples = new float[quantity];
-        int index = 0;
-        switch(profileType) {
-            case 0 : return new float[index];
+        switch (profileType){
+            case 0 : return new float[0];
             case 1 :
-                for (int i = sampleId; i < sampleId + quantity; i++) {
-                    samples[index++] = Math.scalb(toUnsignedInt(elevations.get(i)), -ELEVATION_SHIFT);
+                for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
+                    samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -ELEVATION_SHIFT);
                 }
                 break;
-            case 2:
-            case 3:
+            case 2 :
+            case 3 :
+                int index = 0;
                 samples[index++] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));
-                int profileSize = (profileType == 2) ? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
-                int profileLength = (profileType == 2) ? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
-                for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profileSize); i++) {
-                    for (int j = 0; j < profileSize; j++) {
-
+                int profile_size = (profileType == 2) ? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
+                int profile_length = (profileType == 2) ? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
+                for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
+                    for (int j = 0; j < profile_size; j++) {
                         samples[index] = samples[index - 1] + Q28_4.asFloat(extractSigned(elevations.get(i),
-                                profileLength * (profileSize - j - 1), profileLength));
-                        if (index++ == samples.length-1) break;
+                                profile_length * (profile_size - j - 1), profile_length));
+                        if (index++ == samples.length - 1) break;
                     }
                 }
                 break;

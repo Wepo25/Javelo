@@ -92,10 +92,7 @@ public final class RouteManager {
                     if (routeBean.getRoute().get() != null) {
                         pane.setVisible(true);
                         updateAll();
-                    } else {
-                        pane.setVisible(false);
-
-                    }
+                    } else pane.setVisible(false);
                 }
         );
     }
@@ -105,12 +102,9 @@ public final class RouteManager {
      */
     private void handlerMapViewParameter() {
         mapViewParam.addListener((p, oldS, newS) -> {
-
-            if ((!(oldS.zoomLevel() == newS.zoomLevel()))) {
-                updateAll();
-            } else {
+            if ((!(oldS.zoomLevel() == newS.zoomLevel()))) updateAll();
+            else {
                 if (!oldS.topLeft().equals(newS.topLeft())) {
-
                     updateCircle();
                     setPolylineLayout();
                 }
@@ -157,16 +151,7 @@ public final class RouteManager {
      * It prevents from partial display by adding all point at the same time.
      */
     private void buildRoute() {
-/*
-        List<Double> list = new ArrayList<>();
-        for (PointCh point : routeBean.getRoute().get().points()) {
-            list.add(PointWebMercator.ofPointCh(point).xAtZoomLevel(mapViewParam.get().zoomLevel()));
-            list.add(PointWebMercator.ofPointCh(point).yAtZoomLevel(mapViewParam.get().zoomLevel()));
-        }
 
-        polyline.getPoints().addAll(list);
-        setPolylineLayout();
-*/
         List<PointCh> toBeStreamed = new ArrayList<>(routeBean.getRoute().get().points());
 
         List<Double> list1 = toBeStreamed.stream().map(PointWebMercator::ofPointCh)
@@ -206,7 +191,6 @@ public final class RouteManager {
             circle.setCenterX(mapViewParam.get().viewX(buildCircleCenter()));
             circle.setCenterY(mapViewParam.get().viewY(buildCircleCenter()));
             circle.setRadius(CIRCLE_RADIUS);
-
         }
     }
 
@@ -219,6 +203,4 @@ public final class RouteManager {
             buildRoute();
         }
     }
-
-
 }

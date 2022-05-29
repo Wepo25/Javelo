@@ -13,14 +13,25 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
+/**
+ * A class creating the map without any data from the itinerary on it.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class BaseMapManager {
 
     /**
      * Minimum zoom.
      */
     private final static int ZOOM_MIN = 8;
+    /**
+     * Maximum zoom.
+     */
     private final static int ZOOM_MAX = 19;
-
+    /**
+     * Number of pixels in each tile.
+     */
     private static final int TILE_PIXEL_SIZE = 256;
 
     private final TileManager tileManager;
@@ -31,7 +42,18 @@ public final class BaseMapManager {
     private final GraphicsContext graphContext;
     private boolean redrawNeeded;
 
-
+    /**
+     * The constructor. Initialization of the arguments and pane. Attaches events handler and listener too.
+     *
+     * @param elevationProfile    elevation Profile corresponding to the route.
+     * @param highlightedPosition the position to highlight along the profile.
+     */
+    /**
+     * The constructor. Initialization of the arguments, canvas, pane and graphicContext.
+     * @param tm TileManager used to access the map's tiles.
+     * @param wm WaypointManager used to add and remove waypoints.
+     * @param mvp MapViewParameters used to access the map's coordinates.
+     */
     public BaseMapManager(TileManager tm, WaypointsManager wm, ObjectProperty<MapViewParameters> mvp) {
 
         this.tileManager = tm;
@@ -55,14 +77,21 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
-
         redrawOnNextPulse();
     }
 
+    /**
+     * This method gives the pane.
+     *
+     * @return the pane.
+     */
     public Pane pane() {
         return pane;
     }
 
+    /**
+     * This method draws the map by accessing each tile that composes it.
+     */
     private void draw() {
 
         double x = mapViewParam.get().x();
@@ -84,10 +113,14 @@ public final class BaseMapManager {
                     );
                 } catch (IOException | IllegalArgumentException ignored) {
                 }
+
             }
         }
     }
 
+    /**
+     * This method allows us to set handlers over the pane.
+     */
     private void paneEvent() {
 
         ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();
@@ -136,12 +169,18 @@ public final class BaseMapManager {
         pane.setPickOnBounds(false);
     }
 
+    /**
+     * This method to check whether we need to redraw the map.
+     */
     private void redrawIfNeeded() {
         if (!redrawNeeded) return;
         redrawNeeded = false;
         draw();
     }
 
+    /**
+     * This method redraws the map on next pulse allowing the program to not be constantly redrawing it.
+     */
     private void redrawOnNextPulse() {
         redrawNeeded = true;
         Platform.requestNextPulse();

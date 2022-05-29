@@ -46,9 +46,7 @@ public final class ElevationProfile {
         totalAscent = ascent;
         totalDescent = Math.abs(descent);
 
-        for (float sample : samples) {
-            samplesStats.accept(sample);
-        }
+        for (float sample : samples) samplesStats.accept(sample);
     }
 
     /**

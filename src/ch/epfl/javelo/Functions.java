@@ -29,7 +29,7 @@ public final class Functions {
     /**
      * @param samples table containing values spaced regularly.
      * @param xMax    the maximum value taken by the function.
-     * @return return a function obtained by linear interplolation between
+     * @return return a function obtained by linear interpolation between
      * all values given samples from 0 to XMax.
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
@@ -48,5 +48,6 @@ public final class Functions {
                     immutableSamples.get(Math2.clamp(0, borneInf + 1, immutableSamples.size() - 1)),
                     ((x - borneInf * gap) / gap));
         };
+
     }
 }

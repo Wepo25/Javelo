@@ -12,10 +12,24 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * A class computing the routes between the waypoints.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class RouteBean {
 
+    /**
+     * The Maximum distance between each point of the
+     */
     private static final int MAX_STEP_LENGTH = 5;
-    private static final int MIN_SIZE = 2;
+
+    /**
+     * The minimum number of waypoints placed for a route to be computed.
+     */
+    private static final int MIN_WAYPOINTS = 2;
+
     private final RouteComputer routeComputer;
     private final ObjectProperty<Route> route;
     private final DoubleProperty highlightedPosition;
@@ -40,9 +54,11 @@ public final class RouteBean {
         );
     }
 
-    public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {return elevationProfile;}
+    public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {
+        return elevationProfile;
+    }
 
-    public ObjectProperty<Route> getRoute() {
+    public ReadOnlyObjectProperty<Route> getRoute() {
         return route;
     }
 
@@ -59,7 +75,7 @@ public final class RouteBean {
     }
 
     private void computeRoute() {
-        if (waypoints.size() >= MIN_SIZE) {
+        if (waypoints.size() >= MIN_WAYPOINTS) {
             List<Route> listRoute = new ArrayList<>();
             for (int i = 1; i < waypoints.size(); i++) {
                 Waypoint startWaypoint = waypoints.get(i - 1);

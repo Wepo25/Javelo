@@ -1,7 +1,6 @@
 package ch.epfl.javelo.gui;
 
 import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -209,8 +208,11 @@ public final class ElevationProfileManager {
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
         pane.heightProperty().addListener((p, oldS, newS) -> operationsSequence());
+
         rectangleBindings();
+
         handlerBorderPane();
+
         elevationProfile.addListener((p, oldS, newS) -> operationsSequence());
     }
 
@@ -243,6 +245,7 @@ public final class ElevationProfileManager {
                 mousePositionOnProfileProperty.set(position.getX());
             } else mousePositionOnProfileProperty.set(Double.NaN);
         });
+
         borderPane.setOnMouseExited(event -> {
             if (!rectangle.get().contains(new Point2D(event.getX(), event.getY()))) {
                 mousePositionOnProfileProperty.set(Double.NaN);
@@ -299,8 +302,7 @@ public final class ElevationProfileManager {
         int horizontalIndex = 0;
         int verticalIndex = 0;
 
-        while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
-
+       while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
             Point2D start = worldToScreen.get().transform(0, horizontalIndex * horizontalSpace + firstStep);
             Point2D end = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
             addToPath(start, end);
@@ -309,7 +311,6 @@ public final class ElevationProfileManager {
         }
 
         while (verticalIndex * verticalSpace < length) {
-
             Point2D start = worldToScreen.get().transform(verticalIndex * verticalSpace, minElevation);
             Point2D end = worldToScreen.get().transform(verticalIndex * verticalSpace, maxElevation);
             addToPath(start, end);
@@ -352,15 +353,13 @@ public final class ElevationProfileManager {
      * @param type either horizontal or vertical label.
      */
     private void createLabel(double x, double y, String name, String type) {
-        Preconditions.checkArgument(type.equals(HORIZONTAL_DIRECTION) || type.equals(VERTICAL_DIRECTION));
         Text label = new Text(x, y, name);
         label.getStyleClass().setAll(GRID_LABEL, type);
         label.setFont(Font.font(LABEL_FONT, LABEL_FONT_SIZE));
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
         label.setLayoutX(Objects.equals(type, HORIZONTAL_DIRECTION) ?
                 -(label.prefWidth(0) + 2) : -0.5 * label.prefWidth(0));
-        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ?
-                HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
+        label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
         textGroup.getChildren().add(label);
     }
 
@@ -457,6 +456,4 @@ public final class ElevationProfileManager {
                 ele.minElevation(), ele.maxElevation())
         );
     }
-
-
 }

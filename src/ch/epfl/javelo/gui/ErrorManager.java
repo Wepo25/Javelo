@@ -7,20 +7,34 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * A class displaying an error message when the user performs an action that lead to an error.
+ *
+ * @author Gaspard Thoral (345230)
+ * @author Alexandre Mourot (346365)
+ */
 public final class ErrorManager {
 
+    /**
+     * The opacity of the first transition at the beginning and of the last transition at the end.
+     */
     private static final double FROM_TO_OPACITY = 0;
+    /**
+     * The opacity of the last transition at the beginning and of the first transition at the end.
+     */
     private static final double TO_FROM_OPACITY = 0.8;
 
     private final VBox vBox;
     private final SequentialTransition transition;
 
+    /**
+     * The constructor. Initialization of the vBox and of the transitions.
+     */
     public ErrorManager() {
 
         this.vBox = new VBox();
         this.vBox.getStylesheets().add("error.css");
         this.vBox.setMouseTransparent(true);
-
 
         FadeTransition firstTransition = new FadeTransition(Duration.millis(200), vBox);
         PauseTransition secondTransition = new PauseTransition(Duration.millis(2000));
@@ -33,13 +47,22 @@ public final class ErrorManager {
         lastTransition.setToValue(FROM_TO_OPACITY);
 
         this.transition = new SequentialTransition(firstTransition, secondTransition, lastTransition);
-
     }
 
-    public VBox pane() {
+    /**
+     * This method gives the vBox
+     * @return the vBox.
+     */
+    public VBox vbox() {
         return vBox;
     }
 
+    /**
+     * This method launches a sequence of transitions
+     * informing the user that there has been an error with the action he tried to perform.
+     *
+     * @param errorMessage The message to display.
+     */
     public void displayError(String errorMessage) {
         transition.stop();
         vBox.getChildren().clear();
@@ -47,5 +70,4 @@ public final class ErrorManager {
         java.awt.Toolkit.getDefaultToolkit().beep();
         transition.play();
     }
-
 }

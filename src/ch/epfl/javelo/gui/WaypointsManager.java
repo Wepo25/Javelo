@@ -94,7 +94,6 @@ public final class WaypointsManager {
         this.waypoints = wp;
         this.errorConsumer = errorConsumer;
 
-        //Todo canvas en attribut ou pas;
         pane = new Pane(new Canvas());
         paneActualisation();
 
@@ -102,7 +101,6 @@ public final class WaypointsManager {
 
         mapViewParam.addListener((Observable o) -> paneActualisation());
         waypoints.addListener((Observable o) -> paneActualisation());
-
     }
 
     /**
@@ -125,12 +123,10 @@ public final class WaypointsManager {
             setGroupPosition(group, waypoints.get(i));
             handlerCreation(i, group);
 
-            if (i == 0) {
-                group.getStyleClass().add(FIRST_GROUP_STYLE_CLASS);
-            } else {
-                if (i == waypoints.size() - 1) {
-                    group.getStyleClass().add(LAST_GROUP_STYLE_CLASS);
-                } else group.getStyleClass().add(MIDDLE_GROUP_STYLE_CLASS);
+            if (i == 0) group.getStyleClass().add(FIRST_GROUP_STYLE_CLASS);
+            else {
+                if (i == waypoints.size() - 1) group.getStyleClass().add(LAST_GROUP_STYLE_CLASS);
+                else group.getStyleClass().add(MIDDLE_GROUP_STYLE_CLASS);
             }
             listOfGroup.add(group);
         }
@@ -152,7 +148,6 @@ public final class WaypointsManager {
         group.setOnMousePressed(event -> {
             initialPoint.set(new Point2D(event.getX(), event.getY()));
             initialCoord.set(new Point2D(group.getLayoutX(), group.getLayoutY()));
-
         });
 
         group.setOnMouseDragged(event -> {
@@ -219,11 +214,8 @@ public final class WaypointsManager {
      * @param y coordinate of the WayPoint.
      */
     public void addWaypoint(double x, double y) {
-        if (findClosestNode(x, y) != null) {
-            waypoints.add(findClosestNode(x, y));
-        } else {
-            errorConsumer.accept(WAYPOINT_ADDER_ERROR_MESSAGE_1);
-        }
+        if (findClosestNode(x, y) != null) waypoints.add(findClosestNode(x, y));
+        else errorConsumer.accept(WAYPOINT_ADDER_ERROR_MESSAGE_1);
     }
 
     /**
@@ -241,8 +233,6 @@ public final class WaypointsManager {
             else return new Waypoint(point, nodeId);
         }
         return null;
-
-
     }
 
 }

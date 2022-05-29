@@ -21,6 +21,8 @@ public final class Preconditions {
      * @throws IllegalArgumentException : An exception is thrown if the argument is false.
      */
     public static void checkArgument(boolean shouldBeTrue) {
-        if (!shouldBeTrue) throw new IllegalArgumentException();
+        if (!shouldBeTrue) {
+            throw new IllegalArgumentException();
+        }
     }
 }
