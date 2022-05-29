@@ -55,7 +55,7 @@ public final class AnnotatedMapManager {
     private final RouteBean bean;
 
     /**
-     * Constructor creating the pane and handlers.
+     * Constructor creating the pane and handlers and initializing the attributes.
      * 
      * @param graph the graph.
      * @param tiles the tile manager.

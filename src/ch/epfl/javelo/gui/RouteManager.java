@@ -43,7 +43,7 @@ public final class RouteManager {
 
 
     /**
-     * The constructor. Initializing the argument and attaches them event handler.
+     * The constructor. Initializing the attributes and attaches them event handler.
      * Initializing the pane and giving it children to display the route.
      *
      * @param rb  the RouteBean of the route.

@@ -80,7 +80,7 @@ public final class WaypointsManager {
     private final Pane pane;
 
     /**
-     * The constructor. Adds listeners to actualise the pane when needed.
+     * The constructor. Adds listeners to actualize the pane when needed.
      *
      * @param routeNetwork  graph representing the network of the route.
      * @param mvp           a property containing the parameter of the displayed map.

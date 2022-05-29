@@ -37,9 +37,6 @@ public final class RouteBean {
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
     public ObservableList<Waypoint> waypoints;
 
-    /**
-     * The constructor. Initialization of the vBox and of the transitions.
-     */
 
     /**
      * The constructor. Initialization of the attributes.

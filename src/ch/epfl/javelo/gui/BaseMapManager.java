@@ -43,7 +43,7 @@ public final class BaseMapManager {
     private boolean redrawNeeded;
 
     /**
-     * The constructor. Initialization of the arguments and pane. Attaches events handler and listener too.
+     * The constructor. Initialization of the attributes and pane. Attaches events handler and listener too.
      *
      * @param elevationProfile    elevation Profile corresponding to the route.
      * @param highlightedPosition the position to highlight along the profile.
