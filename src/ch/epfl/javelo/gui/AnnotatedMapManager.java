@@ -36,7 +36,9 @@ public final class AnnotatedMapManager {
      */
     private final static int MIN_PIXEL_DISTANCE = 15;
 
-
+    /**
+     * The initial map view parameter.
+     */
     private final ObjectProperty<MapViewParameters> mapViewParam =
             new SimpleObjectProperty<>(new MapViewParameters(INITIAL_ZOOM_LEVEL, INITIAL_X_VALUE, INITIAL_Y_VALUE));
 
@@ -46,6 +48,13 @@ public final class AnnotatedMapManager {
     private final Pane pane;
     private final RouteBean bean;
 
+    /**
+     * Constructor creating the pane and handlers.
+     * @param graph the graph.
+     * @param tiles the tile manager.
+     * @param bean the route.
+     * @param cons the error consumer.
+     */
     public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons) {
         RouteManager routeManager = new RouteManager(bean, mapViewParam);
         WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParam, bean.waypoints, cons);
@@ -55,6 +64,10 @@ public final class AnnotatedMapManager {
         createHandler();
     }
 
+    /**
+     * This handler allows us to bind the property of the mouse position on the route. It allows to set it
+     * depending on the mouse's position on the pane.
+     */
     private void createHandler() {
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
                 () -> {
@@ -80,10 +93,18 @@ public final class AnnotatedMapManager {
         pane.setOnMouseDragged(event -> mousePositionPoint2D.set(null));
     }
 
+    /**
+     * This method returns the pane.
+     * @return the pane.
+     */
     public Pane pane() {
         return pane;
     }
 
+    /**
+     * This method returns the property of the mouse position on the route.
+     * @return the property containing the mouse position.
+     */
     public DoubleProperty mousePositionOnRouteProperty() {
         return mousePositionOnRouteProperty;
     }

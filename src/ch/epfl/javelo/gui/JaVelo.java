@@ -81,10 +81,10 @@ public final class JaVelo extends Application {
      * The method that starts the program and defines every necessary elements.
      *
      * @param primaryStage The stage containing the map and the itinerary's information.
-     * @throws Exception Throws an error when encountering one that has not been handled.
+     * @throws IOException Throws an error when encountering one that has not been handled.
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
 
         Graph graph = Graph.loadFrom(Path.of(GRAPH_PATH));
         Path cacheBasePath = Path.of(CACHE_BASE_PATH);
