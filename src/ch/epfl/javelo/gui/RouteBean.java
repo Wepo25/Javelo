@@ -90,17 +90,26 @@ public final class RouteBean {
     }
 
     /**
-     * This method allo
-     * @return
+     * This method gives the value of the highlighted position.
+     *
+     * @return the double value of the highlighted position.
      */
     public double highlightedPosition() {
         return highlightedPosition.doubleValue();
     }
 
+    /**
+     * This method sets the value of the highlighted position.
+     *
+     * @param value The new value of the highlighted position.
+     */
     public void setHighlightedPosition(double value) {
         highlightedPosition.set(value);
     }
 
+    /**
+     * This method computes the itinerary between each pair of following waypoints.
+     */
     private void computeRoute() {
         if (waypoints.size() >= MIN_WAYPOINTS) {
             List<Route> listRoute = new ArrayList<>();
@@ -123,6 +132,12 @@ public final class RouteBean {
         } else route.set(null);
     }
 
+    /**
+     * This method gives the index of a non-empty segment at a given position.
+     *
+     * @param position The position of the segment.
+     * @return The segment at the position.
+     */
     public int indexOfNonEmptySegmentAt(double position) {
         int index = route.get().indexOfSegmentAt(position);
         for (int i = 0; i <= index; i += 1) {
@@ -133,6 +148,9 @@ public final class RouteBean {
         return index;
     }
 
+    /**
+     * Record representing a pair of waypoints.
+     */
     record Pair(Waypoint a, Waypoint b) {
     }
 }
