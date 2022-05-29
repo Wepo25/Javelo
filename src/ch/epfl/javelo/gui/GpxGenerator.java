@@ -74,8 +74,8 @@ public class GpxGenerator {
         List<PointCh> points = route.points();
         for (int i = 0; i < points.size(); i++) {
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute("lat", String.valueOf((float) Math.toDegrees(points.get(i).lat())));
-            rtept.setAttribute("lon", String.valueOf((float) Math.toDegrees(points.get(i).lon())));
+            rtept.setAttribute("lat", String.valueOf(Math.toDegrees(points.get(i).lat())));
+            rtept.setAttribute("lon", String.valueOf(Math.toDegrees(points.get(i).lon())));
             Element ele = doc.createElement("ele");
             if (i != 0) position += points.get(i).distanceTo(points.get(i - 1));
             ele.setTextContent(String.valueOf(profile.elevationAt(position)));

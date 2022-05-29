@@ -106,7 +106,6 @@ public final class ElevationProfileManager {
      * String leading to the BorderPane graphics.
      */
     private static final String BORDERPANE_STYLESHEET_FILENAME = "elevation_profile.css";
-
     /**
      * Error Message if the transformation is not invertible.
      */
@@ -128,7 +127,6 @@ public final class ElevationProfileManager {
      * Message showing the elevation.
      */
     private static final String STATISTICS_ELEVATION_MESSAGE = "     Altitude : de %.0f m à %.0f m";
-
     /**
      * String leading to the minimum Y coordinate of the line showing the highlighted property on the profile.
      */

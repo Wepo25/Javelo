@@ -87,7 +87,6 @@ public final class RouteManager {
             updateCircle();
         });
 
-
         routeBean.getRoute().addListener((p, oldS, newS) -> {
                     if (routeBean.getRoute().get() != null) {
                         pane.setVisible(true);

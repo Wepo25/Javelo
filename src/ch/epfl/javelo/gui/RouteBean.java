@@ -37,7 +37,15 @@ public final class RouteBean {
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
     public ObservableList<Waypoint> waypoints;
 
+    /**
+     * The constructor. Initialization of the vBox and of the transitions.
+     */
 
+    /**
+     * The constructor. Initialization of the attributes.
+     *
+     * @param rc The element allowing us to calculate the best itinerary between two points.
+     */
     public RouteBean(RouteComputer rc) {
 
         this.highlightedPosition = new SimpleDoubleProperty();
@@ -54,18 +62,37 @@ public final class RouteBean {
         );
     }
 
+    /**
+     * This method gives a property of the elevation profile in ReadOnly.
+     *
+     * @return a ReadOnlyObjectProperty of the elevation profile.
+     */
     public ReadOnlyObjectProperty<ElevationProfile> getElevationProfile() {
         return elevationProfile;
     }
 
+    /**
+     * This method gives a property of the route in ReadOnly.
+     *
+     * @return a ReadOnlyObjectProperty of the route.
+     */
     public ReadOnlyObjectProperty<Route> getRoute() {
         return route;
     }
 
+    /**
+     * This method gives a double property of the highlighted position.
+     *
+     * @return a DoubleProperty of the highlighted profile.
+     */
     public DoubleProperty highlightedPositionProperty() {
         return highlightedPosition;
     }
 
+    /**
+     * This method allo
+     * @return
+     */
     public double highlightedPosition() {
         return highlightedPosition.doubleValue();
     }
@@ -108,6 +135,4 @@ public final class RouteBean {
 
     record Pair(Waypoint a, Waypoint b) {
     }
-
-
 }
