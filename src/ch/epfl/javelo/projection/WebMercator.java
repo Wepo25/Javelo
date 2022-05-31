@@ -21,8 +21,8 @@ public final class WebMercator {
     /**
      * This method allows us to compute the x coordinate with a point given Longitude.
      *
-     * @param lon - double : Longitude of a given point.
-     * @return - double : The x coordinate of the point located at this Longitude.
+     * @param lon Longitude of a given point.
+     * @return  The x coordinate of the point located at this Longitude.
      */
     public static double x(double lon) {
         return (lon + PI) / (2.0 * PI);
@@ -31,8 +31,8 @@ public final class WebMercator {
     /**
      * This method allows us to compute the x coordinate with a point given Latitude.
      *
-     * @param lat - double : Latitude of a given point.
-     * @return - double : The x coordinate of the point located at this Latitude.
+     * @param lat  Latitude of a given point.
+     * @return The x coordinate of the point located at this Latitude.
      */
     public static double y(double lat) {
         return (1 / (2 * PI)) * (PI - Math2.asinh(Math.tan(lat)));
@@ -41,8 +41,8 @@ public final class WebMercator {
     /**
      * This method allows us to compute the Longitude with a point given x coordinate.
      *
-     * @param x - double : X coordinate of a given point.
-     * @return - double : The Longitude of the point located at this x coordinate.
+     * @param x  X coordinate of a given point.
+     * @return  The Longitude of the point located at this x coordinate.
      */
     public static double lon(double x) {
         return 2 * PI * x - PI;
@@ -51,8 +51,8 @@ public final class WebMercator {
     /**
      * This method allows us to compute the Latitude with a point given y coordinate.
      *
-     * @param y - double : Y coordinate of a given point.
-     * @return - double : The Latitude of the point located at this y coordinate.
+     * @param y Y coordinate of a given point.
+     * @return The Latitude of the point located at this y coordinate.
      */
     public static double lat(double y) {
         return Math.atan(Math.sinh(PI - 2 * PI * y));

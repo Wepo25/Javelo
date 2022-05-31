@@ -51,6 +51,7 @@ public final class ErrorManager {
 
     /**
      * This method gives the vBox
+     *
      * @return the vBox.
      */
     public VBox vbox() {

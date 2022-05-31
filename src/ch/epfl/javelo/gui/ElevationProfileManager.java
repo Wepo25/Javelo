@@ -300,7 +300,7 @@ public final class ElevationProfileManager {
         int horizontalIndex = 0;
         int verticalIndex = 0;
 
-       while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
+        while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
             Point2D start = worldToScreen.get().transform(0, horizontalIndex * horizontalSpace + firstStep);
             Point2D end = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
             addToPath(start, end);

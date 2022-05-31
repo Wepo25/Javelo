@@ -1,7 +1,6 @@
 package ch.epfl.javelo.gui;
 
 
-import ch.epfl.javelo.Preconditions;
 import javafx.scene.image.Image;
 
 import java.io.*;
@@ -11,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 
+import static ch.epfl.javelo.Preconditions.checkArgument;
 import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 
 /**
@@ -67,7 +67,7 @@ public final class TileManager {
      */
     public Image imageForTileAt(TileId tileId) throws IOException {
 
-        Preconditions.checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
+        checkArgument(isValid(tileId.zoomLevel, tileId.xTile, tileId.yTile));
 
         Path fullPath = path.
                 resolve(String.valueOf(tileId.zoomLevel)).
@@ -125,7 +125,7 @@ public final class TileManager {
     public record TileId(int zoomLevel, int xTile, int yTile) {
 
         public TileId {
-            Preconditions.checkArgument(isValid(zoomLevel, xTile, yTile));
+            checkArgument(isValid(zoomLevel, xTile, yTile));
         }
 
         /**

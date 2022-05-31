@@ -13,7 +13,7 @@ import java.util.function.DoubleUnaryOperator;
 public final class Functions {
 
     /**
-     * private constructor which allows the class to be uninstantiable.
+     * Private constructor which allows the class to be not instantiable.
      */
     private Functions() {
     }
@@ -29,7 +29,7 @@ public final class Functions {
     /**
      * @param samples table containing values spaced regularly.
      * @param xMax    the maximum value taken by the function.
-     * @return return a function obtained by linear interpolation between
+     * @return returns a function obtained by linear interpolation between
      * all values given samples from 0 to XMax.
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {

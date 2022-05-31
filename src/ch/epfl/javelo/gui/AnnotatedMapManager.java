@@ -56,7 +56,7 @@ public final class AnnotatedMapManager {
 
     /**
      * Constructor creating the pane and handlers and initializing the attributes.
-     * 
+     *
      * @param graph the graph.
      * @param tiles the tile manager.
      * @param bean the route.
@@ -102,7 +102,6 @@ public final class AnnotatedMapManager {
 
     /**
      * This method returns the pane.
-     *
      * @return the pane.
      */
     public Pane pane() {
@@ -111,7 +110,6 @@ public final class AnnotatedMapManager {
 
     /**
      * This method returns the property of the mouse position on the route.
-     *
      * @return the property containing the mouse position.
      */
     public DoubleProperty mousePositionOnRouteProperty() {

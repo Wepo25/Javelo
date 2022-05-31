@@ -25,8 +25,10 @@ public final class SingleRoute implements Route {
     private final List<PointCh> pointList;
 
     /**
-     * This method constructs a SingleRoute with a list of edges (edges) given and a table
+     * Constructs a SingleRoute with a list of edges (edges) given and a table
      * containing the length at each edge position (positions).
+     *
+     * @param edges of the Route.
      */
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
@@ -43,10 +45,10 @@ public final class SingleRoute implements Route {
     }
 
     /**
-     * This method is not usefull for this type of route which contain only one segment.
+     * This method is not useful for this type of route which contain only one segment.
      *
-     * @param position - double : position given in meter.
-     * @return -int : 0.
+     * @param position position given in meter.
+     * @return 0.
      */
     @Override
     public int indexOfSegmentAt(double position) {
@@ -56,7 +58,7 @@ public final class SingleRoute implements Route {
     /**
      * This method gives us the route's length.
      *
-     * @return - double : the length.
+     * @return the length.
      */
     @Override
     public double length() {
@@ -64,9 +66,9 @@ public final class SingleRoute implements Route {
     }
 
     /**
-     * This method allows us to get every edges of the route.
+     * This method allows us to get every edge of the route.
      *
-     * @return - List<Edges> : immutable and containing all the edges.
+     * @return list immutable and containing all the edges.
      */
     @Override
     public List<Edge> edges() {
@@ -74,9 +76,9 @@ public final class SingleRoute implements Route {
     }
 
     /**
-     * This method allows us to get every point located at the edges extremity of the route.
+     * This method allows us to get every point located at the edges' extremity of the route.
      *
-     * @return - List<PointCh> : containing every pointCh located to edges extremity.
+     * @return list containing every pointCh located to edge extremity.
      */
     @Override
     public List<PointCh> points() {
@@ -86,8 +88,8 @@ public final class SingleRoute implements Route {
     /**
      * This method allows us to find a point located to a given distance on the route.
      *
-     * @param position - double : position along the route.
-     * @return - PointCh : the point corresponding to the position on the route.
+     * @param position position along the route.
+     * @return the point corresponding to the position on the route.
      */
     @Override
     public PointCh pointAt(double position) {
@@ -100,8 +102,8 @@ public final class SingleRoute implements Route {
     /**
      * This method allows us to get the height for a given position along the route.
      *
-     * @param position - double : position along the route.
-     * @return - double : the height corresponding to the position.
+     * @param position position along the route.
+     * @return the height corresponding to the position.
      */
     @Override
     public double elevationAt(double position) {
@@ -114,8 +116,8 @@ public final class SingleRoute implements Route {
     /**
      * This method allows us to get the NodeId belonging to the route and being the closest to a given position.
      *
-     * @param position - double : position along the route.
-     * @return - int : the identity of the closest node to the position.
+     * @param position position along the route.
+     * @return the identity of the closest node to the position.
      */
     @Override
     public int nodeClosestTo(double position) {
@@ -129,8 +131,8 @@ public final class SingleRoute implements Route {
     /**
      * This method allows us to get the point closest to an other given point.
      *
-     * @param point - PointCh : reference point to find the closest around it.
-     * @return - RoutePoint : closest point from the point passed in parameter.
+     * @param point reference point to find the closest around it.
+     * @return closest point from the point passed in parameter.
      */
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
@@ -146,10 +148,10 @@ public final class SingleRoute implements Route {
     }
 
     /**
-     * This method create an Array containing the length at a certain edge.
+     * This method creates an Array containing the length at a certain edge.
      *
-     * @param edges - List<Edge> : list of edge contained in this.
-     * @return - double[] : the Array containing the lengths of at edge index.
+     * @param edges list of edge contained in this.
+     * @return The Array containing the lengths of at edge index.
      */
     private double[] createPositions(List<Edge> edges) {
         final double[] positions;
@@ -166,8 +168,8 @@ public final class SingleRoute implements Route {
     /**
      * This method allows us to find the edge index at a given positions.
      *
-     * @param position - double : position.
-     * @return - int : the index of the edge.
+     * @param position position.
+     * @return the index of the edge.
      */
     private int edgeIndex(double position) {
         double boundedPosition = bounds(position);
@@ -177,6 +179,12 @@ public final class SingleRoute implements Route {
         return Math2.clamp(0, edgeIndex, edges.size() - 1);
     }
 
+    /**
+     * This method allows to clamp a position.
+     *
+     * @param position to be clamped.
+     * @return the clamped position.
+     */
     private double bounds(double position) {
         return Math2.clamp(0, position, length());
     }

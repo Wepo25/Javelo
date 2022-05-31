@@ -23,9 +23,9 @@ public final class ElevationProfile {
     /**
      * This method is the constructor of the ElevationProfile class.
      *
-     * @param length           - double : The length of our sequence of elevations.
-     * @param elevationSamples - float[] : The sequence of elevations.
-     * @throws IllegalArgumentException (checkArgument) : Throws an exception if the length is negative or the
+     * @param length            The length of our sequence of elevations.
+     * @param elevationSamples  The sequence of elevations.
+     * @throws IllegalArgumentException (checkArgument) Throws an exception if the length is negative or the
      *                                  sequence of elevations contain less than two elements.
      */
     public ElevationProfile(double length, float[] elevationSamples) {
@@ -52,23 +52,25 @@ public final class ElevationProfile {
     /**
      * This method allows us to get the length among which this elevation sequence spreads.
      *
-     * @return - double : The length of the path that this elevation sequence represents.
+     * @return The length of the path that this elevation sequence represents.
      */
     public double length() {
         return this.length;
     }
 
     /**
-     * This method allows us to compute the lowest elevation of the path corresponding to this sequence of elevations.
+     * This method allows us to compute the lowest elevation of the path
+     * corresponding to this sequence of elevations.
      *
-     * @return - double : The minimal elevation.
+     * @return The minimal elevation.
      */
     public double minElevation() {
         return samplesStats.getMin();
     }
 
     /**
-     * This method allows us to compute the highest elevation of the path corresponding to this sequence of elevations.
+     * This method allows us to compute the highest elevation of the path
+     * corresponding to this sequence of elevations.
      *
      * @return - double : The maximal elevation.
      */

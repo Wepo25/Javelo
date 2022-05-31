@@ -43,15 +43,10 @@ public final class BaseMapManager {
     private boolean redrawNeeded;
 
     /**
-     * The constructor. Initialization of the attributes and pane. Attaches events handler and listener too.
-     *
-     * @param elevationProfile    elevation Profile corresponding to the route.
-     * @param highlightedPosition the position to highlight along the profile.
-     */
-    /**
      * The constructor. Initialization of the arguments, canvas, pane and graphicContext.
-     * @param tm TileManager used to access the map's tiles.
-     * @param wm WaypointManager used to add and remove waypoints.
+     *
+     * @param tm  TileManager used to access the map's tiles.
+     * @param wm  WaypointManager used to add and remove waypoints.
      * @param mvp MapViewParameters used to access the map's coordinates.
      */
     public BaseMapManager(TileManager tm, WaypointsManager wm, ObjectProperty<MapViewParameters> mvp) {

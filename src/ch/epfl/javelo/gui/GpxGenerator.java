@@ -41,7 +41,7 @@ public class GpxGenerator {
     /**
      * This method creates the document containing the itinerary's data at the gpx format.
      *
-     * @param route The route of the itinerary.
+     * @param route   The route of the itinerary.
      * @param profile The profile of the itinerary.
      * @return a .gpx document containing the itinerary's information
      */
@@ -89,8 +89,8 @@ public class GpxGenerator {
      * This method creates a document and writes the itinerary's data on it.
      *
      * @param fileName The name of the file where we write the itinerary's data.
-     * @param route The route of the itinerary.
-     * @param profile The profile of the itinerary.
+     * @param route    The route of the itinerary.
+     * @param profile  The profile of the itinerary.
      * @throws IOException
      */
     public static void writeGpx(String fileName, Route route, ElevationProfile profile) throws IOException {
@@ -102,7 +102,8 @@ public class GpxGenerator {
                     .newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(doc), new StreamResult(w));
-        } catch (TransformerException ignored){}
+        } catch (TransformerException ignored) {
+        }
     }
 
     /**

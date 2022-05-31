@@ -22,8 +22,8 @@ public final class RouteComputer {
     /**
      * The constructor of the RouteComputer class.
      *
-     * @param graph        - Graph : The buffer containing the data we need to go from point A to point B.
-     * @param costFunction - CostFunction : A function used to pick the best path out of several ones
+     * @param graph        The buffer containing the data we need to go from point A to point B.
+     * @param costFunction A function used to pick the best path out of several ones
      *                     while not using length as the unique criteria.
      */
     public RouteComputer(Graph graph, CostFunction costFunction) {
@@ -66,9 +66,11 @@ public final class RouteComputer {
             for (int i = 0; i < quantity; i++) {
                 int nextNodeId = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if (COMPUTED_DISTANCE != distance[nextNodeId] && COMPUTED_DISTANCE != distance[id]) {
-                    float first_distance = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
-                            * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float second_distance = (float) (first_distance + graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
+                    float first_distance = (float) (distance[id] +
+                            costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
+                                    * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
+                    float second_distance = (float) (first_distance + graph.nodePoint(nextNodeId)
+                            .distanceTo(graph.nodePoint(endNodeId)));
                     if (first_distance < distance[nextNodeId]) {
                         distance[nextNodeId] = first_distance;
                         predecessor[nextNodeId] = id;
