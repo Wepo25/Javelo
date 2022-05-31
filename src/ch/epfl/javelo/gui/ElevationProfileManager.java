@@ -395,7 +395,7 @@ public final class ElevationProfileManager {
      */
     private void createProfileGraph() {
 
-        List<Double> list = IntStream.range((int) rectangle.get().getMinX(), (int) rectangle.get().getMaxX())
+        List<Double> list = IntStream.range((int) rectangle.get().getMinX(), (int) rectangle.get().getMaxX()+1)
                 .mapToDouble(e -> e)
                 .mapMulti((elem, consumer) -> {
 
