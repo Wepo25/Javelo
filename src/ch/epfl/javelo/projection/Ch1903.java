@@ -66,8 +66,8 @@ public final class Ch1903 {
      * This method allows is to switch between WGS84 coordinates to the Swiss coordinates
      * by giving us the point's North coordinate.
      *
-     * @param lon  Longitude of a point in the WGS84 system.
-     * @param lat  Latitude of a point in the WGS84 system.
+     * @param lon Longitude of a point in the WGS84 system.
+     * @param lat Latitude of a point in the WGS84 system.
      * @return The North coordinate of the point in the Swiss system.
      */
     public static double n(double lon, double lat) {
@@ -86,7 +86,7 @@ public final class Ch1903 {
      * by giving us the point's Longitude.
      *
      * @param e East coordinate of a point in the Swiss system.
-     * @param n  North coordinate of a point in the Swiss system.
+     * @param n North coordinate of a point in the Swiss system.
      * @return The Longitude of the point in the WGS84 system.
      */
     public static double lon(double e, double n) {

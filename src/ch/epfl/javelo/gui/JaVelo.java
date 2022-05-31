@@ -145,8 +145,8 @@ public final class JaVelo extends Application {
                 .bind(Bindings.when(annotatedMapManager
                                 .mousePositionOnRouteProperty()
                                 .greaterThanOrEqualTo(0)).
-                then(annotatedMapManager.mousePositionOnRouteProperty()).
-                otherwise(profile.mousePositionOnProfileProperty()));
+                        then(annotatedMapManager.mousePositionOnRouteProperty()).
+                        otherwise(profile.mousePositionOnProfileProperty()));
 
         //Initialization of the stage.
         primaryStage.setMinWidth(WINDOW_WIDTH);

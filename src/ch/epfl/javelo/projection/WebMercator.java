@@ -22,7 +22,7 @@ public final class WebMercator {
      * This method allows us to compute the x coordinate with a point given Longitude.
      *
      * @param lon Longitude of a given point.
-     * @return  The x coordinate of the point located at this Longitude.
+     * @return The x coordinate of the point located at this Longitude.
      */
     public static double x(double lon) {
         return (lon + PI) / (2.0 * PI);
@@ -31,7 +31,7 @@ public final class WebMercator {
     /**
      * This method allows us to compute the x coordinate with a point given Latitude.
      *
-     * @param lat  Latitude of a given point.
+     * @param lat Latitude of a given point.
      * @return The x coordinate of the point located at this Latitude.
      */
     public static double y(double lat) {
@@ -41,8 +41,8 @@ public final class WebMercator {
     /**
      * This method allows us to compute the Longitude with a point given x coordinate.
      *
-     * @param x  X coordinate of a given point.
-     * @return  The Longitude of the point located at this x coordinate.
+     * @param x X coordinate of a given point.
+     * @return The Longitude of the point located at this x coordinate.
      */
     public static double lon(double x) {
         return 2 * PI * x - PI;

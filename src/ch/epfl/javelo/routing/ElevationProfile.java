@@ -23,8 +23,8 @@ public final class ElevationProfile {
     /**
      * This method is the constructor of the ElevationProfile class.
      *
-     * @param length            The length of our sequence of elevations.
-     * @param elevationSamples  The sequence of elevations.
+     * @param length           The length of our sequence of elevations.
+     * @param elevationSamples The sequence of elevations.
      * @throws IllegalArgumentException (checkArgument) Throws an exception if the length is negative or the
      *                                  sequence of elevations contain less than two elements.
      */
