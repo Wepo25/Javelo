@@ -1,7 +1,8 @@
 package ch.epfl.javelo.projection;
 
-import static java.lang.Math.PI;
 import static ch.epfl.javelo.Math2.asinh;
+import static java.lang.Math.PI;
+
 /**
  * This class not instantiable allows us to switch between WGS 84 and Web Mercator coordinates.
  *

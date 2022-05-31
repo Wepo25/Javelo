@@ -1,13 +1,15 @@
 package ch.epfl.javelo.data;
 
-import static ch.epfl.javelo.Bits.extractSigned;
-import static ch.epfl.javelo.Bits.extractUnsigned;
-import static java.lang.Short.toUnsignedInt;
-import static ch.epfl.javelo.Math2.ceilDiv;
 import ch.epfl.javelo.Q28_4;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+
+import static ch.epfl.javelo.Bits.extractSigned;
+import static ch.epfl.javelo.Bits.extractUnsigned;
+import static ch.epfl.javelo.Math2.ceilDiv;
+import static java.lang.Short.toUnsignedInt;
 
 
 /**

@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import static ch.epfl.javelo.Math2.clamp;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -12,6 +11,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+
+import static ch.epfl.javelo.Math2.clamp;
 
 /**
  * A class creating the map without any data from the itinerary on it.

@@ -1,8 +1,9 @@
 package ch.epfl.javelo.data;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import static ch.epfl.javelo.Preconditions.checkArgument;
 
 
 /**

@@ -1,9 +1,10 @@
 package ch.epfl.javelo;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+
+import static ch.epfl.javelo.Preconditions.checkArgument;
 
 
 /**

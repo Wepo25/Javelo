@@ -13,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;

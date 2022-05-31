@@ -1,8 +1,9 @@
 package ch.epfl.javelo.data;
 
+import java.nio.IntBuffer;
+
 import static ch.epfl.javelo.Bits.extractUnsigned;
 import static ch.epfl.javelo.Q28_4.asDouble;
-import java.nio.IntBuffer;
 
 /**
  * A Buffer containing specific data of a Graph. Here nodes.

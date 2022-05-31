@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import static ch.epfl.javelo.Math2.ceilDiv;
 import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -24,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static ch.epfl.javelo.Math2.ceilDiv;
 
 
 /**

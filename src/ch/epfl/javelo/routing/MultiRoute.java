@@ -1,12 +1,14 @@
 package ch.epfl.javelo.routing;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
-import static ch.epfl.javelo.Math2.clamp;
 import ch.epfl.javelo.projection.PointCh;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static ch.epfl.javelo.Math2.clamp;
+import static ch.epfl.javelo.Preconditions.checkArgument;
 
 /**
  * A MultiRoute implementing Route.

@@ -1,14 +1,16 @@
 package ch.epfl.javelo.gui;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
-import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 import javafx.scene.image.Image;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+
+import static ch.epfl.javelo.Preconditions.checkArgument;
+import static ch.epfl.javelo.gui.TileManager.TileId.isValid;
 
 
 /**
