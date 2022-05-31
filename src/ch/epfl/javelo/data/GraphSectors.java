@@ -1,11 +1,13 @@
 package ch.epfl.javelo.data;
 
-import static ch.epfl.javelo.Math2.clamp;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ch.epfl.javelo.Math2.clamp;
 
 /**
  * A Buffer containing specific data of a Graph. Here sectors.

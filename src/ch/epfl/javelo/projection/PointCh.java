@@ -1,7 +1,7 @@
 package ch.epfl.javelo.projection;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
 import static ch.epfl.javelo.Math2.squaredNorm;
+import static ch.epfl.javelo.Preconditions.checkArgument;
 import static java.lang.Math.pow;
 
 /**

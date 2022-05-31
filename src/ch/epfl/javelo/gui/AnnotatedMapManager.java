@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import static ch.epfl.javelo.Math2.norm;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
@@ -15,6 +14,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import java.util.function.Consumer;
+
+import static ch.epfl.javelo.Math2.norm;
 
 /**
  * This class creates the annotated map.
@@ -59,8 +60,8 @@ public final class AnnotatedMapManager {
      *
      * @param graph the graph.
      * @param tiles the tile manager.
-     * @param bean the route.
-     * @param cons the error consumer.
+     * @param bean  the route.
+     * @param cons  the error consumer.
      */
     public AnnotatedMapManager(Graph graph, TileManager tiles, RouteBean bean, Consumer<String> cons) {
         RouteManager routeManager = new RouteManager(bean, mapViewParam);
@@ -105,6 +106,7 @@ public final class AnnotatedMapManager {
 
     /**
      * This method returns the pane.
+     *
      * @return the pane.
      */
     public Pane pane() {
@@ -113,6 +115,7 @@ public final class AnnotatedMapManager {
 
     /**
      * This method returns the property of the mouse position on the route.
+     *
      * @return the property containing the mouse position.
      */
     public DoubleProperty mousePositionOnRouteProperty() {

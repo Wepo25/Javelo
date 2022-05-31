@@ -5,6 +5,7 @@ import ch.epfl.javelo.routing.ElevationProfile;
 import ch.epfl.javelo.routing.Route;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;

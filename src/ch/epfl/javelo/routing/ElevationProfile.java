@@ -1,8 +1,9 @@
 package ch.epfl.javelo.routing;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
-import static ch.epfl.javelo.Functions.sampled;
 import java.util.DoubleSummaryStatistics;
+
+import static ch.epfl.javelo.Functions.sampled;
+import static ch.epfl.javelo.Preconditions.checkArgument;
 
 /**
  * A Profile representing a sequence of elevation.
@@ -98,8 +99,8 @@ public final class ElevationProfile {
     /**
      * This method allows us to get the elevation at a given position.
      *
-     * @param position - double : The position at which we are computing the elevation.
-     * @return - double : The elevation at the given position.
+     * @param position The position at which we are computing the elevation.
+     * @return The elevation at the given position.
      */
     public double elevationAt(double position) {
         return sampled(samples, length).applyAsDouble(position);

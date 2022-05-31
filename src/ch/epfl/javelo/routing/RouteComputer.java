@@ -1,8 +1,10 @@
 package ch.epfl.javelo.routing;
 
-import static ch.epfl.javelo.Preconditions.checkArgument;
 import ch.epfl.javelo.data.Graph;
+
 import java.util.*;
+
+import static ch.epfl.javelo.Preconditions.checkArgument;
 
 /**
  * A class computing the best itinerary from point A to point B.
@@ -94,11 +96,11 @@ public final class RouteComputer {
     /**
      * This method creates a route from a list of nodes.
      *
-     * @param p The list of nodes used for back propagation.
+     * @param p      The list of nodes used for back propagation.
      * @param nodeId The id of the last node.
      * @return A new Route.
      */
-    private Route createRoute(int[] p, int nodeId){
+    private Route createRoute(int[] p, int nodeId) {
         List<Edge> edges = new ArrayList<>();
         int id = nodeId;
         while (p[id] != 0) {

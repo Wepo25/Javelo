@@ -20,8 +20,11 @@ public class Q28_4test {
     }
 
     @Test
-    void asFloat() {
-        assertEquals(Q28_4.asFloat(0b00000000000000000000000001100100), 6.25);
-        assertEquals(Q28_4.asFloat(0b00000000000000000000000000000000), 0);
-    }
+    void ztest() {
+        Integer i = 2;
+        Integer w = 2;
+        String o = "o";
+                }
+
+
 }
