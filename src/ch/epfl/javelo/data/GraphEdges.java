@@ -107,7 +107,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
      * @return - int : The ID of the destination node of the given edge.
      */
-
     public int targetNodeId(int edgeId) {
         return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) :
                 edgesBuffer.getInt((edgeId * EDGES_INTS));
@@ -177,7 +176,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                 }
                 break;
         }
-        return (isInverted(edgeId)) ? reverse(samples) : samples;
+        return isInverted(edgeId) ? reverse(samples) : samples;
     }
 
     /**
