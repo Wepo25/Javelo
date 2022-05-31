@@ -13,8 +13,15 @@ import java.util.*;
  */
 public final class RouteComputer {
 
+    /**
+     * A float value of +∞.
+     */
     private final static float POSITIVE_INFINITY = Float.POSITIVE_INFINITY;
+    /**
+     * A float value of -∞ used to indicate that a node has already been visited.
+     */
     private final static float COMPUTED_DISTANCE = Float.NEGATIVE_INFINITY;
+
     private final Graph graph;
     private final CostFunction costFunction;
 
@@ -66,9 +73,11 @@ public final class RouteComputer {
             for (int i = 0; i < quantity; i++) {
                 int nextNodeId = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if (COMPUTED_DISTANCE != distance[nextNodeId] && COMPUTED_DISTANCE != distance[id]) {
-                    float first_distance = (float) (distance[id] + costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
-                            * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float second_distance = (float) (first_distance + graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
+                    float first_distance = (float) (distance[id] +
+                            costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) *
+                            graph.edgeLength(graph.nodeOutEdgeId(id, i)));
+                    float second_distance = (float) (first_distance +
+                            graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
                     if (first_distance < distance[nextNodeId]) {
                         distance[nextNodeId] = first_distance;
                         predecessor[nextNodeId] = id;
@@ -79,32 +88,33 @@ public final class RouteComputer {
             distance[id] = COMPUTED_DISTANCE;
         } while (!nodesPriorityQueue.isEmpty());
 
-        List<Edge> edges = edges(predecessor, endNodeId);
-        Collections.reverse(edges);
-
-        if (edges.isEmpty()) return null;
-
-        return new SingleRoute(edges);
+        return createRoute(predecessor, endNodeId);
     }
 
-    private List<Edge> edges(int[] predecessor, int endNodeId) {
-
+    /**
+     * This method creates a route from a list of nodes.
+     *
+     * @param p The list of nodes used for back propagation.
+     * @param nodeId The id of the last node.
+     * @return A new Route.
+     */
+    private Route createRoute(int[] p, int nodeId){
         List<Edge> edges = new ArrayList<>();
-        int id = endNodeId;
-
-        while (predecessor[id] != 0) {
+        int id = nodeId;
+        while (p[id] != 0) {
             boolean found = false;
             int edgeID = 0;
             while (!found) {
-                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(predecessor[id], edgeID)) == id) {
-                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(predecessor[id], edgeID), predecessor[id], id));
+                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(p[id], edgeID)) == id) {
+                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(p[id], edgeID), p[id], id));
                     found = true;
                 }
                 edgeID++;
             }
-            id = predecessor[id];
+            id = p[id];
         }
-        return edges;
+        Collections.reverse(edges);
+        return edges.isEmpty() ? null : new SingleRoute(edges);
     }
 }
 

@@ -295,8 +295,7 @@ public final class ElevationProfileManager {
 
         int horizontalSpace = createHorizontalSpace();
         int verticalSpace = createVerticalSpace();
-        int firstStep = Math2.ceilDiv((int) Math.round(minElevation), horizontalSpace) * horizontalSpace;
-
+        int firstStep = Math2.ceilDiv((int) Math.ceil(minElevation), horizontalSpace) * horizontalSpace;
         int horizontalIndex = 0;
         int verticalIndex = 0;
 

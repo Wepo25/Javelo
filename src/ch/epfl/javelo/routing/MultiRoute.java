@@ -6,6 +6,7 @@ import ch.epfl.javelo.projection.PointCh;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +46,6 @@ public final class MultiRoute implements Route {
     public int indexOfSegmentAt(double position) {
         double boundedPosition = bounds(position);
         int index = 0;
-
         for (Route route : segments) {
             double length = route.length();
             if (length < boundedPosition) {
@@ -70,9 +70,9 @@ public final class MultiRoute implements Route {
     }
 
     /**
-     * This method allows us to get every edges of the MultiRoute.
+     * This method allows us to get every edge of the MultiRoute.
      *
-     * @return - List<Edges> : containing all the edges.
+     * @return - List<Edge> : containing all the edges.
      */
     @Override
     public List<Edge> edges() {
@@ -80,7 +80,7 @@ public final class MultiRoute implements Route {
         for (Route route : segments) {
             edges.addAll(route.edges());
         }
-        return edges;
+        return Collections.unmodifiableList(edges);
     }
 
     /**
@@ -152,8 +152,7 @@ public final class MultiRoute implements Route {
         int counter = 0;
         for (Route segment : segments) {
             points = points.min(segment.pointClosestTo(point)
-                    .withPositionShiftedBy(positions[counter]));
-            ++counter;
+                    .withPositionShiftedBy(positions[counter++]));
         }
         return points;
     }

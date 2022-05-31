@@ -23,7 +23,6 @@ public record AttributeSet(long bits) {
      *                                  indexes is greater than the number of Attributes.
      */
     public AttributeSet {
-
         long validBits = bits >> Attribute.COUNT;
         Preconditions.checkArgument(validBits == 0);
     }
@@ -72,9 +71,7 @@ public record AttributeSet(long bits) {
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
         for (Attribute attribute : Attribute.ALL) {
-            if (this.contains(attribute)) {
-                j.add(attribute.toString());
-            }
+            if (this.contains(attribute)) j.add(attribute.toString());
         }
         return j.toString();
     }

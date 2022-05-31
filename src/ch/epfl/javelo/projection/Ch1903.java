@@ -9,12 +9,33 @@ package ch.epfl.javelo.projection;
  */
 public final class Ch1903 {
 
+    /**
+     * The number of seconds in an hour.
+     */
     private static final int HOUR_IN_SECONDS = 3600;
+    /**
+     * Constant subtracted to longitude.
+     */
     private static final double LON_SUBTRACTION = 26782.5;
+    /**
+     * Constant subtracted to latitude.
+     */
     private static final double LAT_SUBTRACTION = 169028.66;
+    /**
+     * Constant subtracted to east.
+     */
     private static final int EAST_SUBTRACTION = 2600000;
+    /**
+     * Constant subtracted to north.
+     */
     private static final int NORTH_SUBTRACTION = 1200000;
+    /**
+     * Factor used to turn longitude and latitude to north or east coordinates.
+     */
     private static final double EAST_NORTH_FACTOR = Math.pow(10, -4);
+    /**
+     * Factor used to turn east and north coordinates to latitude or longitude.
+     */
     private static final double LAT_LON_FACTOR = Math.pow(10, -6);
 
     /**
@@ -69,7 +90,8 @@ public final class Ch1903 {
         double x = LAT_LON_FACTOR * (e - EAST_SUBTRACTION);
         double y = LAT_LON_FACTOR * (n - NORTH_SUBTRACTION);
         double lon0 = 2.6779094 +
-                4.728982 * x + 0.791484 * x * y +
+                4.728982 * x +
+                0.791484 * x * y +
                 0.1306 * x * Math.pow(y, 2) -
                 0.0436 * Math.pow(x, 3);
         return Math.toRadians(lon0 * (100 / 36.));

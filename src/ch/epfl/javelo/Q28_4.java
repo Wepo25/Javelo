@@ -8,6 +8,9 @@ package ch.epfl.javelo;
  */
 public final class Q28_4 {
 
+    /**
+     * The number of bit we shift.
+     */
     private static final int BIT_SHIFT = 4;
 
 

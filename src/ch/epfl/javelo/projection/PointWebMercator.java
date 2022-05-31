@@ -10,7 +10,16 @@ import static ch.epfl.javelo.Preconditions.checkArgument;
  */
 public record PointWebMercator(double x, double y) {
 
+    /**
+     * Minimum zoom level.
+     */
     private static final int MIN_ZOOM = 8;
+
+    private static double lon;
+    private static double lat;
+
+    private static double e;
+    private static double n;
 
     /**
      * Constructor checking the validity of its arguments.
@@ -22,6 +31,10 @@ public record PointWebMercator(double x, double y) {
      */
     public PointWebMercator {
         checkArgument(x >= 0 && x <= 1 && y >= 0 && y <= 1);
+        lon = WebMercator.lon(x);
+        lat = WebMercator.lat(y);
+        e = Ch1903.e(lon, lat);
+        n = Ch1903.n(lon, lat);
     }
 
     /**
@@ -72,7 +85,7 @@ public record PointWebMercator(double x, double y) {
      * @return - double : This point's Longitude.
      */
     public double lon() {
-        return WebMercator.lon(this.x);
+        return lon;
     }
 
     /**
@@ -81,7 +94,7 @@ public record PointWebMercator(double x, double y) {
      * @return - double : This point's Latitude.
      */
     public double lat() {
-        return WebMercator.lat(this.y);
+        return lat;
     }
 
     /**
@@ -91,8 +104,6 @@ public record PointWebMercator(double x, double y) {
      * or null if the point is not in the Swiss.
      */
     public PointCh toPointCh() {
-        double e = Ch1903.e(lon(), lat());
-        double n = Ch1903.n(lon(), lat());
         return SwissBounds.containsEN(e, n) ? new PointCh(e, n) : null;
     }
 }

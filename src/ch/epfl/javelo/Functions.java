@@ -48,6 +48,5 @@ public final class Functions {
                     immutableSamples.get(Math2.clamp(0, borneInf + 1, immutableSamples.size() - 1)),
                     ((x - borneInf * gap) / gap));
         };
-
     }
 }
