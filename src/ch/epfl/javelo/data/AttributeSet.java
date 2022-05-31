@@ -34,10 +34,7 @@ public record AttributeSet(long bits) {
      */
     public static AttributeSet of(Attribute... attributes) {
         Set<Attribute> temp = Set.of(attributes);
-        long result = 0L;
-        for (Attribute attribute : temp) {
-            result += 1L << attribute.ordinal();
-        }
+        long result = temp.stream().mapToLong(attribute -> 1L << attribute.ordinal()).sum();
         return new AttributeSet(result);
     }
 
@@ -69,9 +66,7 @@ public record AttributeSet(long bits) {
     @Override
     public String toString() {
         StringJoiner j = new StringJoiner(",", "{", "}");
-        for (Attribute attribute : Attribute.ALL) {
-            if (this.contains(attribute)) j.add(attribute.toString());
-        }
+        Attribute.ALL.stream().filter(this::contains).map(Attribute::toString).forEach(j::add);
         return j.toString();
     }
 }
