@@ -1,7 +1,6 @@
 package ch.epfl.javelo.data;
 
-import ch.epfl.javelo.Preconditions;
-
+import static ch.epfl.javelo.Preconditions.checkArgument;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -24,7 +23,7 @@ public record AttributeSet(long bits) {
      */
     public AttributeSet {
         long validBits = bits >> Attribute.COUNT;
-        Preconditions.checkArgument(validBits == 0);
+        checkArgument(validBits == 0);
     }
 
     /**

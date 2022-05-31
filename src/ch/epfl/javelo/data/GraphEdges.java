@@ -1,15 +1,14 @@
 package ch.epfl.javelo.data;
 
-import ch.epfl.javelo.Math2;
+import static ch.epfl.javelo.Bits.extractSigned;
+import static ch.epfl.javelo.Bits.extractUnsigned;
+import static java.lang.Short.toUnsignedInt;
+import static ch.epfl.javelo.Math2.ceilDiv;
 import ch.epfl.javelo.Q28_4;
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-import static ch.epfl.javelo.Bits.extractSigned;
-import static ch.epfl.javelo.Bits.extractUnsigned;
-import static java.lang.Short.toUnsignedInt;
 
 /**
  * A Buffer containing specific data of a Graph. Here edges.
@@ -155,20 +154,21 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         int sampleId = extractUnsigned(profileIds.get(edgeId), SAMPLE_INDEX, SAMPLE_LENGTH);
         int quantity = 1 + (int) Math.ceil(length(edgeId) / 2);
         float[] samples = new float[quantity];
-        switch (profileType){
-            case 0 : return new float[0];
-            case 1 :
+        switch (profileType) {
+            case 0:
+                return new float[0];
+            case 1:
                 for (int i = sampleId, index = 0; i < sampleId + quantity; i++, index++) {
                     samples[index] = Math.scalb(toUnsignedInt(elevations.get(i)), -ELEVATION_SHIFT);
                 }
                 break;
-            case 2 :
-            case 3 :
+            case 2:
+            case 3:
                 int index = 0;
                 samples[index++] = Q28_4.asFloat(toUnsignedInt(elevations.get(sampleId)));
                 int profile_size = (profileType == 2) ? SAMPLE_PROFILE_2 : SAMPLE_PROFILE_3;
                 int profile_length = (profileType == 2) ? EXTRACT_PROFILE_2 : EXTRACT_PROFILE_3;
-                for (int i = sampleId + 1; i <= sampleId + Math2.ceilDiv(quantity - 1, profile_size); i++) {
+                for (int i = sampleId + 1; i <= sampleId + ceilDiv(quantity - 1, profile_size); i++) {
                     for (int j = 0; j < profile_size; j++) {
                         samples[index] = samples[index - 1] + Q28_4.asFloat(extractSigned(elevations.get(i),
                                 profile_length * (profile_size - j - 1), profile_length));

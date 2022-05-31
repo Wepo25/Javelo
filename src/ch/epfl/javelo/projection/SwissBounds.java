@@ -47,9 +47,9 @@ public final class SwissBounds {
     /**
      * This method allows us to check if a given location is situated in Switzerland.
      *
-     * @param e - double : The point's East coordinate in the Swiss system.
-     * @param n - double : The point's North coordinate in the Swiss system.
-     * @return - boolean : Whether the given point is located in Switzerland.
+     * @param e The point's East coordinate in the Swiss system.
+     * @param n The point's North coordinate in the Swiss system.
+     * @return Whether the given point is located in Switzerland.
      */
     public static boolean containsEN(double e, double n) {
         return (MAX_E >= e && MIN_E <= e && MAX_N >= n && MIN_N <= n);

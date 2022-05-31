@@ -33,8 +33,8 @@ public final class ErrorManager {
     public ErrorManager() {
 
         this.vBox = new VBox();
-        this.vBox.getStylesheets().add("error.css");
-        this.vBox.setMouseTransparent(true);
+        vBox.getStylesheets().add("error.css");
+        vBox.setMouseTransparent(true);
 
         FadeTransition firstTransition = new FadeTransition(Duration.millis(200), vBox);
         PauseTransition secondTransition = new PauseTransition(Duration.millis(2000));
@@ -51,6 +51,7 @@ public final class ErrorManager {
 
     /**
      * This method gives the vBox
+     *
      * @return the vBox.
      */
     public VBox vbox() {

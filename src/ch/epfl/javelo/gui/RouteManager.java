@@ -7,7 +7,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,20 +53,18 @@ public final class RouteManager {
         this.routeBean = rb;
         this.mapViewParam = mvp;
 
-        polyline = new Polyline();
-        circle = new Circle();
-        pane = new Pane(polyline, circle);
-
-        handlerCircle();
-
-        handlerMapViewParameter();
-
-        handlerRouteBean();
-
+        this.polyline = new Polyline();
         polyline.setId(POLYLINE_ID);
+
+        this.circle = new Circle();
         circle.setId(CIRCLE_ID);
 
+        this.pane = new Pane(polyline, circle);
         pane.setPickOnBounds(false);
+
+        handlerCircle();
+        handlerMapViewParameter();
+        handlerRouteBean();
     }
 
     /**
@@ -101,7 +98,7 @@ public final class RouteManager {
      */
     private void handlerMapViewParameter() {
         mapViewParam.addListener((p, oldS, newS) -> {
-            if ((!(oldS.zoomLevel() == newS.zoomLevel()))) updateAll();
+            if (oldS.zoomLevel() != newS.zoomLevel()) updateAll();
             else {
                 if (!oldS.topLeft().equals(newS.topLeft())) {
                     updateCircle();
@@ -117,14 +114,11 @@ public final class RouteManager {
     private void handlerCircle() {
         circle.setOnMouseClicked(e -> {
             Point2D position = circle.localToParent(e.getX(), e.getY());
-
             int nodeId = routeBean.getRoute().get().nodeClosestTo(routeBean.highlightedPosition());
             Waypoint pointToAdd = new Waypoint(mapViewParam.get()
                     .pointAt(position.getX(), position.getY()).toPointCh(), nodeId);
-
             int tempIndex = routeBean.indexOfNonEmptySegmentAt(routeBean.highlightedPosition());
             routeBean.waypoints.add(tempIndex + 1, pointToAdd);
-
         });
     }
 
@@ -144,7 +138,6 @@ public final class RouteManager {
         polyline.setLayoutY(-mapViewParam.get().topLeft().getY());
     }
 
-
     /**
      * This method creates the Polyline representing the route.
      * It prevents from partial display by adding all point at the same time.
@@ -152,15 +145,14 @@ public final class RouteManager {
     private void buildRoute() {
 
         List<PointCh> toBeStreamed = new ArrayList<>(routeBean.getRoute().get().points());
-
-        List<Double> list1 = toBeStreamed.stream().map(PointWebMercator::ofPointCh)
+        List<Double> pointsOnLine = toBeStreamed.stream().map(PointWebMercator::ofPointCh)
                 .mapMultiToDouble((elem, consumer) -> {
                     consumer.accept(elem.xAtZoomLevel(mapViewParam.get().zoomLevel()));
                     consumer.accept(elem.yAtZoomLevel(mapViewParam.get().zoomLevel()));
                 })
                 .boxed().toList();
 
-        polyline.getPoints().setAll(list1);
+        polyline.getPoints().setAll(pointsOnLine);
         setPolylineLayout();
 
     }

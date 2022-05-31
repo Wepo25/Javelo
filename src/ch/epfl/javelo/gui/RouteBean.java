@@ -115,7 +115,8 @@ public final class RouteBean {
                 Waypoint endWaypoint = waypoints.get(i);
                 if (!(startWaypoint.closestNodeId() == endWaypoint.closestNodeId())) {
                     if (!computedRoute.containsKey(new Pair(startWaypoint, endWaypoint))) {
-                        Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(), endWaypoint.closestNodeId());
+                        Route tempRoute = routeComputer.bestRouteBetween(startWaypoint.closestNodeId(),
+                                endWaypoint.closestNodeId());
                         if (tempRoute == null) {
                             route.set(null);
                             return;

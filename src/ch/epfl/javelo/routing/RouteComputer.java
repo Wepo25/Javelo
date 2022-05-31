@@ -1,8 +1,7 @@
 package ch.epfl.javelo.routing;
 
-import ch.epfl.javelo.Preconditions;
+import static ch.epfl.javelo.Preconditions.checkArgument;
 import ch.epfl.javelo.data.Graph;
-
 import java.util.*;
 
 /**
@@ -29,8 +28,8 @@ public final class RouteComputer {
     /**
      * The constructor of the RouteComputer class.
      *
-     * @param graph        - Graph : The buffer containing the data we need to go from point A to point B.
-     * @param costFunction - CostFunction : A function used to pick the best path out of several ones
+     * @param graph        The buffer containing the data we need to go from point A to point B.
+     * @param costFunction A function used to pick the best path out of several ones
      *                     while not using length as the unique criteria.
      */
     public RouteComputer(Graph graph, CostFunction costFunction) {
@@ -47,7 +46,7 @@ public final class RouteComputer {
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
-        Preconditions.checkArgument(startNodeId != endNodeId);
+        checkArgument(startNodeId != endNodeId);
 
         record WeightedNode(int nodeId, float distance) implements Comparable<WeightedNode> {
             @Override
@@ -74,10 +73,11 @@ public final class RouteComputer {
                 int nextNodeId = graph.edgeTargetNodeId(graph.nodeOutEdgeId(id, i));
                 if (COMPUTED_DISTANCE != distance[nextNodeId] && COMPUTED_DISTANCE != distance[id]) {
                     float first_distance = (float) (distance[id] +
-                            costFunction.costFactor(id, graph.nodeOutEdgeId(id, i)) *
-                            graph.edgeLength(graph.nodeOutEdgeId(id, i)));
-                    float second_distance = (float) (first_distance +
-                            graph.nodePoint(nextNodeId).distanceTo(graph.nodePoint(endNodeId)));
+                            costFunction.costFactor(id, graph.nodeOutEdgeId(id, i))
+                                    * graph.edgeLength(graph.nodeOutEdgeId(id, i)));
+                    float second_distance = (float) (first_distance + graph.nodePoint(nextNodeId)
+                            .distanceTo(graph.nodePoint(endNodeId)));
+
                     if (first_distance < distance[nextNodeId]) {
                         distance[nextNodeId] = first_distance;
                         predecessor[nextNodeId] = id;

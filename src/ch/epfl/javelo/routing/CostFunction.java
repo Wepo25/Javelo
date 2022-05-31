@@ -11,9 +11,9 @@ public interface CostFunction {
     /**
      * This method allows us to get the factor by which we have to multiply the length of an edge.
      *
-     * @param nodeId - int : Identity of the starting node of the edge.
-     * @param edgeId - int : Identity of the edge to weight.
-     * @return - double : the factor superior or equal to 1.
+     * @param nodeId Identity of the starting node of the edge.
+     * @param edgeId Identity of the edge to weight.
+     * @return the factor superior or equal to 1.
      */
     double costFactor(int nodeId, int edgeId);
 }

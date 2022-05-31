@@ -1,8 +1,10 @@
 package ch.epfl.javelo;
 
+import static ch.epfl.javelo.Preconditions.checkArgument;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+
 
 /**
  * This final not instantiable class allows us to get create mathematical function.
@@ -13,7 +15,7 @@ import java.util.function.DoubleUnaryOperator;
 public final class Functions {
 
     /**
-     * private constructor which allows the class to be uninstantiable.
+     * Private constructor which allows the class to be not instantiable.
      */
     private Functions() {
     }
@@ -29,11 +31,11 @@ public final class Functions {
     /**
      * @param samples table containing values spaced regularly.
      * @param xMax    the maximum value taken by the function.
-     * @return return a function obtained by linear interpolation between
+     * @return returns a function obtained by linear interpolation between
      * all values given samples from 0 to XMax.
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
-        Preconditions.checkArgument(xMax > 0 && samples.length >= 2);
+        checkArgument(xMax > 0 && samples.length >= 2);
         List<Float> temp = new ArrayList<>();
 
         for (Float f : samples) temp.add(f);

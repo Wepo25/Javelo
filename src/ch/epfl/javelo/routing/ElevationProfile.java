@@ -1,8 +1,7 @@
 package ch.epfl.javelo.routing;
 
-import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Preconditions;
-
+import static ch.epfl.javelo.Preconditions.checkArgument;
+import static ch.epfl.javelo.Functions.sampled;
 import java.util.DoubleSummaryStatistics;
 
 /**
@@ -23,13 +22,13 @@ public final class ElevationProfile {
     /**
      * This method is the constructor of the ElevationProfile class.
      *
-     * @param length           - double : The length of our sequence of elevations.
-     * @param elevationSamples - float[] : The sequence of elevations.
-     * @throws IllegalArgumentException (checkArgument) : Throws an exception if the length is negative or the
+     * @param length           The length of our sequence of elevations.
+     * @param elevationSamples The sequence of elevations.
+     * @throws IllegalArgumentException (checkArgument) Throws an exception if the length is negative or the
      *                                  sequence of elevations contain less than two elements.
      */
     public ElevationProfile(double length, float[] elevationSamples) {
-        Preconditions.checkArgument(length > 0 && elevationSamples.length >= 2);
+        checkArgument(length > 0 && elevationSamples.length >= 2);
 
         this.length = length;
         this.samples = new float[elevationSamples.length];
@@ -52,23 +51,25 @@ public final class ElevationProfile {
     /**
      * This method allows us to get the length among which this elevation sequence spreads.
      *
-     * @return - double : The length of the path that this elevation sequence represents.
+     * @return The length of the path that this elevation sequence represents.
      */
     public double length() {
         return this.length;
     }
 
     /**
-     * This method allows us to compute the lowest elevation of the path corresponding to this sequence of elevations.
+     * This method allows us to compute the lowest elevation of the path
+     * corresponding to this sequence of elevations.
      *
-     * @return - double : The minimal elevation.
+     * @return The minimal elevation.
      */
     public double minElevation() {
         return samplesStats.getMin();
     }
 
     /**
-     * This method allows us to compute the highest elevation of the path corresponding to this sequence of elevations.
+     * This method allows us to compute the highest elevation of the path
+     * corresponding to this sequence of elevations.
      *
      * @return - double : The maximal elevation.
      */
@@ -101,7 +102,7 @@ public final class ElevationProfile {
      * @return - double : The elevation at the given position.
      */
     public double elevationAt(double position) {
-        return Functions.sampled(samples, length).applyAsDouble(position);
+        return sampled(samples, length).applyAsDouble(position);
     }
 
 

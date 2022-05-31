@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+
 /**
  * The program's main class.
  *
@@ -95,7 +96,10 @@ public final class JaVelo extends Application {
         ErrorManager errorManager = new ErrorManager();
 
         //The map.
-        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph, tileManager, routeBean, errorManager::displayError);
+        AnnotatedMapManager annotatedMapManager = new AnnotatedMapManager(graph,
+                tileManager,
+                routeBean,
+                errorManager::displayError);
 
         //The profile.
         ElevationProfileManager profile = new ElevationProfileManager(
@@ -137,10 +141,12 @@ public final class JaVelo extends Application {
         mainPane.getStylesheets().add(MAIN_PANE_STYLESHEET);
 
         //Binding the shown position with the mouse's position on screen.
-        routeBean.highlightedPositionProperty().bind(Bindings.when(annotatedMapManager.mousePositionOnRouteProperty()
-                        .greaterThanOrEqualTo(0)).
-                then(annotatedMapManager.mousePositionOnRouteProperty()).
-                otherwise(profile.mousePositionOnProfileProperty()));
+        routeBean.highlightedPositionProperty()
+                .bind(Bindings.when(annotatedMapManager
+                                .mousePositionOnRouteProperty()
+                                .greaterThanOrEqualTo(0)).
+                        then(annotatedMapManager.mousePositionOnRouteProperty()).
+                        otherwise(profile.mousePositionOnProfileProperty()));
 
         //Initialization of the stage.
         primaryStage.setMinWidth(WINDOW_WIDTH);

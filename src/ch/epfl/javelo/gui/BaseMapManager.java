@@ -1,6 +1,6 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Math2;
+import static ch.epfl.javelo.Math2.clamp;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -43,15 +43,10 @@ public final class BaseMapManager {
     private boolean redrawNeeded;
 
     /**
-     * The constructor. Initialization of the attributes and pane. Attaches events handler and listener too.
-     *
-     * @param elevationProfile    elevation Profile corresponding to the route.
-     * @param highlightedPosition the position to highlight along the profile.
-     */
-    /**
      * The constructor. Initialization of the arguments, canvas, pane and graphicContext.
-     * @param tm TileManager used to access the map's tiles.
-     * @param wm WaypointManager used to add and remove waypoints.
+     *
+     * @param tm  TileManager used to access the map's tiles.
+     * @param wm  WaypointManager used to add and remove waypoints.
      * @param mvp MapViewParameters used to access the map's coordinates.
      */
     public BaseMapManager(TileManager tm, WaypointsManager wm, ObjectProperty<MapViewParameters> mvp) {
@@ -124,18 +119,17 @@ public final class BaseMapManager {
     private void paneEvent() {
 
         ObjectProperty<Point2D> dragged = new SimpleObjectProperty<>();
-
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
 
+        //Action to perform when mouse is scrolled.
         pane.setOnScroll(e -> {
-
             if (e.getDeltaY() == 0d) return;
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get()) return;
             minScrollTime.set(currentTime + 200);
             int zoomDelta = (int) Math.signum(e.getDeltaY());
             int oldZ = mapViewParam.get().zoomLevel();
-            int newZ = Math2.clamp(ZOOM_MIN, oldZ + zoomDelta, ZOOM_MAX);
+            int newZ = clamp(ZOOM_MIN, oldZ + zoomDelta, ZOOM_MAX);
 
             PointWebMercator temp = mapViewParam.get().pointAt(e.getX(), e.getY());
 
@@ -146,8 +140,10 @@ public final class BaseMapManager {
             redrawOnNextPulse();
         });
 
+        //Action to perform when mouse is pressed.
         pane.setOnMousePressed(e -> dragged.set(new Point2D(e.getX(), e.getY())));
 
+        //Action to perform when mouse is dragged.
         pane.setOnMouseDragged(e -> {
             Point2D tempDragged = dragged.get().subtract(e.getX(), e.getY());
             Point2D tempPoint = mapViewParam.get().topLeft().add(tempDragged);
@@ -156,10 +152,10 @@ public final class BaseMapManager {
                     tempPoint.getY())
             );
             dragged.set(new Point2D(e.getX(), e.getY()));
-
             redrawOnNextPulse();
         });
 
+        //Action to perform when mouse is released.
         pane.setOnMouseReleased(e -> {
             if (e.isStillSincePress()) {
                 waypointsManager.addWaypoint(e.getX(), e.getY());

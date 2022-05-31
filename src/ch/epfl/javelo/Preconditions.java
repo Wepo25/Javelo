@@ -17,8 +17,8 @@ public final class Preconditions {
     /**
      * Allows us to check an IllegalArgumentException() for several classes while using cleaner code.
      *
-     * @param shouldBeTrue - boolean :  Argument which we want to verify.
-     * @throws IllegalArgumentException : An exception is thrown if the argument is false.
+     * @param shouldBeTrue Argument which we want to verify.
+     * @throws IllegalArgumentException An exception is thrown if the argument is false.
      */
     public static void checkArgument(boolean shouldBeTrue) {
         if (!shouldBeTrue) {

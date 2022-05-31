@@ -1,6 +1,5 @@
 package ch.epfl.javelo.projection;
 
-
 /**
  * This final not instantiable class is used to convert swiss coordinate into WGS 84 and inversely.
  *
@@ -10,31 +9,31 @@ package ch.epfl.javelo.projection;
 public final class Ch1903 {
 
     /**
-     * The number of seconds in an hour.
+     * Number of seconds in an hour.
      */
     private static final int HOUR_IN_SECONDS = 3600;
     /**
-     * Constant subtracted to longitude.
+     * Subtraction for the longitude translation.
      */
     private static final double LON_SUBTRACTION = 26782.5;
     /**
-     * Constant subtracted to latitude.
+     * Subtraction for the latitude translation.
      */
     private static final double LAT_SUBTRACTION = 169028.66;
     /**
-     * Constant subtracted to east.
+     * Subtraction for the East translation.
      */
     private static final int EAST_SUBTRACTION = 2600000;
     /**
-     * Constant subtracted to north.
+     * Subtraction for the North translation.
      */
     private static final int NORTH_SUBTRACTION = 1200000;
     /**
-     * Factor used to turn longitude and latitude to north or east coordinates.
+     * Scale factor for the north and east coordinates.
      */
     private static final double EAST_NORTH_FACTOR = Math.pow(10, -4);
     /**
-     * Factor used to turn east and north coordinates to latitude or longitude.
+     * Scale factor for the latitude and longitude.
      */
     private static final double LAT_LON_FACTOR = Math.pow(10, -6);
 
@@ -45,11 +44,12 @@ public final class Ch1903 {
     }
 
     /**
-     * This method allows is to switch between WGS84 coordinates to the Swiss coordinates by giving us the point's East coordinate.
+     * This method allows is to switch between WGS84 coordinates to the Swiss coordinates
+     * by giving us the point's East coordinate.
      *
-     * @param lon - double : Longitude of a point in the WGS84 system.
-     * @param lat - double : Latitude of a point in the WGS84 system.
-     * @return - double : The East coordinate of the point in the Swiss system.
+     * @param lon Longitude of a point in the WGS84 system.
+     * @param lat Latitude of a point in the WGS84 system.
+     * @return The East coordinate of the point in the Swiss system.
      */
     public static double e(double lon, double lat) {
         double lon1 = EAST_NORTH_FACTOR * (HOUR_IN_SECONDS * (Math.toDegrees(lon)) - LON_SUBTRACTION);
@@ -62,11 +62,12 @@ public final class Ch1903 {
     }
 
     /**
-     * This method allows is to switch between WGS84 coordinates to the Swiss coordinates by giving us the point's North coordinate.
+     * This method allows is to switch between WGS84 coordinates to the Swiss coordinates
+     * by giving us the point's North coordinate.
      *
-     * @param lon - double : Longitude of a point in the WGS84 system.
-     * @param lat - double : Latitude of a point in the WGS84 system.
-     * @return - double : The North coordinate of the point in the Swiss system.
+     * @param lon Longitude of a point in the WGS84 system.
+     * @param lat Latitude of a point in the WGS84 system.
+     * @return The North coordinate of the point in the Swiss system.
      */
     public static double n(double lon, double lat) {
         double lon1 = EAST_NORTH_FACTOR * (HOUR_IN_SECONDS * (Math.toDegrees(lon)) - LON_SUBTRACTION);
@@ -80,11 +81,12 @@ public final class Ch1903 {
     }
 
     /**
-     * This method allows is to switch between the Swiss coordinates to the WGS84 coordinates by giving us the point's Longitude.
+     * This method allows is to switch between the Swiss coordinates to the WGS84 coordinates
+     * by giving us the point's Longitude.
      *
-     * @param e - double : East coordinates of a point in the Swiss system.
-     * @param n - double : North coordinates of a point in the Swiss system.
-     * @return - double : The Longitude of the point in the WGS84 system.
+     * @param e East coordinate of a point in the Swiss system.
+     * @param n North coordinate of a point in the Swiss system.
+     * @return The Longitude of the point in the WGS84 system.
      */
     public static double lon(double e, double n) {
         double x = LAT_LON_FACTOR * (e - EAST_SUBTRACTION);
@@ -98,11 +100,12 @@ public final class Ch1903 {
     }
 
     /**
-     * This method allows is to switch between the Swiss coordinates to the WGS84 coordinates by giving us the point's Latitude.
+     * This method allows is to switch between the Swiss coordinates to the WGS84 coordinates
+     * by giving us the point's Latitude.
      *
-     * @param e - double : East coordinates of a point in the Swiss system.
-     * @param n - double : North coordinates of a point in the Swiss system.
-     * @return - double : The Latitude of the point in the WGS84 system.
+     * @param e East coordinate of a point in the Swiss system.
+     * @param n North coordinate of a point in the Swiss system.
+     * @return The Latitude of the point in the WGS84 system.
      */
     public static double lat(double e, double n) {
         double x = LAT_LON_FACTOR * (e - EAST_SUBTRACTION);
@@ -116,5 +119,3 @@ public final class Ch1903 {
         return Math.toRadians(lat0 * (100 / 36.));
     }
 }
-
-

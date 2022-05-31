@@ -1,9 +1,8 @@
 package ch.epfl.javelo.routing;
 
-import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.Preconditions;
+import static ch.epfl.javelo.Preconditions.checkArgument;
+import static ch.epfl.javelo.Math2.clamp;
 import ch.epfl.javelo.projection.PointCh;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,11 +26,11 @@ public final class MultiRoute implements Route {
      * This method constructs a MultiRoute with a list of Route given ,and a table (positions)
      * containing the length at each segment positions.
      *
-     * @param seg - List<Route> : List containing all the segments constituting this route.
-     * @throws IllegalArgumentException (checkArgument) : Throws an exception is the list of segment given is empty.
+     * @param seg List containing all the segments constituting this route.
+     * @throws IllegalArgumentException (checkArgument) Throws an exception is the list of segment given is empty.
      */
     public MultiRoute(List<Route> seg) {
-        Preconditions.checkArgument(!seg.isEmpty());
+        checkArgument(!seg.isEmpty());
         segments = List.copyOf(seg);
         positions = createPositions(segments);
     }
@@ -39,8 +38,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get the index in terms of SingleRoute to a given position on the route.
      *
-     * @param position - double : position given in meter.
-     * @return - int : the index of the SingleRoute linked to the position.
+     * @param position position given in meter.
+     * @return the index of the SingleRoute linked to the position.
      */
     @Override
     public int indexOfSegmentAt(double position) {
@@ -62,7 +61,7 @@ public final class MultiRoute implements Route {
     /**
      * This method gives us the MultiRoute's length.
      *
-     * @return - double : the total length of the MultiRoute.
+     * @return the total length of the MultiRoute.
      */
     @Override
     public double length() {
@@ -72,7 +71,7 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get every edge of the MultiRoute.
      *
-     * @return - List<Edge> : containing all the edges.
+     * @return list containing all the edges.
      */
     @Override
     public List<Edge> edges() {
@@ -86,7 +85,7 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get every point located at the edge's extremity of the route.
      *
-     * @return - List<PointCh> : containing every pointCh located to edge's extremity.
+     * @return list containing every pointCh located to edge's extremity.
      */
     @Override
     public List<PointCh> points() {
@@ -103,8 +102,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to find a point located to a given distance on the MultiRoute.
      *
-     * @param position - double : Position along the route.
-     * @return - PointCh : The point corresponding to the position on the MultiRoute.
+     * @param position Position along the route.
+     * @return The point corresponding to the position on the MultiRoute.
      */
     @Override
     public PointCh pointAt(double position) {
@@ -116,8 +115,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get the height for a given position along the MultiRoute.
      *
-     * @param position - double : position along the route.
-     * @return - double : the height corresponding to the position.
+     * @param position position along the route.
+     * @return the height corresponding to the position.
      */
     @Override
     public double elevationAt(double position) {
@@ -130,8 +129,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get the NodeId belonging to the route and closest to a given position.
      *
-     * @param position - double : position along the route.
-     * @return - int : the identity of the closest node to the position.
+     * @param position position along the route.
+     * @return the identity of the closest node to the position.
      */
     @Override
     public int nodeClosestTo(double position) {
@@ -143,8 +142,8 @@ public final class MultiRoute implements Route {
     /**
      * This method allows us to get the point closest to an other given point.
      *
-     * @param point - PointCh : reference point to find the closest around it.
-     * @return - RoutePoint : closest point from the point passed in parameter.
+     * @param point reference point to find the closest around it.
+     * @return closest point from the point passed in parameter.
      */
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
@@ -160,8 +159,8 @@ public final class MultiRoute implements Route {
     /**
      * This method create an Array containing the length at a certain segment.
      *
-     * @param segments - List<Route> : list of route contained in this.
-     * @return - double[] : the Array containing the lengths of at segment index.
+     * @param segments list of route contained in this.
+     * @return the Array containing the lengths of at segment index.
      */
     private double[] createPositions(List<Route> segments) {
         final double[] positions;
@@ -178,19 +177,25 @@ public final class MultiRoute implements Route {
     /**
      * Private method to find the right index of segment at the scale of this MultiRoute.
      *
-     * @param position - double : position given in meter.
-     * @return - int : the index link to the position.
+     * @param position position given in meter.
+     * @return the index link to the position.
      */
     private int indexOfSegmentOnRoute(double position) {
         double boundedPosition = bounds(position);
         int resultSearch = Arrays.binarySearch(positions, boundedPosition);
         int segmentIndex;
         segmentIndex = (resultSearch >= 0) ? resultSearch : -resultSearch - 2;
-        return Math2.clamp(0, segmentIndex, segments.size() - 1);
+        return clamp(0, segmentIndex, segments.size() - 1);
     }
 
+    /**
+     * This method allows to clamp a position.
+     *
+     * @param position to be clamped.
+     * @return the clamped position.
+     */
     private double bounds(double position) {
-        return Math2.clamp(0, position, length());
+        return clamp(0, position, length());
     }
 
 }

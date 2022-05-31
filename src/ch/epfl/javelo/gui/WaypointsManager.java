@@ -13,7 +13,6 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -94,10 +93,9 @@ public final class WaypointsManager {
         this.waypoints = wp;
         this.errorConsumer = errorConsumer;
 
-        pane = new Pane(new Canvas());
-        paneActualisation();
-
+        this.pane = new Pane(new Canvas());
         pane.setPickOnBounds(false);
+        paneActualisation();
 
         mapViewParam.addListener((Observable o) -> paneActualisation());
         waypoints.addListener((Observable o) -> paneActualisation());

@@ -19,10 +19,10 @@ public final class Bits {
     /**
      * This method allows us to extract specific bits from an int and to make it signed.
      *
-     * @param value  - int : A given integer.
-     * @param start  - int : The index at which we start extracting the bits.
-     * @param length - int : The length of the bit extraction.
-     * @return - int : The signed representation of the extracted bits.
+     * @param value  A given integer.
+     * @param start  The index at which we start extracting the bits.
+     * @param length The length of the bit extraction.
+     * @return The signed representation of the extracted bits.
      * @throws IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
      */
     public static int extractSigned(int value, int start, int length) {
@@ -34,11 +34,11 @@ public final class Bits {
     /**
      * This method allows us to extract specific bits from an int and to make it unsigned.
      *
-     * @param value  - int : A given integer.
-     * @param start  - int : The index at which we start extracting the bits.
-     * @param length - int : The length of the bit extraction.
-     * @return - int : The unsigned representation of the extracted bits.
-     * @throw IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
+     * @param value  A given integer.
+     * @param start  The index at which we start extracting the bits.
+     * @param length The length of the bit extraction.
+     * @return The unsigned representation of the extracted bits.
+     * @throws IllegalArgumentException (checkArgument) : Throws an exception if specific conditions are not met.
      */
     public static int extractUnsigned(int value, int start, int length) {
         checkArgument((start + length) <= Integer.SIZE && start < Integer.SIZE && start >= 0 &&

@@ -1,6 +1,6 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Math2;
+import static ch.epfl.javelo.Math2.norm;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
@@ -56,7 +56,7 @@ public final class AnnotatedMapManager {
 
     /**
      * Constructor creating the pane and handlers and initializing the attributes.
-     * 
+     *
      * @param graph the graph.
      * @param tiles the tile manager.
      * @param bean the route.
@@ -85,7 +85,7 @@ public final class AnnotatedMapManager {
                         RoutePoint closestPoint = bean.getRoute().get().
                                 pointClosestTo(pointActual);
                         PointWebMercator tempPWM = PointWebMercator.ofPointCh(closestPoint.point());
-                        double tempNorm = Math2.norm(
+                        double tempNorm = norm(
                                 mousePositionPoint2D.get().getX() - mapViewParam.get().viewX(tempPWM),
                                 mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(tempPWM)
                         );
@@ -95,14 +95,16 @@ public final class AnnotatedMapManager {
                 },
                 mapViewParam, bean.getRoute(), mousePositionPoint2D));
 
+        //Action to perform when mouse is moved on the pane.
         pane.setOnMouseMoved(event -> mousePositionPoint2D.set(new Point2D(event.getX(), event.getY())));
+        //Action to perform when mouse leaves the pane.
         pane.setOnMouseExited(event -> mousePositionPoint2D.set(null));
+        //Action to perform when mouse is dragged.
         pane.setOnMouseDragged(event -> mousePositionPoint2D.set(null));
     }
 
     /**
      * This method returns the pane.
-     *
      * @return the pane.
      */
     public Pane pane() {
@@ -111,7 +113,6 @@ public final class AnnotatedMapManager {
 
     /**
      * This method returns the property of the mouse position on the route.
-     *
      * @return the property containing the mouse position.
      */
     public DoubleProperty mousePositionOnRouteProperty() {

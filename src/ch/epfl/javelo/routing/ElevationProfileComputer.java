@@ -1,9 +1,8 @@
 package ch.epfl.javelo.routing;
 
-import ch.epfl.javelo.Functions;
-import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.Preconditions;
-
+import static ch.epfl.javelo.Preconditions.checkArgument;
+import static ch.epfl.javelo.Math2.interpolate;
+import static ch.epfl.javelo.Functions.sampled;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,22 +25,26 @@ public final class ElevationProfileComputer {
     /**
      * This method allows us to build an ElevationProfile while interpolating the missing data.
      *
-     * @param route         - Route : The route of which we compute the ElevationProfile.
-     * @param maxStepLength - double : The gap between edges.
-     * @return - ElevationProfile : The ElevationProfile associated to the given route.
-     * @throws IllegalArgumentException (checkArgument) : Throws an exception if
+     * @param route         The route of which we compute the ElevationProfile.
+     * @param maxStepLength The gap between edges.
+     * @return The ElevationProfile associated to the given route.
+     * @throws IllegalArgumentException (checkArgument) Throws an exception if
      *                                  the gap between two edges is negative or null.
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
-        if (route != null) {
-            Preconditions.checkArgument(maxStepLength > 0);
+
+            checkArgument(maxStepLength > 0);
+
+            if (route == null) return null;
             int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
             double length = route.length();
             double spaceBetween = length / (nbSamples - 1);
             float[] samples = new float[nbSamples];
             List<Integer> indexes = new ArrayList<>();
 
-            for (int i = 0; i < nbSamples; i++) samples[i] = ((float) route.elevationAt(i * spaceBetween));
+            for (int i = 0; i < nbSamples; i++) {
+                samples[i] = ((float) route.elevationAt(i * spaceBetween));
+            }
 
             int firstValidIndex = firstValid(samples);
             int lastValidIndex = lastValid(samples);
@@ -57,7 +60,8 @@ public final class ElevationProfileComputer {
                 if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
                     indexes.add(i);
                     indexes.add(i);
-                } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1]) || Float.isNaN(samples[i + 1]))) {
+                } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1])
+                        || Float.isNaN(samples[i + 1]))) {
                     indexes.add(i);
                 }
             }
@@ -69,9 +73,10 @@ public final class ElevationProfileComputer {
             for (int i = 0; i <= (indexes.size() / 2) - 1; i++) {
                 int quantity = indexes.get(2 * i + 1) - indexes.get(2 * i);
                 if (quantity == 1) {
-                    samples[indexes.get(2 * i) + 1] = (float) Math2.interpolate(samples[indexes.get(2 * i)], samples[indexes.get(2 * i) + 1], 0.5);
+                    samples[indexes.get(2 * i) + 1] = (float) interpolate(samples[indexes.get(2 * i)],
+                            samples[indexes.get(2 * i) + 1], 0.5);
                 } else {
-                    DoubleUnaryOperator func = Functions.sampled(new float[]{samples[indexes.get(2 * i)],
+                    DoubleUnaryOperator func = sampled(new float[]{samples[indexes.get(2 * i)],
                             samples[indexes.get(2 * i + 1)]}, quantity);
                     for (int j = 1; j < quantity; j++) {
                         samples[indexes.get(2 * i) + j] = (float) func.applyAsDouble(j);
@@ -79,15 +84,13 @@ public final class ElevationProfileComputer {
                 }
             }
             return new ElevationProfile(length, samples);
-        }
-        return null;
     }
 
     /**
      * This method allows us to compute the first non-NaN value of an array of float.
      *
-     * @param floatArray - float[] : The array we are looking through.
-     * @return - int : The first valid index or -1 if it does not exist.
+     * @param floatArray The array we are looking through.
+     * @return The first valid index or -1 if it does not exist.
      */
     private static int firstValid(float[] floatArray) {
         for (int i = 0; i < floatArray.length; i++) {
@@ -99,8 +102,8 @@ public final class ElevationProfileComputer {
     /**
      * This method allows us to compute the last non-NaN value of an array of float.
      *
-     * @param floatArray - float[] : The array we are looking through.
-     * @return - int : The last valid index or -1 if it does not exist.
+     * @param floatArray The array we are looking through.
+     * @return The last valid index or -1 if it does not exist.
      */
     private static int lastValid(float[] floatArray) {
         for (int i = floatArray.length - 1; i >= 0; i--) {

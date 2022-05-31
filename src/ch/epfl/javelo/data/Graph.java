@@ -22,11 +22,29 @@ import java.util.function.DoubleUnaryOperator;
  */
 public final class Graph {
 
+    /**
+     * The path to the file containing the nodes' data.
+     */
     private static final String NODES_PATH = "nodes.bin";
+    /**
+     * The path to the file containing the sectors' data.
+     */
     private static final String SECTORS_PATH = "sectors.bin";
+    /**
+     * The path to the file containing the edges' data.
+     */
     private static final String EDGES_PATH = "edges.bin";
+    /**
+     * The path to the file containing the profiles' data.
+     */
     private static final String PROFILES_PATH = "profile_ids.bin";
+    /**
+     * The path to the file containing the elevations' data.
+     */
     private static final String ELEVATIONS_PATH = "elevations.bin";
+    /**
+     * The path to the file containing the attributes' data.
+     */
     private static final String ATTRIBUTES_PATH = "attributes.bin";
 
     private final GraphNodes nodes;
@@ -209,6 +227,6 @@ public final class Graph {
     public DoubleUnaryOperator edgeProfile(int edgeId) {
         return (!edges.hasProfile(edgeId)) ?
                 Functions.constant(Double.NaN) :
-                Functions.sampled(edges.profileSamples(edgeId), this.edges.length(edgeId));
+                Functions.sampled(edges.profileSamples(edgeId), edges.length(edgeId));
     }
 }

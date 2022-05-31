@@ -1,6 +1,6 @@
 package ch.epfl.javelo.gui;
 
-import ch.epfl.javelo.Math2;
+import static ch.epfl.javelo.Math2.ceilDiv;
 import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -161,7 +161,8 @@ public final class ElevationProfileManager {
     private final Line line;
     private final Pane pane;
 
-    private final Text vboxText = new Text();
+    private final VBox vBox;
+    private final Text vboxText;
 
     private final BorderPane borderPane;
 
@@ -186,22 +187,23 @@ public final class ElevationProfileManager {
         this.screenToWorld = new SimpleObjectProperty<>();
         this.worldToScreen = new SimpleObjectProperty<>();
 
-        VBox vbox = new VBox(vboxText);
-        vbox.setId(VBOX_ID);
+        this.vboxText = new Text();
+        this.vBox = new VBox(vboxText);
+        vBox.setId(VBOX_ID);
 
-        textGroup = new Group();
-        line = new Line();
+        this.textGroup = new Group();
+        this.line = new Line();
 
-        path = new Path();
+        this.path = new Path();
         path.setId(PATH_ID);
 
-        profileGraph = new Polygon();
+        this.profileGraph = new Polygon();
         profileGraph.setId(POLYGON_ID);
 
-        pane = new Pane(path, textGroup, profileGraph, line);
+        this.pane = new Pane(path, textGroup, profileGraph, line);
 
-        borderPane = new BorderPane(pane, null, null, vbox, null);
-        borderPane.setBottom(vbox);
+        this.borderPane = new BorderPane(pane, null, null, vBox, null);
+        borderPane.setBottom(vBox);
         borderPane.getStylesheets().setAll(BORDERPANE_STYLESHEET_FILENAME);
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());
@@ -295,11 +297,11 @@ public final class ElevationProfileManager {
 
         int horizontalSpace = createHorizontalSpace();
         int verticalSpace = createVerticalSpace();
-        int firstStep = Math2.ceilDiv((int) Math.ceil(minElevation), horizontalSpace) * horizontalSpace;
+        int firstStep = ceilDiv((int) Math.ceil(minElevation), horizontalSpace) * horizontalSpace;
         int horizontalIndex = 0;
         int verticalIndex = 0;
 
-       while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
+        while (horizontalIndex * horizontalSpace + firstStep < maxElevation) {
             Point2D start = worldToScreen.get().transform(0, horizontalIndex * horizontalSpace + firstStep);
             Point2D end = worldToScreen.get().transform(length, horizontalIndex * horizontalSpace + firstStep);
             addToPath(start, end);
