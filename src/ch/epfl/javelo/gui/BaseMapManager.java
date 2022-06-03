@@ -40,6 +40,7 @@ public final class BaseMapManager {
     private final ObjectProperty<MapViewParameters> mapViewParam;
 
     private final Pane pane;
+    private final Canvas canvas;
     private final GraphicsContext graphContext;
     private boolean redrawNeeded;
 
@@ -56,13 +57,33 @@ public final class BaseMapManager {
         this.waypointsManager = wm;
         this.mapViewParam = mvp;
 
-        Canvas canvas = new Canvas();
+        canvas = new Canvas();
         pane = new Pane(canvas);
 
         paneEvent();
 
         graphContext = canvas.getGraphicsContext2D();
 
+        canvasHandlers();
+
+        redrawOnNextPulse();
+    }
+
+
+
+    /**
+     * This method gives the pane.
+     *
+     * @return the pane.
+     */
+    public Pane pane() {
+        return pane;
+    }
+
+    /**
+     * This method sets all bindings and listener on the canvas.
+     */
+    private void canvasHandlers() {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
@@ -73,16 +94,6 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
-        redrawOnNextPulse();
-    }
-
-    /**
-     * This method gives the pane.
-     *
-     * @return the pane.
-     */
-    public Pane pane() {
-        return pane;
     }
 
     /**

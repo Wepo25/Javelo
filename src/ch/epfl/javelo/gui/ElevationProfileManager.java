@@ -152,6 +152,15 @@ public final class ElevationProfileManager {
      */
     private static final int HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT = -7;
 
+    /**
+     * Horizontal label adjustment given in the course.
+     */
+    public static final int HORIZONTAL_LABEL_ADJUSTMENT_INSET = 2;
+    /**
+     * Vertical label adjustment factor given in the course.
+     */
+    public static final double VERTICAL_LABEL_ADJUSTMENT_FACTOR = -0.5;
+
     private final ReadOnlyObjectProperty<ElevationProfile> elevationProfile;
     private final DoubleProperty mousePositionOnProfileProperty;
     private final ReadOnlyDoubleProperty highlightedPosition;
@@ -162,7 +171,6 @@ public final class ElevationProfileManager {
     private final Line line;
     private final Pane pane;
 
-    private final VBox vbox;
     private final Text vboxText;
 
     private final BorderPane borderPane;
@@ -189,7 +197,7 @@ public final class ElevationProfileManager {
         this.worldToScreen = new SimpleObjectProperty<>();
 
         this.vboxText = new Text();
-        this.vbox = new VBox(vboxText);
+        VBox vbox = new VBox(vboxText);
         vbox.setId(VBOX_ID);
 
         this.textGroup = new Group();
@@ -346,6 +354,7 @@ public final class ElevationProfileManager {
 
     /**
      * This method allows us to create the labels indicating the length and height.
+     * Depending on the type of the label.
      *
      * @param x    the x coordinate.
      * @param y    the y coordinate.
@@ -354,11 +363,17 @@ public final class ElevationProfileManager {
      */
     private void createLabel(double x, double y, String name, String type) {
         Text label = new Text(x, y, name);
+
         label.getStyleClass().setAll(GRID_LABEL, type);
+
         label.setFont(Font.font(LABEL_FONT, LABEL_FONT_SIZE));
+
         label.setTextOrigin((Objects.equals(type, HORIZONTAL_DIRECTION)) ? VPos.CENTER : VPos.TOP);
+
         label.setLayoutX(Objects.equals(type, HORIZONTAL_DIRECTION) ?
-                -(label.prefWidth(0) + 2) : -0.5 * label.prefWidth(0));
+                -(label.prefWidth(0) + HORIZONTAL_LABEL_ADJUSTMENT_INSET) :
+                VERTICAL_LABEL_ADJUSTMENT_FACTOR * label.prefWidth(0));
+
         label.setLayoutY(Objects.equals(type, HORIZONTAL_DIRECTION) ? HORIZONTAL_LABEL_Y_VALUE_ADJUSTMENT : 0);
         textGroup.getChildren().add(label);
     }

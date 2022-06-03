@@ -35,7 +35,7 @@ public final class RouteBean {
     private final DoubleProperty highlightedPosition;
     private final ObjectProperty<ElevationProfile> elevationProfile;
     private final Map<Pair, Route> computedRoute = new LinkedHashMap<>();
-    public ObservableList<Waypoint> waypoints;
+    public final ObservableList<Waypoint> waypoints;
 
 
     /**
