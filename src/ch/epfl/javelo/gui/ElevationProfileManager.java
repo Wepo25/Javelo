@@ -162,7 +162,7 @@ public final class ElevationProfileManager {
     private final Line line;
     private final Pane pane;
 
-    private final VBox vBox;
+    private final VBox vbox;
     private final Text vboxText;
 
     private final BorderPane borderPane;
@@ -189,8 +189,8 @@ public final class ElevationProfileManager {
         this.worldToScreen = new SimpleObjectProperty<>();
 
         this.vboxText = new Text();
-        this.vBox = new VBox(vboxText);
-        vBox.setId(VBOX_ID);
+        this.vbox = new VBox(vboxText);
+        vbox.setId(VBOX_ID);
 
         this.textGroup = new Group();
         this.line = new Line();
@@ -203,8 +203,8 @@ public final class ElevationProfileManager {
 
         this.pane = new Pane(path, textGroup, profileGraph, line);
 
-        this.borderPane = new BorderPane(pane, null, null, vBox, null);
-        borderPane.setBottom(vBox);
+        this.borderPane = new BorderPane(pane, null, null, vbox, null);
+        borderPane.setBottom(vbox);
         borderPane.getStylesheets().setAll(BORDERPANE_STYLESHEET_FILENAME);
 
         pane.widthProperty().addListener((p, oldS, newS) -> operationsSequence());

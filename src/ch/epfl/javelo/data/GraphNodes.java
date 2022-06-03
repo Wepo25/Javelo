@@ -34,18 +34,27 @@ public record GraphNodes(IntBuffer buffer) {
      */
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
 
+    /**
+     * The index of OUT_DEGREE.
+     */
     private static final int OUT_DEGREE_INDEX = 28;
-
+    /**
+     * The length of OUT_DEGREE.
+     */
     private static final int OUT_DEGREE_LENGTH = 4;
-
+    /**
+     * The index of EDGE_ID.
+     */
     private static final int EDGE_ID_INDEX = 0;
-
+    /**
+     * The length of EDGE_ID.
+     */
     private static final int EDGE_ID_LENGTH = 28;
 
     /**
      * This method allows us to compute the number of nodes contained inside the buffer.
      *
-     * @return - int : The total number of nodes contained in an object GraphNodes.
+     * @return The total number of nodes contained in an object GraphNodes.
      */
     public int count() {
         return buffer.capacity() / NODE_INTS;
@@ -54,8 +63,8 @@ public record GraphNodes(IntBuffer buffer) {
     /**
      * This method allows us to determine the east coordinate of a given node.
      *
-     * @param nodeId - int : The identity of the node.
-     * @return - double : The coordinate E of the node.
+     * @param nodeId The identity of the node.
+     * @return The coordinate E of the node.
      */
     public double nodeE(int nodeId) {
         return asDouble(buffer.get(nodeId * NODE_INTS + OFFSET_E));
@@ -64,8 +73,8 @@ public record GraphNodes(IntBuffer buffer) {
     /**
      * This method allows us to determine the north coordinate of a given node.
      *
-     * @param nodeId - int : The identity of the node.
-     * @return - double : The coordinate N of the node.
+     * @param nodeId The identity of the node.
+     * @return The coordinate N of the node.
      */
     public double nodeN(int nodeId) {
         return asDouble(buffer.get(nodeId * NODE_INTS + OFFSET_N));
@@ -74,8 +83,8 @@ public record GraphNodes(IntBuffer buffer) {
     /**
      * This method allows us to determine the number of leaving edge of a specific node.
      *
-     * @param nodeId - int : The identity of the node.
-     * @return - int : The number of edges leaving this node.
+     * @param nodeId The identity of the node.
+     * @return The number of edges leaving this node.
      */
     public int outDegree(int nodeId) {
         int idEdge = buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES);
@@ -86,14 +95,13 @@ public record GraphNodes(IntBuffer buffer) {
      * This method allows us to get the global index of a leaving edges with the id of its node and
      * its index in the list of edges leaving this specific node.
      *
-     * @param nodeId    - int : The identity of the node.
-     * @param edgeIndex - int : The index of the edges in a list consisting only of edges leaving this specific node.
-     * @return - int : The global index of the given edge.
+     * @param nodeId    The identity of the node.
+     * @param edgeIndex The index of the edges in a list consisting only of edges leaving this specific node.
+     * @return The global index of the given edge.
      */
     public int edgeId(int nodeId, int edgeIndex) {
         assert 0 <= edgeIndex && edgeIndex < outDegree(nodeId);
         int idEdge = buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES);
         return extractUnsigned(idEdge, EDGE_ID_INDEX, EDGE_ID_LENGTH) + edgeIndex;
     }
-
 }

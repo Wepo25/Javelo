@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.IntStream;
 
 import static ch.epfl.javelo.Functions.sampled;
 import static ch.epfl.javelo.Math2.interpolate;
 import static ch.epfl.javelo.Preconditions.checkArgument;
+import static java.lang.Float.isNaN;
 
 /**
  * A class intended to build an ElevationProfile
@@ -43,9 +45,7 @@ public final class ElevationProfileComputer {
         float[] samples = new float[nbSamples];
         List<Integer> indexes = new ArrayList<>();
 
-        for (int i = 0; i < nbSamples; i++) {
-            samples[i] = ((float) route.elevationAt(i * spaceBetween));
-        }
+        IntStream.range(0, nbSamples).forEach(i -> samples[i] = ((float) route.elevationAt(i * spaceBetween)));
 
         int firstValidIndex = firstValid(samples);
         int lastValidIndex = lastValid(samples);
@@ -54,19 +54,19 @@ public final class ElevationProfileComputer {
         Arrays.fill(samples, 0, firstValidIndex, samples[firstValidIndex]);
         Arrays.fill(samples, lastValidIndex, samples.length, samples[lastValidIndex]);
 
-        if (!Float.isNaN(samples[0]) && Float.isNaN(samples[1])) indexes.add(0);
+        if (!isNaN(samples[0]) && isNaN(samples[1])) indexes.add(0);
 
         //Taking the indexes of values surrounding NaNs to facilitate interpolation.
-        for (int i = 1; i < samples.length - 1; i++) {
-            if (!Float.isNaN(samples[i]) && Float.isNaN(samples[i - 1]) && Float.isNaN(samples[i + 1])) {
+        IntStream.range(1, samples.length - 1).forEach(i -> {
+            if (!isNaN(samples[i]) && isNaN(samples[i - 1]) && isNaN(samples[i + 1])) {
                 indexes.add(i);
                 indexes.add(i);
-            } else if (!Float.isNaN(samples[i]) && (Float.isNaN(samples[i - 1])
-                    || Float.isNaN(samples[i + 1]))) {
+            } else if (!isNaN(samples[i]) && (isNaN(samples[i - 1])
+                    || isNaN(samples[i + 1]))) {
                 indexes.add(i);
             }
-        }
-        if (!Float.isNaN(samples[samples.length - 1]) && Float.isNaN(samples[samples.length - 2])) {
+        });
+        if (!isNaN(samples[samples.length - 1]) && isNaN(samples[samples.length - 2])) {
             indexes.add(samples.length - 1);
         }
 
@@ -95,7 +95,7 @@ public final class ElevationProfileComputer {
      */
     private static int firstValid(float[] floatArray) {
         for (int i = 0; i < floatArray.length; i++) {
-            if (!Float.isNaN(floatArray[i])) return i;
+            if (!isNaN(floatArray[i])) return i;
         }
         return -1;
     }
@@ -108,7 +108,7 @@ public final class ElevationProfileComputer {
      */
     private static int lastValid(float[] floatArray) {
         for (int i = floatArray.length - 1; i >= 0; i--) {
-            if (!Float.isNaN(floatArray[i])) return i;
+            if (!isNaN(floatArray[i])) return i;
         }
         return -1;
     }

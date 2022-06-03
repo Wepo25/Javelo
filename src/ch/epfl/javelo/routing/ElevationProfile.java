@@ -105,8 +105,6 @@ public final class ElevationProfile {
     public double elevationAt(double position) {
         return sampled(samples, length).applyAsDouble(position);
     }
-
-
 }
 
 

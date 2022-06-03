@@ -49,7 +49,7 @@ public final class Math2 {
      * @param v   The value we want to check.
      * @param max The maximum of a given range.
      * @return min if v is smaller than min, max if v is greater than max and v otherwise.
-     * @throws IllegalArgumentException (checkArgument) Throws an exception if the minimum value of the range
+     * @throws IllegalArgumentException Throws an exception if the minimum value of the range
      *                                  is strictly greater than its given maximum.
      */
     public static int clamp(int min, int v, int max) {

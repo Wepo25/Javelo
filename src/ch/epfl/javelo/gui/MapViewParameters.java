@@ -52,7 +52,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
      * This method returns the x position of a PointWebMercator depending on the topLeft point of the map displayed.
      *
      * @param point the point to express the coordinate from.
-     * @return return the x coordinate in type double.
+     * @return the x coordinate in type double.
      */
     public double viewX(PointWebMercator point) {
         return point.xAtZoomLevel(zoomLevel) - this.x;
@@ -62,7 +62,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
      * This method returns the y position of a PointWebMercator depending on the topLeft point of the map displayed.
      *
      * @param point the point to express the coordinate from.
-     * @return return the y coordinate in type double.
+     * @return the y coordinate in type double.
      */
     public double viewY(PointWebMercator point) {
         return point.yAtZoomLevel(zoomLevel) - this.y;

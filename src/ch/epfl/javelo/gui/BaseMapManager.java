@@ -109,7 +109,6 @@ public final class BaseMapManager {
                     );
                 } catch (IOException | IllegalArgumentException ignored) {
                 }
-
             }
         }
     }

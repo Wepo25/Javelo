@@ -96,8 +96,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to know if an edge goes in the same direction as the OMS path it comes from.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
-     * @return - boolean : True if the edge goes in the opposite way of the OMS path it comes from.
+     * @param edgeId The ID (or position) of the edge inside edgesBuffer.
+     * @return True if the edge goes in the opposite way of the OMS path it comes from.
      */
     public boolean isInverted(int edgeId) {
         return edgesBuffer.getInt(edgeId * EDGES_INTS) < 0;
@@ -106,8 +106,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to know which node a given edge is targeting.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
-     * @return - int : The ID of the destination node of the given edge.
+     * @param edgeId The ID (or position) of the edge inside edgesBuffer.
+     * @return The ID of the destination node of the given edge.
      */
     public int targetNodeId(int edgeId) {
         return isInverted(edgeId) ? ~edgesBuffer.getInt((edgeId * EDGES_INTS)) :
@@ -117,8 +117,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to know the length of a given edge.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
-     * @return - double : The length in meter of the given edge.
+     * @param edgeId The ID (or position) of the edge inside edgesBuffer.
+     * @return The length in meter of the given edge.
      */
     public double length(int edgeId) {
         return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort(EDGES_INTS * edgeId + OFFSET_LENGTH)));
@@ -127,8 +127,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to know the elevation gain of a given edge.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
-     * @return - double : The positive difference in altitude of the given edge.
+     * @param edgeId The ID (or position) of the edge inside edgesBuffer.
+     * @return The positive difference in altitude of the given edge.
      */
     public double elevationGain(int edgeId) {
         return Q28_4.asDouble(toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + OFFSET_ELEVATION))));
@@ -137,8 +137,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to know whether a given edge has a profile.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside profileIds.
-     * @return - boolean : True iff the given edge possesses a profile (different from 0).
+     * @param edgeId The ID (or position) of the edge inside profileIds.
+     * @return True iff the given edge possesses a profile (different from 0).
      */
     public boolean hasProfile(int edgeId) {
         return extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH) != 0;
@@ -147,8 +147,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to access a given edge's height samples no matter its profile type.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside profileIds.
-     * @return - float[] : An array of floats consisting of the different heights of a given edge.
+     * @param edgeId The ID (or position) of the edge inside profileIds.
+     * @return An array of floats consisting of the different heights of a given edge.
      */
     public float[] profileSamples(int edgeId) {
         int profileType = extractUnsigned(profileIds.get(edgeId), PROFILE_INDEX, PROFILE_LENGTH);
@@ -177,6 +177,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                     }
                 }
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + profileType);
         }
         return isInverted(edgeId) ? reverse(samples) : samples;
     }
@@ -184,8 +186,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to find the ID of a set of attribute given an edge.
      *
-     * @param edgeId - int : The ID (or position) of the edge inside edgesBuffer.
-     * @return - int : The ID of the set of attributes of the given edge.
+     * @param edgeId The ID (or position) of the edge inside edgesBuffer.
+     * @return The ID of the set of attributes of the given edge.
      */
     public int attributesIndex(int edgeId) {
         return toUnsignedInt(edgesBuffer.getShort((edgeId * EDGES_INTS + OFFSET_ATTRIBUTE)));
@@ -194,8 +196,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * This method allows us to easily reverse a float array which is useful when using the profileSamples method.
      *
-     * @param l - float[] : An array of floats.
-     * @return - float[] : The given float array but reversed.
+     * @param l An array of floats.
+     * @return The given float array but reversed.
      */
     private float[] reverse(float[] l) {
         for (int i = 0; i < l.length / 2; i++) {

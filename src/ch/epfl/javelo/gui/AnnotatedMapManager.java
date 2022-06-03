@@ -16,6 +16,8 @@ import javafx.scene.layout.StackPane;
 import java.util.function.Consumer;
 
 import static ch.epfl.javelo.Math2.norm;
+import static java.lang.Double.NaN;
+
 
 /**
  * This class creates the annotated map.
@@ -82,7 +84,7 @@ public final class AnnotatedMapManager {
                     if (bean.getRoute().get() != null && mousePositionPoint2D.get() != null) {
                         PointCh pointActual = mapViewParam.get().pointAt(mousePositionPoint2D.get().getX(),
                                 mousePositionPoint2D.get().getY()).toPointCh();
-                        if (pointActual == null) return Double.NaN;
+                        if (pointActual == null) return NaN;
                         RoutePoint closestPoint = bean.getRoute().get().
                                 pointClosestTo(pointActual);
                         PointWebMercator tempPWM = PointWebMercator.ofPointCh(closestPoint.point());
@@ -91,8 +93,8 @@ public final class AnnotatedMapManager {
                                 mousePositionPoint2D.get().getY() - mapViewParam.get().viewY(tempPWM)
                         );
                         if (tempNorm <= MIN_PIXEL_DISTANCE) return closestPoint.position();
-                        else return Double.NaN;
-                    } else return Double.NaN;
+                        else return NaN;
+                    } else return NaN;
                 },
                 mapViewParam, bean.getRoute(), mousePositionPoint2D));
 

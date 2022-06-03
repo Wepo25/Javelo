@@ -36,7 +36,7 @@ public interface Route {
     /**
      * This method allows us to get every point located at the edges' extremity of the route.
      *
-     * @return a list containing every pointCh located to edges extremity.
+     * @return a list containing every pointCh located to edge extremity.
      */
     List<PointCh> points();
 
@@ -65,7 +65,7 @@ public interface Route {
     int nodeClosestTo(double position);
 
     /**
-     * This method allows us to get the point closest to an other given point.
+     * This method allows us to get the point closest to another given point.
      *
      * @param point reference point to find the closest around it.
      * @return closest point from the point passed in parameter.

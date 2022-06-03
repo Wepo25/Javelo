@@ -37,10 +37,9 @@ public final class SingleRoute implements Route {
         checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
         positions = createPositions(edges);
-
         List<PointCh> list = new ArrayList<>();
         list.add(edges.get(0).fromPoint());
-        for (Edge edge : edges) list.add((edge.toPoint()));
+        edges.forEach(e -> list.add(e.toPoint()));
         this.pointList = List.copyOf(list);
     }
 
@@ -129,7 +128,7 @@ public final class SingleRoute implements Route {
     }
 
     /**
-     * This method allows us to get the point closest to an other given point.
+     * This method allows us to get the point closest to another given point.
      *
      * @param point reference point to find the closest around it.
      * @return closest point from the point passed in parameter.

@@ -32,7 +32,6 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
         return positionDifference == 0 ? this : new RoutePoint(point,
                 position + positionDifference,
                 distanceToReference);
-
     }
 
     /**

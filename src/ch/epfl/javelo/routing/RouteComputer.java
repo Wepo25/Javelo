@@ -42,9 +42,9 @@ public final class RouteComputer {
     /**
      * This method allows us to compute the best route between two given points.
      *
-     * @param startNodeId - int : The index of the node at which we start our bike session.
-     * @param endNodeId   - int : The index of the node at which we end our bike session.
-     * @return - Route : The best route to go from startNodeId to endNodeId.
+     * @param startNodeId The index of the node at which we start our bike session.
+     * @param endNodeId   The index of the node at which we end our bike session.
+     * @return The best route to go from startNodeId to endNodeId.
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
@@ -96,24 +96,24 @@ public final class RouteComputer {
     /**
      * This method creates a route from a list of nodes.
      *
-     * @param p      The list of nodes used for back propagation.
-     * @param nodeId The id of the last node.
+     * @param backNodes The list of nodes used for back propagation.
+     * @param nodeId    The id of the last node.
      * @return A new Route.
      */
-    private Route createRoute(int[] p, int nodeId) {
+    private Route createRoute(int[] backNodes, int nodeId) {
         List<Edge> edges = new ArrayList<>();
         int id = nodeId;
-        while (p[id] != 0) {
+        while (backNodes[id] != 0) {
             boolean found = false;
             int edgeID = 0;
             while (!found) {
-                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(p[id], edgeID)) == id) {
-                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(p[id], edgeID), p[id], id));
+                if (graph.edgeTargetNodeId(graph.nodeOutEdgeId(backNodes[id], edgeID)) == id) {
+                    edges.add(Edge.of(graph, graph.nodeOutEdgeId(backNodes[id], edgeID), backNodes[id], id));
                     found = true;
                 }
                 edgeID++;
             }
-            id = p[id];
+            id = backNodes[id];
         }
         Collections.reverse(edges);
         return edges.isEmpty() ? null : new SingleRoute(edges);

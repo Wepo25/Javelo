@@ -43,7 +43,7 @@ public class GpxGenerator {
      *
      * @param route   The route of the itinerary.
      * @param profile The profile of the itinerary.
-     * @return a .gpx document containing the itinerary's information
+     * @return A .gpx document containing the itinerary's information
      */
     public static Document createGpx(Route route, ElevationProfile profile) {
         Document doc = newDocument();
@@ -91,7 +91,7 @@ public class GpxGenerator {
      * @param fileName The name of the file where we write the itinerary's data.
      * @param route    The route of the itinerary.
      * @param profile  The profile of the itinerary.
-     * @throws IOException
+     * @throws IOException Due to Writer
      */
     public static void writeGpx(String fileName, Route route, ElevationProfile profile) throws IOException {
         Document doc = createGpx(route, profile);

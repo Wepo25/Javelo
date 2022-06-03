@@ -32,8 +32,8 @@ public final class Functions {
     /**
      * @param samples table containing values spaced regularly.
      * @param xMax    the maximum value taken by the function.
-     * @return returns a function obtained by linear interpolation between
-     * all values given samples from 0 to XMax.
+     * @return a function obtained by linear interpolation between
+     *         all values given samples from 0 to XMax.
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
         checkArgument(xMax > 0 && samples.length >= 2);

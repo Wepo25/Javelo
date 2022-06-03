@@ -34,13 +34,9 @@ public final class RouteManager {
 
     private final RouteBean routeBean;
     private final ReadOnlyObjectProperty<MapViewParameters> mapViewParam;
-
     private final Pane pane;
-
     private final Polyline polyline;
-
     private final Circle circle;
-
 
     /**
      * The constructor. Initializing the attributes and attaches them event handler.
@@ -176,9 +172,8 @@ public final class RouteManager {
     private void updateCircle() {
         if (Double.isNaN(routeBean.highlightedPosition())) {
             circle.setVisible(false);
-            return;
         }
-        if (routeBean.getRoute().get() != null) {
+        else if (routeBean.getRoute().get() != null) {
             circle.setVisible(true);
             circle.setCenterX(mapViewParam.get().viewX(buildCircleCenter()));
             circle.setCenterY(mapViewParam.get().viewY(buildCircleCenter()));
