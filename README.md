@@ -1,4 +1,4 @@
-# JaVelo - Swiss Bike Travel Application
+# JaVelo - Bike Travel Companion for Switzerland
 
 **JaVelo** is a Java application designed to enhance your biking experience in Switzerland. Just like Google Maps guides you on the road, JaVelo is your biking companion. It allows you to visualize biking paths, inclines, and declines in Switzerland, making your biking adventures more enjoyable and organized. JaVelo computes paths using the A* algorithm and leverages JavaFX and OpenStreetMap to provide a user-friendly experience.
 
