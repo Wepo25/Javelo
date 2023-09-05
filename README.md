@@ -41,8 +41,8 @@ We welcome contributions to enhance JaVelo and make it even better for biking en
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Acknowledgments
+## Demonstration
 
-JaVelo relies on the open-source community for its core technologies, including JavaFX and OpenStreetMap.
+https://github.com/Lolshh/JaVelo/assets/81919237/a5f87eb2-5a8f-4f3a-b05e-a717fdd621a5
 
 Happy biking with JaVelo! 🚴‍♂️🌄
