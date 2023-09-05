@@ -10,6 +10,10 @@
 
 - **A* Algorithm**: JaVelo uses the A* algorithm for path computation, ensuring optimal route planning.
 
+## Demonstration
+
+https://github.com/Lolshh/JaVelo/assets/81919237/a5f87eb2-5a8f-4f3a-b05e-a717fdd621a5
+
 ## Installation
 
 1. **JavaFX**: Ensure you have JavaFX installed on your system. If not, you can download it [here](https://openjfx.io/).
@@ -41,8 +45,6 @@ We welcome contributions to enhance JaVelo and make it even better for biking en
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Demonstration
-
-https://github.com/Lolshh/JaVelo/assets/81919237/a5f87eb2-5a8f-4f3a-b05e-a717fdd621a5
+##
 
 Happy biking with JaVelo! 🚴‍♂️🌄
